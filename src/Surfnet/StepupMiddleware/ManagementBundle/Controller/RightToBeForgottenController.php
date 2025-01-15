@@ -19,15 +19,15 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,27 +36,20 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RightToBeForgottenController extends Controller
+class RightToBeForgottenController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
-    public function __construct(TransactionAwarePipeline $pipeline, IdentityService $identityService)
-    {
-        $this->pipeline = $pipeline;
-        $this->identityService = $identityService;
+    public function __construct(
+        /**
+         * @return TransactionAwarePipeline
+         */
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly IdentityService $identityService,
+    ) {
     }
 
-    public function forgetIdentityAction(Request $request)
+    public function forgetIdentity(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $payload = JsonHelper::decode($request->getContent());
 
@@ -71,62 +64,52 @@ class RightToBeForgottenController extends Controller
         $this->assertMayForget(new NameId($payload['name_id']), new Institution($payload['institution']));
 
         $command = new ForgetIdentityCommand();
-        $command->UUID        = (string) Uuid::uuid4();
-        $command->nameId      = $payload['name_id'];
+        $command->UUID = (string)Uuid::uuid4();
+        $command->nameId = $payload['name_id'];
         $command->institution = $payload['institution'];
 
         return $this->handleCommand($request, $command);
     }
 
-    /**
-     * @param Request $request
-     * @param Command $command
-     * @return JsonResponse
-     */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, AbstractCommand $command): JsonResponse
     {
         $this->pipeline->process($command);
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response   = new JsonResponse([
-            'status'       => 'OK',
-            'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
-        ]);
 
-        return $response;
+        return new JsonResponse([
+            'status' => 'OK',
+            'processed_by' => $serverName,
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
+        ]);
     }
 
     /**
-     * @param NameId      $nameId
-     * @param Institution $institution
      * @throws ConflictHttpException
      */
-    private function assertMayForget(NameId $nameId, Institution $institution)
+    private function assertMayForget(NameId $nameId, Institution $institution): void
     {
         $credentials =
             $this->identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);
 
-        if ($credentials === null) {
+        if (!$credentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
             return;
         }
 
         if ($credentials->isSraa()) {
             throw new ConflictHttpException(
                 'Identity is currently configured to act as an SRAA. ' .
-                'Remove its NameID from the configuration and try again.'
+                'Remove its NameID from the configuration and try again.',
             );
         }
 
-        if ($credentials->isRaa()) {
-            $role = 'RAA';
-        } else {
-            $role = 'RA';
-        }
+        $role = $credentials->isRaa() ? 'RAA' : 'RA';
 
-        throw new ConflictHttpException(sprintf(
-            'Identity is currently accredited as an %s. Retract the accreditation and try again.',
-            $role
-        ));
+        throw new ConflictHttpException(
+            sprintf(
+                'Identity is currently accredited as an %s. Retract the accreditation and try again.',
+                $role,
+            ),
+        );
     }
 }

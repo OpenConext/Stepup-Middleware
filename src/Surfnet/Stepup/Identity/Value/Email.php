@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -19,37 +21,34 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Email implements JsonSerializable
+final class Email implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $email;
+    private readonly string $email;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('unknown@domain.invalid');
     }
 
-    /**
-     * @param string $email
-     */
-    public function __construct($email)
+    public function __construct(string $email)
     {
-        if (!is_string($email) || trim($email) === '') {
+        if (trim($email) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'email', $email);
         }
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidArgumentException(sprintf(
-                'Email given: "%s is not a RFC 822 (https://www.ietf.org/rfc/rfc0822.txt) compliant email address"',
-                $email
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Email given: "%s is not a RFC 822 (https://www.ietf.org/rfc/rfc0822.txt) compliant email address"',
+                    $email,
+                ),
+            );
         }
 
         $this->email = trim($email);
@@ -58,22 +57,22 @@ final class Email implements JsonSerializable
     /**
      * @return string
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->email;
     }
 
-    public function equals(Email $other)
+    public function equals(Email $other): bool
     {
         return $this->email === $other->email;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->email;
     }

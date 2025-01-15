@@ -18,18 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle;
 
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\EmailVerifiedSecondFactorRemindersCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplaySpecificEventsCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection\CompilerPass\CollectProjectorsForEventReplayCompilerPass;
-use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

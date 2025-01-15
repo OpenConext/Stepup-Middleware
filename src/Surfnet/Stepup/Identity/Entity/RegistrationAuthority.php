@@ -29,80 +29,49 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
  */
 final class RegistrationAuthority extends SimpleEventSourcedEntity
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole
-     */
-    private $role;
+    private ?RegistrationAuthorityRole $role = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Location
-     */
-    private $location;
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?Location $location = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\ContactInformation
-     */
-    private $contactInformation;
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?ContactInformation $contactInformation = null;
 
-    /**
-     * @var Institution
-     */
-    private $institution;
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?Institution $institution = null;
 
-    /**
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param Institution $institution
-     * @return RegistrationAuthority
-     */
     public static function accreditWith(
         RegistrationAuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $institution
-    ) {
-        $registrationAuthority                     = new self();
-        $registrationAuthority->role               = $role;
-        $registrationAuthority->location           = $location;
+        Institution $institution,
+    ): self {
+        $registrationAuthority = new self();
+        $registrationAuthority->role = $role;
+        $registrationAuthority->location = $location;
         $registrationAuthority->contactInformation = $contactInformation;
-        $registrationAuthority->institution        = $institution;
+        $registrationAuthority->institution = $institution;
 
         return $registrationAuthority;
     }
 
-    /**
-     * @param Location           $location
-     * @param ContactInformation $contactInformation
-     */
-    public function amendInformation(Location $location, ContactInformation $contactInformation)
+    public function amendInformation(Location $location, ContactInformation $contactInformation): void
     {
         $this->location = $location;
         $this->contactInformation = $contactInformation;
     }
 
-    /**
-     * @param RegistrationAuthorityRole $role
-     * @return void
-     */
-    public function appointAs(RegistrationAuthorityRole $role)
+    public function appointAs(RegistrationAuthorityRole $role): void
     {
         $this->role = $role;
     }
 
-    /**
-     * @param RegistrationAuthorityRole $role
-     * @return bool
-     */
-    public function isAppointedAs(RegistrationAuthorityRole $role)
+    public function isAppointedAs(RegistrationAuthorityRole $role): bool
     {
         return $this->role->equals($role);
     }
 
-    /**
-     * @return RegistrationAuthorityRole
-     */
-    public function getRole()
+    public function getRole(): ?RegistrationAuthorityRole
     {
         return $this->role;
     }

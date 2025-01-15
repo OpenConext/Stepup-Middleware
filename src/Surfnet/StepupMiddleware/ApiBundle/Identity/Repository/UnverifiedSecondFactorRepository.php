@@ -19,12 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 
+/**
+ * @extends ServiceEntityRepository<UnverifiedSecondFactor>
+ */
 class UnverifiedSecondFactorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -32,13 +35,7 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, UnverifiedSecondFactor::class);
     }
 
-    /**
-     * @param string $id
-     * @param null $lockMode
-     * @param null $lockVersion
-     * @return UnverifiedSecondFactor|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?UnverifiedSecondFactor
     {
         /** @var UnverifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -47,17 +44,16 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param UnverifiedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(UnverifiedSecondFactorQuery $query)
+    public function createSearchQuery(UnverifiedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId) {
+        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         if ($query->verificationNonce) {
@@ -68,26 +64,23 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'sf')
+            ->delete($this->getEntityName(), 'sf')
             ->where('sf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
     }
 
-    /**
-     * @param UnverifiedSecondFactor $secondFactor
-     */
-    public function save(UnverifiedSecondFactor $secondFactor)
+    public function save(UnverifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
 
-    public function remove(UnverifiedSecondFactor $secondFactor)
+    public function remove(UnverifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();

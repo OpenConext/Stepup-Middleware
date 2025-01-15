@@ -18,35 +18,25 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Exception\JsonException;
 use Surfnet\Stepup\Helper\JsonHelper;
 
 class JsonHelperTest extends TestCase
 {
-    /**
-     * @test
-     * @group json
-     *
-     * @dataProvider nonStringProvider
-     * @param $nonString
-     */
-    public function json_helper_can_only_decode_strings($nonString)
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        JsonHelper::decode($nonString);
-    }
+    use MockeryPHPUnitIntegration;
 
     /**
      * @test
      * @group json
      */
-    public function json_helper_decodes_strings_to_arrays()
+    public function json_helper_decodes_strings_to_arrays(): void
     {
         $expectedDecodedResult = ['hello' => 'world'];
-        $json                  = '{ "hello" : "world" }';
+        $json = '{ "hello" : "world" }';
 
         $actualDecodedResult = JsonHelper::decode($json);
 
@@ -57,7 +47,7 @@ class JsonHelperTest extends TestCase
      * @test
      * @group json
      */
-    public function json_helper_throws_an_exception_when_there_is_a_syntax_error()
+    public function json_helper_throws_an_exception_when_there_is_a_syntax_error(): void
     {
         $this->expectException(JsonException::class);
         $this->expectExceptionMessage('Syntax error');
@@ -67,14 +57,14 @@ class JsonHelperTest extends TestCase
         JsonHelper::decode($jsonWithMissingDoubleQuotes);
     }
 
-    public function nonStringProvider()
+    public function nonStringProvider(): array
     {
         return [
             'boolean' => [true],
-            'array'   => [[]],
+            'array' => [[]],
             'integer' => [1],
-            'float'   => [1.2],
-            'object'  => [new \StdClass()],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

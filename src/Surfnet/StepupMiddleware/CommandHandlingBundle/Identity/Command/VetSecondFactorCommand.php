@@ -25,81 +25,72 @@ use Symfony\Component\Validator\Constraints as Assert;
 class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $authorityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $authorityId;
 
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
+     * @var string
+     */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
+
+    /**
+     * @var string
+     */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
+
+    /**
      *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $registrationCode;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorType;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $registrationCode;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorIdentifier;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorType;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $documentNumber;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $secondFactorIdentifier;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $documentNumber;
-
-    /**
-     * @Assert\EqualTo(value=true)
-     *
      * @var boolean
      */
-    public $identityVerified;
+    #[Assert\EqualTo(value: true)]
+    public bool $identityVerified;
 
     /**
-     * @Assert\Type(type="bool")
-     *
      * @var boolean
      */
-    public $provePossessionSkipped;
+    #[Assert\Type(type: 'bool')]
+    public bool $provePossessionSkipped = false;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         // Returning null as opposed to having the institution on this command was done
         // because the RA (actor) institution can be loaded from the authorityId

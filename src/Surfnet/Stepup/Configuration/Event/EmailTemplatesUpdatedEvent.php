@@ -21,22 +21,15 @@ namespace Surfnet\Stepup\Configuration\Event;
 class EmailTemplatesUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var array
-     */
-    public $emailTemplates;
-
-    /**
      * @param string $configurationId
-     * @param array  $emailTemplates
+     * @param array $emailTemplates
      */
-    public function __construct($configurationId, array $emailTemplates)
+    public function __construct($configurationId, public array $emailTemplates)
     {
         parent::__construct($configurationId);
-
-        $this->emailTemplates = $emailTemplates;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['email_templates']);
     }

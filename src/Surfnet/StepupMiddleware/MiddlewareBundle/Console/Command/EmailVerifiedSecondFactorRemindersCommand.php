@@ -24,7 +24,7 @@ use DateTime;
 use Exception;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
@@ -44,59 +44,36 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
-    /**
-     * @var TransactionAwarePipeline
-     */
-    private $pipeline;
+    protected static $defaultName = 'middleware:cron:email-reminder';
 
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
-
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connection;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('middleware:cron:email-reminder')
             ->setDescription('Sends email reminders to identities with verified tokens more than 7 days old.')
             ->addOption(
                 'dry-run',
                 null,
                 InputOption::VALUE_NONE,
-                'Run in dry mode, not sending any email'
+                'Run in dry mode, not sending any email',
             )
             ->addOption(
                 'date',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7'
+                'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7',
             );
     }
 
     public function __construct(
-        TransactionAwarePipeline $pipeline,
-        BufferedEventBus $eventBus,
-        DBALConnectionHelper $connection,
-        LoggerInterface $logger
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly BufferedEventBus $eventBus,
+        private readonly DBALConnectionHelper $connection,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
-        $this->logger = $logger;
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->validateInput($input);
@@ -109,7 +86,17 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
         $date = new DateTime();
         $date->sub(new DateInterval('P7D'));
         if ($input->hasOption('date') && !is_null($input->getOption('date'))) {
-            $date = DateTime::createFromFormat('Y-m-d', $input->getOption('date'));
+            $receivedDate = $input->getOption('date');
+            $date = DateTime::createFromFormat('Y-m-d', $receivedDate);
+            if ($date === false) {
+                $output->writeln(
+                    sprintf(
+                        '<error>Error processing the "date" option. Please review the received input: "%s" </error>',
+                        $receivedDate
+                    )
+                );
+                return 1;
+            }
         }
 
         $dryRun = false;
@@ -133,13 +120,18 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             $this->connection->rollBack();
             throw $e;
         }
+        return 0;
     }
 
-    private function validateInput(InputInterface $input)
+    private function validateInput(InputInterface $input): void
     {
         if ($input->hasOption('date')) {
             $date = $input->getOption('date');
-            Assertion::nullOrDate($date, 'Y-m-d', 'Expected date to be a string and formatted in the Y-m-d date format');
+            Assertion::nullOrDate(
+                $date,
+                'Y-m-d',
+                'Expected date to be a string and formatted in the Y-m-d date format',
+            );
         }
 
         if ($input->hasOption('dry-run')) {

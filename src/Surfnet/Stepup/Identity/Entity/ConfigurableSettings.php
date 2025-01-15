@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Exception;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
@@ -30,32 +31,26 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 final class ConfigurableSettings
 {
     /**
-     * @var TimeFrame
-     */
-    private $emailVerificationTimeFrame;
-
-    /**
      * @var Locale[]
      */
-    private $locales;
+    private readonly array $locales;
 
     /**
-     * @param TimeFrame $timeFrame
-     * @param Locale[]  $locales
+     * @param Locale[] $locales
      */
-    private function __construct(TimeFrame $timeFrame, array $locales)
-    {
+    private function __construct(
+        private readonly TimeFrame $emailVerificationTimeFrame,
+        array $locales,
+    ) {
         foreach ($locales as $index => $locale) {
             if (!$locale instanceof Locale) {
                 throw InvalidArgumentException::invalidType(
-                    'Surfnet\Stepup\Identity\Value\Locale',
+                    Locale::class,
                     sprintf('locales[%s]', $index),
-                    $locale
+                    $locale,
                 );
             }
         }
-
-        $this->emailVerificationTimeFrame = $timeFrame;
         $this->locales = $locales;
     }
 
@@ -63,43 +58,37 @@ final class ConfigurableSettings
      * @param int $emailVerificationTimeFrame positive integer
      * @param string[] $locales
      * @return ConfigurableSettings
+     * @throws Exception
+     * @throws Exception
      */
-    public static function create($emailVerificationTimeFrame, array $locales)
+    public static function create(int $emailVerificationTimeFrame, array $locales): self
     {
         return new self(
             TimeFrame::ofSeconds($emailVerificationTimeFrame),
             array_map(
-                function ($locale) {
-                    return new Locale($locale);
-                },
-                $locales
-            )
+                fn($locale): Locale => new Locale($locale),
+                $locales,
+            ),
         );
     }
 
     /**
      * @return EmailVerificationWindow
      */
-    public function createNewEmailVerificationWindow()
+    public function createNewEmailVerificationWindow(): EmailVerificationWindow
     {
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             $this->emailVerificationTimeFrame,
-            DateTime::now()
+            DateTime::now(),
         );
     }
 
-    /**
-     * @param Locale $locale
-     * @return bool
-     */
-    public function isSupportedLocale(Locale $locale)
+    public function isSupportedLocale(Locale $locale): bool
     {
         return array_reduce(
             $this->locales,
-            function ($supported, Locale $supportedLocale) use ($locale) {
-                return $supported || $supportedLocale->equals($locale);
-            },
-            false
+            fn($supported, Locale $supportedLocale): bool => $supported || $supportedLocale->equals($locale),
+            false,
         );
     }
 }

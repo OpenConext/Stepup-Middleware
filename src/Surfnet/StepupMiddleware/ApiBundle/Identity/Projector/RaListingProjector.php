@@ -20,8 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
@@ -44,76 +44,60 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
  */
 class RaListingProjector extends Projector
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
-
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
-
-    public function __construct(RaListingRepository $raListingRepository, IdentityRepository $identityRepository)
-    {
-        $this->raListingRepository = $raListingRepository;
-        $this->identityRepository = $identityRepository;
+    public function __construct(
+        private readonly RaListingRepository $raListingRepository,
+        private readonly IdentityRepository $identityRepository,
+    ) {
     }
 
-    /**
-     * @param IdentityAccreditedAsRaForInstitutionEvent $event
-     * @return void
-     */
-    public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
+    public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event,): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
 
         $raListing = RaListing::create(
-            (string) $event->identityId,
+            (string)$event->identityId,
             $event->identityInstitution,
             $identity->commonName,
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
             $event->contactInformation,
-            $event->raInstitution
+            $event->raInstitution,
         );
 
         $this->raListingRepository->save($raListing);
     }
 
-    /**
-     * @param IdentityAccreditedAsRaaForInstitutionEvent $event
-     * @return void
-     */
-    public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event)
+    public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event,): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
 
         $raListing = RaListing::create(
-            (string) $event->identityId,
+            (string)$event->identityId,
             $event->identityInstitution,
             $identity->commonName,
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
             $event->contactInformation,
-            $event->raInstitution
+            $event->raInstitution,
         );
 
         $this->raListingRepository->save($raListing);
     }
 
     public function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
-        RegistrationAuthorityInformationAmendedForInstitutionEvent $event
-    ) {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
+        RegistrationAuthorityInformationAmendedForInstitutionEvent $event,
+    ): void {
+        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
+            $event->identityId,
+            $event->raInstitution,
+        );
 
-        if (!$raListing) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new RuntimeException(
                 "Tried to amend an RaListing's registration authority location and contact information, " .
-                "but the listing could not be found"
+                "but the listing could not be found",
             );
         }
 
@@ -123,33 +107,38 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event)
+    public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event): void
     {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
+        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
+            $event->identityId,
+            $event->raInstitution,
+        );
 
         $raListing->role = AuthorityRole::ra();
 
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event)
+    public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event): void
     {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
+        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
+            $event->identityId,
+            $event->raInstitution,
+        );
 
         $raListing->role = AuthorityRole::raa();
 
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
-    {
+    public function applyRegistrationAuthorityRetractedForInstitutionEvent(
+        RegistrationAuthorityRetractedForInstitutionEvent $event,
+    ): void {
         $this->raListingRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
     }
 
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->raListingRepository->removeByIdentityId($event->identityId, $event->identityInstitution);
     }
@@ -157,22 +146,20 @@ class RaListingProjector extends Projector
     /**
      * This method is kept to be backwards compatible for changes before FGA
      *
-     * @param IdentityAccreditedAsRaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
-
+        $identity = $this->identityRepository->find((string)$event->identityId);
         $raListing = RaListing::create(
-            (string) $event->identityId,
+            (string)$event->identityId,
             $event->identityInstitution,
             $identity->commonName,
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
             $event->contactInformation,
-            $event->identityInstitution
+            $event->identityInstitution,
         );
 
         $this->raListingRepository->save($raListing);
@@ -181,22 +168,20 @@ class RaListingProjector extends Projector
     /**
      * This method is kept to be backwards compatible for changes before FGA
      *
-     * @param IdentityAccreditedAsRaaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
-
+        $identity = $this->identityRepository->find((string)$event->identityId);
         $raListing = RaListing::create(
-            (string) $event->identityId,
+            (string)$event->identityId,
             $event->identityInstitution,
             $identity->commonName,
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
             $event->contactInformation,
-            $event->identityInstitution
+            $event->identityInstitution,
         );
 
         $this->raListingRepository->save($raListing);
@@ -204,19 +189,19 @@ class RaListingProjector extends Projector
 
     /**
      * This method is kept to be backwards compatible for changes before FGA
-     *
-     * @param RegistrationAuthorityInformationAmendedEvent $event
      */
     public function applyRegistrationAuthorityInformationAmendedEvent(
-        RegistrationAuthorityInformationAmendedEvent $event
-    ) {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->identityInstitution);
+        RegistrationAuthorityInformationAmendedEvent $event,
+    ): void {
+        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
+            $event->identityId,
+            $event->identityInstitution,
+        );
 
-        if (!$raListing) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new RuntimeException(
                 "Tried to amend an RaListing's registration authority location and contact information, " .
-                "but the listing could not be found"
+                "but the listing could not be found",
             );
         }
 
@@ -228,40 +213,40 @@ class RaListingProjector extends Projector
 
     /**
      * This method is kept to be backwards compatible for changes before FGA
-     *
-     * @param AppointedAsRaEvent $event
      */
-    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event): void
     {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
+        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution(
+            $event->identityId,
+            $event->identityInstitution,
+        );
 
-        $raListing->role = AuthorityRole::ra();
-
-        $this->raListingRepository->save($raListing);
+        foreach ($raListing as $listing) {
+            $listing->role = AuthorityRole::ra();
+            $this->raListingRepository->save($listing);
+        }
     }
 
     /**
      * This method is kept to be backwards compatible for changes before FGA
-     *
-     * @param AppointedAsRaaEvent $event
      */
-    public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event): void
     {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
+        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution(
+            $event->identityId,
+            $event->identityInstitution,
+        );
 
-        $raListing->role = AuthorityRole::raa();
-
-        $this->raListingRepository->save($raListing);
+        foreach ($raListing as $listing) {
+            $listing->role = AuthorityRole::raa();
+            $this->raListingRepository->save($listing);
+        }
     }
 
     /**
      * This method is kept to be backwards compatible for changes before FGA
-     *
-     * @param RegistrationAuthorityRetractedEvent $event
      */
-    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event): void
     {
         $this->raListingRepository->removeByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
     }

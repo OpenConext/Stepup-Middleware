@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -19,29 +21,24 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class CommonName implements JsonSerializable
+final class CommonName implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $commonName;
+    private readonly string $commonName;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('—');
     }
 
-    /**
-     * @param string $commonName
-     */
-    public function __construct($commonName)
+    public function __construct(string $commonName)
     {
-        if (!is_string($commonName) || trim($commonName) === '') {
+        if (trim($commonName) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'commonName', $commonName);
         }
 
@@ -51,22 +48,22 @@ final class CommonName implements JsonSerializable
     /**
      * @return string
      */
-    public function getCommonName()
+    public function getCommonName(): string
     {
         return $this->commonName;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->commonName;
     }
 
-    public function equals(CommonName $other)
+    public function equals(CommonName $other): bool
     {
         return $this->commonName === $other->commonName;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->commonName;
     }

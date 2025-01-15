@@ -25,61 +25,34 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_identity_institution", columns={"institution"}),
- *          @ORM\Index(name="idxft_identity_email", columns={"email"}, flags={"FULLTEXT"}),
- *          @ORM\Index(name="idxft_identity_commonname", columns={"common_name"}, flags={"FULLTEXT"})
- *      }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_identity_institution', columns: ['institution'])]
+#[ORM\Index(name: 'idxft_identity_email', columns: ['email'], flags: ['FULLTEXT'])]
+#[ORM\Index(name: 'idxft_identity_commonname', columns: ['common_name'], flags: ['FULLTEXT'])]
+#[ORM\Entity(repositoryClass: IdentityRepository::class)]
 class Identity implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
-    /**
-     * @ORM\Column(type="stepup_name_id")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\NameId
-     */
-    public $nameId;
+    #[ORM\Column(type: 'stepup_name_id')]
+    public NameId $nameId;
 
-    /**
-     * @ORM\Column(type="stepup_common_name")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
+    #[ORM\Column(type: 'stepup_common_name')]
+    public CommonName $commonName;
 
-    /**
-     * @ORM\Column(type="institution")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $institution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
-    /**
-     * @ORM\Column(type="stepup_email")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
+    #[ORM\Column(type: 'stepup_email')]
+    public Email $email;
 
-    /**
-     * @ORM\Column(type="stepup_locale")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Locale
-     */
-    public $preferredLocale;
+    #[ORM\Column(type: 'stepup_locale')]
+    public Locale $preferredLocale;
+    public ?bool $possessedSelfAssertedToken = null;
 
     public static function create(
         string $id,
@@ -87,8 +60,8 @@ class Identity implements JsonSerializable
         NameId $nameId,
         Email $email,
         CommonName $commonName,
-        Locale $preferredLocale
-    ) {
+        Locale $preferredLocale,
+    ): self {
         $identity = new self();
 
         $identity->id = $id;
@@ -100,7 +73,7 @@ class Identity implements JsonSerializable
         return $identity;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

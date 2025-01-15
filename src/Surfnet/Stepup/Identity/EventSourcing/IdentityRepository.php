@@ -34,32 +34,23 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityRepository extends EventSourcingRepository
 {
-    protected $events;
-
-    protected $logger;
-
-    private $userDataFilter;
-
     /**
      * @param EventStreamDecorator[] $eventStreamDecorators
      */
     public function __construct(
-        EventStoreInterface $eventStore,
+        protected EventStoreInterface $events,
         EventBusInterface $eventBus,
         AggregateFactory $aggregateFactory,
-        UserDataFilterInterface $userDataFilter,
-        LoggerInterface $logger,
-        array $eventStreamDecorators = []
+        private readonly UserDataFilterInterface $userDataFilter,
+        protected LoggerInterface $logger,
+        array $eventStreamDecorators = [],
     ) {
-        $this->events = $eventStore;
-        $this->logger = $logger;
-        $this->userDataFilter = $userDataFilter;
         parent::__construct(
-            $eventStore,
+            $this->events,
             $eventBus,
             Identity::class,
             $aggregateFactory,
-            $eventStreamDecorators
+            $eventStreamDecorators,
         );
     }
 

@@ -1,3 +1,10 @@
 framework:
     router:
         utf8: true
+
+when@prod: &prodOverride
+    framework:
+        router:
+            strict_requirements: null
+
+when@prod_event_replay: *prodOverride

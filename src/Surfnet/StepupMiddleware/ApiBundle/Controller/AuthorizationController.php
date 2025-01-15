@@ -21,38 +21,34 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonAuthorizationResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 
 class AuthorizationController extends AbstractController
 {
-    /**
-     * @var AuthorizationService
-     */
-    private $authorizationService;
-
-    /**
-     * @param AuthorizationService $authorizationService
-     */
-    public function __construct(AuthorizationService $authorizationService)
-    {
-        $this->authorizationService = $authorizationService;
+    public function __construct(
+        private readonly AuthorizationService $authorizationService,
+    ) {
     }
 
-    public function mayRegisterSelfAssertedTokensAction(string $identityId)
+    public function mayRegisterSelfAssertedTokens(string $identityId): JsonAuthorizationResponse
     {
-        $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(new IdentityId($identityId));
+        $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(
+            new IdentityId($identityId),
+        );
         return JsonAuthorizationResponse::from($decision);
     }
 
-    public function mayRegisterRecoveryTokensAction(string $identityId)
+    public function mayRegisterRecoveryTokens(string $identityId): JsonAuthorizationResponse
     {
         $decision = $this->authorizationService->assertRecoveryTokensAreAllowed(new IdentityId($identityId));
         return JsonAuthorizationResponse::from($decision);
     }
 
-    public function maySelfVetSelfAssertedTokenAction(string $identityId)
+    public function maySelfVetSelfAssertedToken(string $identityId): JsonAuthorizationResponse
     {
-        $decision = $this->authorizationService->assertSelfVetUsingSelfAssertedTokenIsAllowed(new IdentityId($identityId));
+        $decision = $this->authorizationService->assertSelfVetUsingSelfAssertedTokenIsAllowed(
+            new IdentityId($identityId),
+        );
         return JsonAuthorizationResponse::from($decision);
     }
 }

@@ -33,7 +33,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -41,74 +44,55 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         'email',
     ];
 
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var Email
-     */
-    public $email;
-
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        CommonName $commonName,
-        Email $email
+        public NameId $nameId,
+        public CommonName $commonName,
+        public Email $email,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId     = $nameId;
-        $this->commonName = $commonName;
-        $this->email      = $email;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new NameId($data['name_id']),
             CommonName::unknown(),
-            Email::unknown()
+            Email::unknown(),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'          => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'name_id'              => (string) $this->nameId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
 
@@ -119,6 +103,9 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

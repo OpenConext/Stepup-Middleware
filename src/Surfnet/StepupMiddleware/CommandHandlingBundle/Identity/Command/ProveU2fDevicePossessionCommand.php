@@ -26,38 +26,32 @@ class ProveU2fDevicePossessionCommand extends AbstractCommand implements SelfSer
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of the second factor to create.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
 
     /**
      * The key handle issued by the U2F device
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $keyHandle;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $keyHandle;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

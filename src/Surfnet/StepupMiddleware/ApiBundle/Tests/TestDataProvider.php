@@ -18,9 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests;
 
+use StdClass;
+
 final class TestDataProvider
 {
-    public static function notNull()
+    /**
+     * @return array<string, mixed>
+     */
+    public static function notNull(): array
     {
         return [
             'string' => ['a string'],
@@ -29,7 +34,7 @@ final class TestDataProvider
             'true' => [true],
             'false' => [false],
             'array' => [[]],
-            'object' => [new \StdClass],
+            'object' => [new StdClass],
         ];
     }
 }

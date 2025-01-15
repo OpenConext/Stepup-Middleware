@@ -28,52 +28,17 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class RaLocationAddedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var RaLocationId
-     */
-    public $raLocationId;
-
-    /**
-     * @var RaLocationName
-     */
-    public $raLocationName;
-
-    /**
-     * @var Location
-     */
-    public $location;
-    /**
-     * @var ContactInformation
-     */
-    public $contactInformation;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        RaLocationId $raLocationId,
-        RaLocationName $raLocationName,
-        Location $location,
-        ContactInformation $contactInformation
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public RaLocationId $raLocationId,
+        public RaLocationName $raLocationName,
+        public Location $location,
+        public ContactInformation $contactInformation
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution                = $institution;
-        $this->raLocationId               = $raLocationId;
-        $this->raLocationName             = $raLocationName;
-        $this->location                   = $location;
-        $this->contactInformation         = $contactInformation;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
@@ -81,7 +46,7 @@ class RaLocationAddedEvent implements SerializableInterface
             new RaLocationId($data['ra_location_id']),
             new RaLocationName($data['ra_location_name']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
@@ -89,11 +54,11 @@ class RaLocationAddedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
-            'ra_location_name'             => $this->raLocationName->getRaLocationName(),
-            'location'                     => $this->location->getLocation(),
-            'contact_information'          => $this->contactInformation->getContactInformation(),
+            'institution' => $this->institution->getInstitution(),
+            'ra_location_id' => $this->raLocationId->getRaLocationId(),
+            'ra_location_name' => $this->raLocationName->getRaLocationName(),
+            'location' => $this->location->getLocation(),
+            'contact_information' => $this->contactInformation->getContactInformation(),
         ];
     }
 }

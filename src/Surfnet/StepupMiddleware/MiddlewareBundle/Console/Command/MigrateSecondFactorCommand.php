@@ -30,53 +30,38 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use function sprintf;
 
 final class MigrateSecondFactorCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
-
-    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
-    {
-        $this->bootstrapService = $bootstrapService;
-        $this->transactionHelper = $transactionHelper;
+    public function __construct(
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly TransactionHelper $transactionHelper,
+    ) {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Migrates the tokens of an identity to a new institution while preserving the old tokens')
             ->addArgument(
                 'old-name-id',
                 InputArgument::REQUIRED,
-                'The old NameID of the identity used as the source of the tokens to move'
+                'The old NameID of the identity used as the source of the tokens to move',
             )
             ->addArgument(
                 'new-name-id',
                 InputArgument::REQUIRED,
-                'The new NameID of the identity to move the tokens to'
+                'The new NameID of the identity to move the tokens to',
             )
             ->addArgument('target-institution', InputArgument::OPTIONAL, 'The institution of the target identity')
             ->addArgument('email', InputArgument::OPTIONAL, 'The e-mail address of the identity to create');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sourceNameId = new NameId($input->getArgument('old-name-id'));
         $targetNameId = new NameId($input->getArgument('new-name-id'));
-
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
-        );
 
         $output->writeln(sprintf('<comment>Starting token migration for %s</comment>', $sourceNameId));
         $sourceIdentity = $this->bootstrapService->getIdentityByNameId($sourceNameId);
@@ -86,15 +71,15 @@ final class MigrateSecondFactorCommand extends Command
             $this->transactionHelper->beginTransaction();
 
             // Check if target identity should be created
-            if ($targetIdentity === null) {
+            if (!$targetIdentity instanceof Identity) {
                 $output->writeln(
-                    sprintf('<info>Target with NameID %s does not exist, creating new identity</info>', $targetNameId)
+                    sprintf('<info>Target with NameID %s does not exist, creating new identity</info>', $targetNameId),
                 );
 
                 $identityId = $this->createIdentity($targetNameId, $sourceIdentity, $input);
 
                 $output->writeln(
-                    sprintf('<info>Successfully created identity with UUID %s</info>', $identityId)
+                    sprintf('<info>Successfully created identity with UUID %s</info>', $identityId),
                 );
 
 
@@ -109,7 +94,9 @@ final class MigrateSecondFactorCommand extends Command
                     $this->bootstrapService->migrateVettedSecondFactor($sourceIdentity, $targetIdentity, $secondFactor);
                     $output->writeln(sprintf('<comment>Moved token %s</comment>', $secondFactor->id));
                 } else {
-                    $output->writeln(sprintf('<info>Skipped moving token %s, already present"</info>', $secondFactor->id));
+                    $output->writeln(
+                        sprintf('<info>Skipped moving token %s, already present"</info>', $secondFactor->id),
+                    );
                 }
             }
 
@@ -118,24 +105,26 @@ final class MigrateSecondFactorCommand extends Command
             $output->writeln(
                 sprintf(
                     '<error>An Error occurred when trying to move the tokens of identity: "%s"</error>',
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             $this->transactionHelper->rollback();
-            throw $e;
+            return 1;
         }
         $output->writeln(
-            sprintf('<info>Successfully moved tokens from identity %s to identity %s</info>', $sourceIdentity->id, $targetIdentity->id)
+            sprintf(
+                '<info>Successfully moved tokens from identity %s to identity %s</info>',
+                $sourceIdentity->id,
+                $targetIdentity->id,
+            ),
         );
+        return 0;
     }
 
     /**
-     * @param NameId $targetNameId
-     * @param Identity $sourceIdentity
-     * @param InputInterface $input
      * @return string
      */
-    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, InputInterface $input)
+    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, InputInterface $input): string
     {
         $newInstitution = $input->getArgument('target-institution');
         $newEmail = $input->getArgument('email');
@@ -150,7 +139,7 @@ final class MigrateSecondFactorCommand extends Command
             $targetNameId,
             $sourceIdentity->commonName->getCommonName(),
             $newEmail,
-            $sourceIdentity->preferredLocale->getLocale()
+            $sourceIdentity->preferredLocale->getLocale(),
         );
 
         return $identity->id;
@@ -159,7 +148,7 @@ final class MigrateSecondFactorCommand extends Command
     private function tokenExists(array $targetSecondFactors, VettedSecondFactor $sourceSecondFactor): bool
     {
         foreach ($targetSecondFactors as $secondFactor) {
-            if ($secondFactor->isEqual($secondFactor)) {
+            if ($secondFactor->isEqual($sourceSecondFactor)) {
                 return true;
             }
         }

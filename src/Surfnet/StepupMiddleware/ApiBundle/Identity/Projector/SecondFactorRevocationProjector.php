@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\Projector;
 use DateTime as CoreDateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -30,22 +30,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocatio
 
 class SecondFactorRevocationProjector extends Projector
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRevocationRepository $repository)
+    public function __construct(private readonly SecondFactorRevocationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     protected function applyVettedSecondFactorRevokedEvent(
         VettedSecondFactorRevokedEvent $event,
-        DomainMessage $domainMessage
-    ) {
+        DomainMessage $domainMessage,
+    ): void {
         $revocation = new SecondFactorRevocation();
-        $revocation->id = (string) Uuid::uuid4();
+        $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'self';
@@ -56,10 +50,10 @@ class SecondFactorRevocationProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-        DomainMessage $domainMessage
-    ) {
+        DomainMessage $domainMessage,
+    ): void {
         $revocation = new SecondFactorRevocation();
-        $revocation->id = (string) Uuid::uuid4();
+        $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'ra';

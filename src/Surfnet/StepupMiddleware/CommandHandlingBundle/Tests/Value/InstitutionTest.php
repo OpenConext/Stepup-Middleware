@@ -18,20 +18,23 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
 class InstitutionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @dataProvider nonStringOrNonEmptyStringProvider
-     *
-     * @param mixed $invalidValue
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
-    {
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException::class);
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
+        string $invalidValue,
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
 
         new Institution($invalidValue);
     }
@@ -39,27 +42,23 @@ class InstitutionTest extends UnitTest
     /**
      * @test
      */
-    public function two_institutions_with_the_same_value_are_equal()
+    public function two_institutions_with_the_same_value_are_equal(): void
     {
-        $institution       = new Institution('a');
-        $theSame           = new Institution('a');
+        $institution = new Institution('a');
+        $theSame = new Institution('a');
         $theSameWithSpaces = new Institution('  a ');
-        $different         = new Institution('A');
+        $different = new Institution('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertTrue($institution->equals($theSameWithSpaces));
         $this->assertFalse($institution->equals($different));
     }
 
-    public function nonStringOrNonEmptyStringProvider()
+    public function nonStringOrNonEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 }

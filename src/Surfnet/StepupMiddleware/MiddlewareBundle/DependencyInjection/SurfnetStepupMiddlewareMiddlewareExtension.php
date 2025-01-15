@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection;
 
+use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
 {
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $config, ContainerBuilder $container): void
     {
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
@@ -38,7 +39,7 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
         $fileLoader->load('event_replaying.yml');
 
         $definition = (new Definition())
-            ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')
+            ->setClass(ConfigurableSettings::class)
             ->setFactory('Surfnet\Stepup\Identity\Entity\ConfigurableSettings::create')
             ->setArguments([$config['email_verification_window'], $container->getParameter('locales')]);
 
@@ -46,7 +47,7 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
 
         $container->setParameter(
             'middleware.enabled_generic_second_factors',
-            $config['enabled_generic_second_factors']
+            $config['enabled_generic_second_factors'],
         );
     }
 }

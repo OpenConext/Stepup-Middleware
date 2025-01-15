@@ -25,74 +25,67 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
-    public $useRaLocationsOption;
+    #[Assert\Type(type: 'boolean')]
+    public bool $useRaLocationsOption;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
-    public $showRaaContactInformationOption;
+    #[Assert\Type(type: 'boolean')]
+    public bool $showRaaContactInformationOption;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
-    public $verifyEmailOption;
+    #[Assert\Type(type: 'boolean')]
+    public bool $verifyEmailOption;
 
 
     /**
-     * @Assert\Type(type="integer")
-     *
      * @var int
      */
-    public $numberOfTokensPerIdentityOption;
+    #[Assert\Type(type: 'integer')]
+    public int $numberOfTokensPerIdentityOption;
 
-    /**
-     * @Assert\NotNull()
-     */
-    public $allowedSecondFactors;
-
-    /**
-     * @var array|null
-     */
-    public $useRaOption;
+    #[Assert\NotNull]
+    public array $allowedSecondFactors;
 
     /**
      * @var array|null
      */
-    public $useRaaOption;
+    public ?array $useRaOption = null;
 
     /**
      * @var array|null
      */
-    public $selectRaaOption;
+    public ?array $useRaaOption = null;
+
+    /**
+     * @var array|null
+     */
+    public ?array $selectRaaOption = null;
 
     /**
      * @var bool|null
      */
-    public $selfVetOption;
+    public ?bool $selfVetOption = null;
 
     /**
      * @var bool|null
      */
-    public $selfAssertedTokensOption;
+    public ?bool $selfAssertedTokensOption = null;
 
     /**
      * @var bool|null
      */
-    public $ssoOn2faOption;
+    public ?bool $ssoOn2faOption = null;
 }

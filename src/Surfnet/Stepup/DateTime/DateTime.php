@@ -20,36 +20,36 @@ namespace Surfnet\Stepup\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use TypeError;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DateTime
+class DateTime implements Stringable
 {
     /**
      * The 'c' format, expanded in separate format characters. This string can also be used with
      * `DateTime::createFromString()`.
      */
-    const FORMAT = 'Y-m-d\\TH:i:sP';
+    public const FORMAT = 'Y-m-d\\TH:i:sP';
 
     /**
      * Allows for mocking of time.
-     *
+     * @see DateTimeHelper::setCurrentTime here you can see how now can be overridden using reflection
      * @var self|null
      */
-    private static $now;
+    private static ?DateTime $now = null;
+
+    private readonly CoreDateTime $dateTime;
 
     /**
-     * @var CoreDateTime
-     */
-    private $dateTime;
-
-    /**
+     * @see DateTimeHelper::setCurrentTime here you can see how now can be overridden using reflection
      * @return self
      */
-    public static function now()
+    public static function now(): DateTime
     {
         return self::$now ?: new self(new CoreDateTime);
     }
@@ -58,12 +58,8 @@ class DateTime
      * @param string $string A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
      * @return self
      */
-    public static function fromString($string)
+    public static function fromString(string $string): self
     {
-        if (!is_string($string)) {
-            InvalidArgumentException::invalidType('string', 'dateTime', $string);
-        }
-
         $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string);
 
         if ($dateTime === false) {
@@ -81,11 +77,7 @@ class DateTime
         $this->dateTime = $dateTime ?: new CoreDateTime();
     }
 
-    /**
-     * @param DateInterval $interval
-     * @return DateTime
-     */
-    public function add(DateInterval $interval)
+    public function add(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->add($interval);
@@ -93,11 +85,7 @@ class DateTime
         return new self($dateTime);
     }
 
-    /**
-     * @param DateInterval $interval
-     * @return DateTime
-     */
-    public function sub(DateInterval $interval)
+    public function sub(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->sub($interval);
@@ -108,7 +96,7 @@ class DateTime
     /**
      * @return DateTime
      */
-    public function endOfDay()
+    public function endOfDay(): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->setTime(23, 59, 59);
@@ -116,64 +104,35 @@ class DateTime
         return new self($dateTime);
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return boolean
-     */
-    public function comesBefore(DateTime $dateTime)
+    public function comesBefore(DateTime $dateTime): bool
     {
         return $this->dateTime < $dateTime->dateTime;
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return boolean
-     */
-    public function comesBeforeOrIsEqual(DateTime $dateTime)
+    public function comesBeforeOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime <= $dateTime->dateTime;
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return boolean
-     */
-    public function comesAfter(DateTime $dateTime)
+    public function comesAfter(DateTime $dateTime): bool
     {
         return $this->dateTime > $dateTime->dateTime;
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return boolean
-     */
-    public function comesAfterOrIsEqual(DateTime $dateTime)
+    public function comesAfterOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime >= $dateTime->dateTime;
     }
 
-    /**
-     * @param $format
-     * @return string
-     */
-    public function format($format)
+    public function format(string $format): string
     {
-        $formatted = $this->dateTime->format($format);
-
-        if ($formatted === false) {
-            throw new InvalidArgumentException(sprintf(
-                'Given format "%s" is not a valid format for DateTime',
-                $format
-            ));
-        }
-
-        return $formatted;
+        return $this->dateTime->format($format);
     }
 
     /**
      * @return string An ISO 8601 representation of this DateTime.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format(self::FORMAT);
     }

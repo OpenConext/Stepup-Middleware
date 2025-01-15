@@ -20,19 +20,27 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupBundle\Value\VettingType as StepupBundleVettingType;
 
 abstract class AbstractSecondFactor extends SimpleEventSourcedEntity implements SecondFactor
 {
     public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service): bool
     {
-        return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->getType(), $service);
+        return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->getType(), $this->vettingType(), $service);
     }
 
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service): bool
+    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, VettingType $vettingType, SecondFactorTypeService $service): bool
     {
-        return $service->hasEqualOrLowerLoaComparedTo($this->getType(), $type);
+        // SecondFactorTypeService works with the vetting type value objects
+        // from the stepup bundle, so convert them.
+        $ownVettingType = new StepupBundleVettingType($this->vettingType()->type());
+        $otherVettingType = new StepupBundleVettingType($vettingType->type());
+
+        return $service->hasEqualOrLowerLoaComparedTo($this->getType(), $ownVettingType, $type, $otherVettingType);
     }
 
     public function typeAndIdentifierAreEqual(SecondFactorType $type, SecondFactorIdentifier $identifier): bool
@@ -40,5 +48,15 @@ abstract class AbstractSecondFactor extends SimpleEventSourcedEntity implements 
         $typeIsEqual = $this->getType()->equals($type);
         $identifierIsEqual = $this->getIdentifier()->equals($identifier);
         return $typeIsEqual && $identifierIsEqual;
+    }
+
+    /**
+     * By default the vetting type of a token is unknown UNITL it has been vetted
+     * So only the VettedSecondFactor implementation returns anything other than
+     * the UnknownVettingType
+     */
+    public function vettingType(): VettingType
+    {
+        return new UnknownVettingType();
     }
 }

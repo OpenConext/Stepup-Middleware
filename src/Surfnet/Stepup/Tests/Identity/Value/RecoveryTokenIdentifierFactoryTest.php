@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -27,27 +28,29 @@ use Surfnet\Stepup\Identity\Value\SafeStore;
 
 final class RecoveryTokenIdentifierFactoryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @group domain
      */
-    public function test_generates_identifiers_of_all_types()
+    public function test_generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),
-            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678')
+            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678'),
         );
         $this->assertEquals(
             new SafeStore(new HashedSecret('super-secret')),
-            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret')
+            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret'),
         );
 
         $this->assertEquals(
             PhoneNumber::unknown(),
-            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::sms())
+            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::sms()),
         );
         $this->assertEquals(
             SafeStore::unknown(),
-            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::safeStore())
+            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::safeStore()),
         );
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,22 +20,22 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 class InstitutionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
-     * @dataProvider invalidValueProvider
-     *
-     * @param mixed $invalidValue
+     * @dataProvider invalidValueProviderInvalidString
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
-    {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
-
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(string $invalidValue): void {
+        $this->expectException(InvalidArgumentException::class);
         new Institution($invalidValue);
     }
 
@@ -41,12 +43,12 @@ class InstitutionTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_institutions_with_the_same_value_are_equal()
+    public function two_institutions_with_the_same_value_are_equal(): void
     {
-        $institution       = new Institution('a');
-        $theSame           = new Institution('a');
+        $institution = new Institution('a');
+        $theSame = new Institution('a');
         $theSameWithSpaces = new Institution('  a ');
-        $different         = new Institution('A');
+        $different = new Institution('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertTrue($institution->equals($theSameWithSpaces));
@@ -56,15 +58,11 @@ class InstitutionTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProvider()
+    public function invalidValueProviderInvalidString(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 }

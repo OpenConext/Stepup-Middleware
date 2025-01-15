@@ -22,6 +22,7 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\PastEventsService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionAwareEventDispatcher;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,85 +30,64 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+#[AsCommand(
+    name: 'stepup:event:replay',
+    description: 'replay specified events for specified projectors'
+)]
 class ReplaySpecificEventsCommand extends Command
 {
-    const OPTION_LIST_EVENTS = 'list-events';
-    const OPTION_LIST_PROJECTORS = 'list-projectors';
+    public const OPTION_LIST_EVENTS = 'list-events';
+    public const OPTION_LIST_PROJECTORS = 'list-projectors';
 
-    /**
-     * @var EventCollection
-     */
-    private $collection;
-
-    /**
-     * @var PastEventsService
-     */
-    private $pastEventsService;
-
-    /**
-     * @var TransactionAwareEventDispatcher
-     */
-    private $eventDispatcher;
-    /**
-     * @var ProjectorCollection
-     */
-    private $projectorCollection;
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('stepup:event:replay')
-            ->setDescription('replay specified events for specified projectors')
             ->addOption(
                 self::OPTION_LIST_EVENTS,
                 null,
                 InputOption::VALUE_NONE,
-                'List all events available to replay'
+                'List all events available to replay',
             )
             ->addOption(
                 self::OPTION_LIST_PROJECTORS,
                 null,
                 InputOption::VALUE_NONE,
-                'List all projectors available for which events can be replayed'
+                'List all projectors available for which events can be replayed',
             );
     }
 
     public function __construct(
-        EventCollection $collection,
-        ProjectorCollection $projectorCollection,
-        PastEventsService $pastEventsService,
-        TransactionAwareEventDispatcher $eventDispatcher
+        private readonly EventCollection $collection,
+        private readonly ProjectorCollection $projectorCollection,
+        private readonly PastEventsService $pastEventsService,
+        private readonly TransactionAwareEventDispatcher $eventDispatcher,
     ) {
-        $this->collection = $collection;
-        $this->projectorCollection = $projectorCollection;
-        $this->pastEventsService = $pastEventsService;
-        $this->eventDispatcher = $eventDispatcher;
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $availableEvents     = $this->collection->getEventNames();
+        $availableEvents = $this->collection->getEventNames();
         $availableProjectors = $this->projectorCollection->getProjectorNames();
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');
-            $output->writeln(!empty($availableEvents) ? $availableEvents : 'None.');
+            $output->writeln($availableEvents === [] ? 'None.' : $availableEvents);
 
-            return;
+            return 0;
         }
 
         if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
             $output->writeln('<info>Events can be replayed for the following projectors:</info>');
-            $output->writeln(!empty($availableProjectors) ? $availableProjectors : 'None.');
+            $output->writeln($availableProjectors === [] ? 'None.' : $availableProjectors);
 
-            return;
+            return 0;
         }
 
-        if (count($availableProjectors) === 0) {
-            $output->writeln('<error>There are no projectors configured to reply events for</error>');
+        if ($availableProjectors === []) {
+            $output->writeln('<error>There are no projectors configured to replay events for</error>');
 
-            return;
+            return 1;
         }
 
         /** @var QuestionHelper $questionHelper */
@@ -115,21 +95,21 @@ class ReplaySpecificEventsCommand extends Command
 
         $selectEventsQuestion = new ChoiceQuestion(
             'Which events would you like to replay? Please supply a comma-separated list of numbers.',
-            $availableEvents
+            $availableEvents,
         );
         $selectEventsQuestion->setMultiselect(true);
 
-        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventSelection = $this->collection->select($chosenEvents);
 
         $selectProjectorsQuestion = new ChoiceQuestion(
             'For which projectors would you like to replay the selected events? '
             . 'Please supply a comma-separated list of numbers.',
-            $availableProjectors
+            $availableProjectors,
         );
         $selectProjectorsQuestion->setMultiselect(true);
 
-        $chosenProjectors   = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
+        $chosenProjectors = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
         $projectorSelection = $this->projectorCollection->selectByNames($chosenProjectors);
 
         $events = $this->pastEventsService->findEventsBy($eventSelection);
@@ -141,5 +121,6 @@ class ReplaySpecificEventsCommand extends Command
 
         $output->writeln('<info>Dispatching events</info>');
         $this->eventDispatcher->dispatch($events);
+        return 0;
     }
 }

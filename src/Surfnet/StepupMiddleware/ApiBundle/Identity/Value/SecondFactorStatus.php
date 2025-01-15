@@ -18,60 +18,51 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
-final class SecondFactorStatus
-{
-    /**
-     * @var string
-     */
-    private $status;
+use Stringable;
 
-    public static function unverified()
+final readonly class SecondFactorStatus implements Stringable
+{
+    public static function unverified(): self
     {
         return new self('unverified');
     }
 
-    public static function verified()
+    public static function verified(): self
     {
         return new self('verified');
     }
 
-    public static function vetted()
+    public static function vetted(): self
     {
         return new self('vetted');
     }
 
-    public static function revoked()
+    public static function revoked(): self
     {
         return new self('revoked');
     }
 
-    public static function forgotten()
+    public static function forgotten(): self
     {
         return new self('forgotten');
     }
 
     /**
-     * @param string $status
      * @return bool
      */
-    public static function isValidStatus($status)
+    public static function isValidStatus(string $status): bool
     {
         return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', 'forgotten', true]);
     }
 
-    /**
-     * @param string $status
-     */
-    private function __construct($status)
+    private function __construct(private string $status)
     {
-        $this->status = $status;
     }
 
     /**
-     * @param SecondFactorStatus $other
      * @return bool
      */
-    public function equals(SecondFactorStatus $other)
+    public function equals(SecondFactorStatus $other): bool
     {
         return $this->status === $other->status;
     }
@@ -79,7 +70,7 @@ final class SecondFactorStatus
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->status;
     }

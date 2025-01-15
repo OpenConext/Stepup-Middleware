@@ -26,7 +26,7 @@ final class InstitutionRoleSet implements InstitutionRoleSetInterface
     /**
      * @var InstitutionRole[]
      */
-    private $institutionRoles;
+    private readonly array $institutionRoles;
 
     public function __construct(array $institutionRoles)
     {
@@ -35,14 +35,14 @@ final class InstitutionRoleSet implements InstitutionRoleSetInterface
                 throw InvalidArgumentException::invalidType(
                     'InsititutionRole[]',
                     'institutionRoles',
-                    $institutionRoles
+                    $institutionRoles,
                 );
             }
         }
         $this->institutionRoles = $institutionRoles;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->institutionRoles;
     }

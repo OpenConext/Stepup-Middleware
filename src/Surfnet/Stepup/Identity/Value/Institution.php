@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -19,21 +21,19 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Institution implements JsonSerializable
+final class Institution implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $institution;
+    private readonly string $institution;
 
     /**
      * @param string $institution may not be an empty string
      */
-    public function __construct($institution)
+    public function __construct(string $institution)
     {
-        if (!is_string($institution) || strlen(trim($institution)) === 0) {
+        if (trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 
@@ -43,26 +43,22 @@ final class Institution implements JsonSerializable
     /**
      * @return string
      */
-    public function getInstitution()
+    public function getInstitution(): string
     {
         return $this->institution;
     }
 
-    /**
-     * @param Institution $otherInstitution
-     * @return bool
-     */
-    public function equals(Institution $otherInstitution)
+    public function equals(Institution $otherInstitution): bool
     {
         return $this->institution === $otherInstitution->institution;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->institution;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->institution;
     }

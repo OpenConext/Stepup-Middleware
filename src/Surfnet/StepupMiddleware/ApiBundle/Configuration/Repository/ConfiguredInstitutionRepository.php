@@ -19,10 +19,13 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 
+/**
+ * @extends ServiceEntityRepository<ConfiguredInstitution>
+ */
 class ConfiguredInstitutionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -30,10 +33,7 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
         parent::__construct($registry, ConfiguredInstitution::class);
     }
 
-    /**
-     * @param ConfiguredInstitution $configuredInstitution
-     */
-    public function save(ConfiguredInstitution $configuredInstitution)
+    public function save(ConfiguredInstitution $configuredInstitution): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($configuredInstitution);
@@ -41,10 +41,9 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return bool
      */
-    public function hasConfigurationFor(Institution $institution)
+    public function hasConfigurationFor(Institution $institution): bool
     {
         $result = $this->createQueryBuilder('ci')
             ->select('ci.institution')
@@ -56,10 +55,7 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
         return $result !== null;
     }
 
-    /**
-     * @param Institution $institution
-     */
-    public function removeConfigurationFor(Institution $institution)
+    public function removeConfigurationFor(Institution $institution): void
     {
         $this->createQueryBuilder('ci')
             ->delete()

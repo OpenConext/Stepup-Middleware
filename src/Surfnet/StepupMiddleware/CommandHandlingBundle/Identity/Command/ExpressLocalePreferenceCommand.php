@@ -26,25 +26,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServiceExecutable, RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $preferredLocale;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $preferredLocale;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getRaInstitution(): null
     {
         return null;
     }
@@ -52,7 +49,7 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

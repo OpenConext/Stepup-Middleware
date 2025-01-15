@@ -26,23 +26,12 @@ use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository;
 
 class SamlEntityProjector extends Projector
 {
-    /**
-     * @var SamlEntityRepository
-     */
-    private $samlEntityRepository;
-
-    /**
-     * @param SamlEntityRepository $samlEntityRepository
-     */
-    public function __construct(SamlEntityRepository $samlEntityRepository)
-    {
-        $this->samlEntityRepository = $samlEntityRepository;
+    public function __construct(
+        private readonly SamlEntityRepository $samlEntityRepository,
+    ) {
     }
 
-    /**
-     * @param ServiceProvidersUpdatedEvent $event
-     */
-    public function applyServiceProvidersUpdatedEvent(ServiceProvidersUpdatedEvent $event)
+    public function applyServiceProvidersUpdatedEvent(ServiceProvidersUpdatedEvent $event): void
     {
         $spConfigurations = [];
         foreach ($event->serviceProviders as $configuration) {
@@ -55,10 +44,7 @@ class SamlEntityProjector extends Projector
         $this->samlEntityRepository->replaceAllSps($spConfigurations);
     }
 
-    /**
-     * @param IdentityProvidersUpdatedEvent $event
-     */
-    public function applyIdentityProvidersUpdatedEvent(IdentityProvidersUpdatedEvent $event)
+    public function applyIdentityProvidersUpdatedEvent(IdentityProvidersUpdatedEvent $event): void
     {
         $spConfigurations = [];
         foreach ($event->identityProviders as $configuration) {

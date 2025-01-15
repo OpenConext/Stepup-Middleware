@@ -23,99 +23,65 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class DBALEventHydrator
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private ?Statement $loadStatement = null;
 
     /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $payloadSerializer;
-
-    /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $metadataSerializer;
-
-    /**
-     * @var string
-     */
-    private $eventStreamTableName;
-
-    /**
-     * @var string
-     */
-    private $sensitiveDataTable;
-
-    /**
-     * @var \Doctrine\DBAL\Driver\Statement
-     */
-    private $loadStatement = null;
-
-    /**
-     * @param Connection          $connection
-     * @param SimpleInterfaceSerializer $payloadSerializer
-     * @param SimpleInterfaceSerializer $metadataSerializer
-     * @param string              $eventStreamTable
-     * @param string              $sensitiveDataTable
+     * @param string $eventStreamTableName
+     * @param string $sensitiveDataTable
      */
     public function __construct(
-        Connection $connection,
-        SimpleInterfaceSerializer $payloadSerializer,
-        SimpleInterfaceSerializer $metadataSerializer,
-        $eventStreamTable,
-        $sensitiveDataTable
+        private readonly Connection $connection,
+        private readonly SimpleInterfaceSerializer $payloadSerializer,
+        private readonly SimpleInterfaceSerializer $metadataSerializer,
+        private $eventStreamTableName,
+        private $sensitiveDataTable,
     ) {
-        $this->connection         = $connection;
-        $this->payloadSerializer  = $payloadSerializer;
-        $this->metadataSerializer = $metadataSerializer;
-        $this->eventStreamTableName = $eventStreamTable;
-        $this->sensitiveDataTable = $sensitiveDataTable;
     }
 
-    /**
-     * @return string
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function getCount()
+    public function getCount(): int
     {
         $statement = $this->connection->prepare('SELECT COUNT(1) AS cnt FROM ' . $this->eventStreamTableName);
-        $statement->execute();
+        $result = $statement->executeQuery();
 
-        $row = $statement->fetch();
+        $row = $result->fetchAssociative();
 
-        return $row['cnt'];
+        if (!$row) {
+            return 0;
+        }
+
+        return (int) $row['cnt'];
     }
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     * @return DomainEventStream
-     */
-    public function getFromTill($limit, $offset)
+    public function getFromTill(int $limit, int $offset): DomainEventStream
     {
         $statement = $this->prepareLoadStatement();
         $statement->bindValue('limit', $limit, PDO::PARAM_INT);
         $statement->bindValue('offset', $offset, PDO::PARAM_INT);
 
-        $statement->execute();
+        $result = $statement->executeQuery();
 
-        $events = array();
-        while ($row = $statement->fetch()) {
+        $events = [];
+
+        while ($row = $result->fetchAssociative()) {
             $events[] = $this->deserializeEvent($row);
         }
 
         return new DomainEventStream($events);
     }
 
-    public function fetchByEventTypes($eventTypes)
+    /**
+     * @param string[] $eventTypes
+     * @throws Exception
+     */
+    public function fetchByEventTypes(array $eventTypes): DomainEventStream
     {
         $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
 
@@ -128,40 +94,40 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 WHERE %es%.type IN ($eventTypePlaceholders)
-                ORDER BY recorded_on, playhead ASC"
+                ORDER BY recorded_on, playhead ASC",
         );
 
         $statement = $this->connection->prepare($query);
-        $statement->execute($eventTypes);
+        $results = $statement->executeQuery($eventTypes);
 
-        $events = array();
-        while ($row = $statement->fetch()) {
+        $events = [];
+        foreach ($results->fetchAllAssociative() as $row) {
             $events[] = $this->deserializeEvent($row);
         }
 
         return new DomainEventStream($events);
     }
 
-    private function deserializeEvent($row)
+    private function deserializeEvent(array $row): DomainMessage
     {
-        $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));
+        $event = $this->payloadSerializer->deserialize(json_decode((string)$row['payload'], true));
 
         if ($event instanceof Forgettable) {
-            $event->setSensitiveData(SensitiveData::deserialize(json_decode($row['sensitive_data'], true)));
+            $event->setSensitiveData(SensitiveData::deserialize(json_decode((string)$row['sensitive_data'], true)));
         }
 
         return new DomainMessage(
             $row['uuid'],
             $row['playhead'],
-            $this->metadataSerializer->deserialize(json_decode($row['metadata'], true)),
+            $this->metadataSerializer->deserialize(json_decode((string)$row['metadata'], true)),
             $event,
-            DateTime::fromString($row['recorded_on'])
+            DateTime::fromString($row['recorded_on']),
         );
     }
 
-    private function prepareLoadStatement()
+    private function prepareLoadStatement(): Statement
     {
-        if ($this->loadStatement === null) {
+        if (!$this->loadStatement instanceof Statement) {
             $query = str_replace(
                 ['%es%', '%sd%'],
                 [$this->eventStreamTableName, $this->sensitiveDataTable],
@@ -171,7 +137,7 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 ORDER BY recorded_on ASC
-                LIMIT :limit OFFSET :offset'
+                LIMIT :limit OFFSET :offset',
             );
 
             $this->loadStatement = $this->connection->prepare($query);

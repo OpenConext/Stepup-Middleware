@@ -4,18 +4,17 @@ security:
             pattern: ^/_trans(/|$)
             security: false
         monitor:
-            pattern: ^/(info|health)$
+            pattern: ^/(internal/)?(info|health)$
             security: false
         api:
             http_basic: ~
-            logout_on_user_change: true
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
             stateless:  true
 
     access_control:
-        - { path: ^/management, roles: [ROLE_MANAGEMENT] } # can be expanded with hosts: or ip:
-        - { path: ^/deprovision, roles: [ROLE_DEPROVISION] }
-        - { roles: [ROLE_SS,ROLE_RA,ROLE_READ] }
+        - { path: ^/management, roles: [IS_AUTHENTICATED_FULLY, ROLE_MANAGEMENT] } # can be expanded with hosts: or ip:
+        - { path: ^/deprovision, roles: [IS_AUTHENTICATED_FULLY, ROLE_DEPROVISION] }
+        - { roles: [IS_AUTHENTICATED_FULLY, ROLE_SS, ROLE_RA, ROLE_READ] }
 
     providers:
         in_memory:
@@ -37,5 +36,24 @@ security:
                         password: "%lifecycle_password%"
                         roles: 'ROLE_DEPROVISION'
 
-    encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+    password_hashers:
+        Symfony\Component\Security\Core\User\InMemoryUser:
+            algorithm: plaintext
+
+
+
+# In test, it makes sense we use a hard-coded password for the api users. This, to aid the behat tests in Stepup-Deploy.
+when@smoketest: &smoketestOveride
+    security:
+        providers:
+            in_memory:
+                memory:
+                    users:
+                        management:
+                            password: "secret"
+                        ss:
+                            password: "secret"
+                        ra:
+                            password: "secret"
+
+when@smoketest_event_replay: *smoketestOveride

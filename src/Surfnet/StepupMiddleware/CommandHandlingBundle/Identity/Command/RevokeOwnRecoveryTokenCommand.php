@@ -29,28 +29,24 @@ class RevokeOwnRecoveryTokenCommand extends AbstractCommand implements SelfServi
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of a recovery token.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $recoveryTokenId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $recoveryTokenId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

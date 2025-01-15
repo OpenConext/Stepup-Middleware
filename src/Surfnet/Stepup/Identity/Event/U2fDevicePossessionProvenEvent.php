@@ -22,11 +22,13 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
-use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
@@ -37,7 +39,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -49,50 +54,10 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    public $secondFactorId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\U2fKeyHandle
-     */
-    public $keyHandle;
-
-    /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
-     */
-    public $emailVerificationWindow;
-
-    /**
-     * @var string
-     */
-    public $emailVerificationNonce;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
-     * @param U2fKeyHandle $keyHandle
+     * @param SecondFactorIdentifier $keyHandle
      * @param bool $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string $emailVerificationNonce
@@ -103,42 +68,33 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        U2fKeyHandle $keyHandle,
-        $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale
+        IdentityId              $identityId,
+        Institution             $identityInstitution,
+        public SecondFactorId          $secondFactorId,
+        public SecondFactorIdentifier            $keyHandle,
+        public bool             $emailVerificationRequired,
+        public EmailVerificationWindow $emailVerificationWindow,
+        public string           $emailVerificationNonce,
+        public CommonName              $commonName,
+        public Email                   $email,
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->keyHandle = $keyHandle;
-        $this->emailVerificationRequired = $emailVerificationRequired;
-        $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce = $emailVerificationNonce;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->keyHandle;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;
@@ -154,27 +110,29 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
-            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'email_verification_required' => $this->emailVerificationRequired,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce' => $this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -182,11 +140,12 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             ->withSecondFactorIdentifier($this->keyHandle, new SecondFactorType('u2f'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email       = $sensitiveData->getEmail();
-        $this->commonName  = $sensitiveData->getCommonName();
-        $this->keyHandle   = $sensitiveData->getSecondFactorIdentifier();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
+        $keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        $this->keyHandle = $keyHandle;
     }
 
     public function obtainUserData(): array
@@ -196,6 +155,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

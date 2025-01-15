@@ -21,22 +21,15 @@ namespace Surfnet\Stepup\Configuration\Event;
 class IdentityProvidersUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var array
-     */
-    public $identityProviders;
-
-    /**
      * @param string $configurationId
-     * @param array  $identityProviders
+     * @param array $identityProviders
      */
-    public function __construct($configurationId, array $identityProviders)
+    public function __construct($configurationId, public array $identityProviders)
     {
         parent::__construct($configurationId);
-
-        $this->identityProviders = $identityProviders;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['identity_providers']);
     }

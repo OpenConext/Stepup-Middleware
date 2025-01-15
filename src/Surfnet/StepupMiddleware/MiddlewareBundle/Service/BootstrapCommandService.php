@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -49,70 +49,47 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class BootstrapCommandService
 {
-    /** @var Pipeline  */
-    private $pipeline;
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-    /** @var MetadataEnricher */
-    private $enricher;
-    /** @var IdentityRepository  */
-    private $identityRepository;
-    /** @var UnverifiedSecondFactorRepository  */
-    private $unverifiedSecondFactorRepository;
-    /** @var VerifiedSecondFactorRepository */
-    private $verifiedSecondFactorRepository;
-    /** @var InstitutionConfigurationOptionsRepository */
-    private $institutionConfigurationRepository;
-    /** @var VettedSecondFactorRepository */
-    private $vettedSecondFactorRepository;
-
-    private $validRegistrationStatuses = ['unverified', 'verified', 'vetted'];
+    /**
+     * @var string[]
+     */
+    private array $validRegistrationStatuses = ['unverified', 'verified', 'vetted'];
 
     public function __construct(
-        Pipeline $pipeline,
-        MetadataEnricher $enricher,
-        TokenStorageInterface $tokenStorage,
-        IdentityRepository $identityRepository,
-        UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
-        VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
-        VettedSecondFactorRepository $vettedSecondFactorRepository,
-        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository
+        private readonly Pipeline $pipeline,
+        private readonly MetadataEnricher $enricher,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly IdentityRepository $identityRepository,
+        private readonly UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
+        private readonly VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
+        private readonly VettedSecondFactorRepository $vettedSecondFactorRepository,
+        private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationRepository,
     ) {
-        $this->pipeline = $pipeline;
-        $this->enricher = $enricher;
-        $this->tokenStorage = $tokenStorage;
-        $this->identityRepository = $identityRepository;
-        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
-        $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
-        $this->institutionConfigurationRepository = $institutionConfigurationOptionsRepository;
-        $this->vettedSecondFactorRepository = $vettedSecondFactorRepository;
     }
 
-    public function setToken(TokenInterface $token)
+    public function setToken(TokenInterface $token): void
     {
         $this->tokenStorage->setToken($token);
     }
 
-    /**
-     * @param string $registrationStatus
-     */
-    public function validRegistrationStatus($registrationStatus)
+    public function validRegistrationStatus(string $registrationStatus): void
     {
         if (!in_array($registrationStatus, $this->validRegistrationStatuses)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Invalid argument provided for the "registration-status" argument. One of: %s is expected. Received: "%s"',
                     implode(', ', $this->validRegistrationStatuses),
-                    $registrationStatus
-                )
+                    $registrationStatus,
+                ),
             );
         }
     }
 
-    public function requiresMailVerification(string $institution)
+    public function requiresMailVerification(string $institution): bool
     {
-        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(new ConfigurationInstitution($institution));
-        if ($configuration) {
+        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(
+            new ConfigurationInstitution($institution),
+        );
+        if ($configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
             return $configuration->verifyEmailOption->isEnabled();
         }
         return true;
@@ -123,14 +100,14 @@ class BootstrapCommandService
         string $actorId,
         Identity $identity,
         string $secondFactorId,
-        string $secondFactorIdentifier
-    ) :void {
+        string $secondFactorIdentifier,
+    ): void {
         $verifiedSecondFactor = $this->verifiedSecondFactorRepository->findOneBy(
-            ['identityId' => $identity->id, 'type' => $tokenType]
+            ['identityId' => $identity->id, 'type' => $tokenType],
         );
 
         $command = new VetSecondFactorCommand();
-        $command->UUID = (string) Uuid::uuid4();
+        $command->UUID = (string)Uuid::uuid4();
         $command->authorityId = $actorId;
         $command->identityId = $identity->id;
         $command->secondFactorId = $secondFactorId;
@@ -143,21 +120,13 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    /**
-     * @param Institution $institution
-     * @param NameId $nameId
-     * @param $commonName
-     * @param $email
-     * @param $preferredLocale
-     * @return CreateIdentityCommand
-     */
     public function createIdentity(
         Institution $institution,
         NameId $nameId,
-        $commonName,
-        $email,
-        $preferredLocale
-    ) {
+        string $commonName,
+        string $email,
+        string $preferredLocale,
+    ): CreateIdentityCommand {
         $command = new CreateIdentityCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->id = (string)Uuid::uuid4();
@@ -172,8 +141,12 @@ class BootstrapCommandService
         return $command;
     }
 
-    public function proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier)
-    {
+    public function proveGsspPossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $tokenType,
+        string $tokenIdentifier
+    ): void {
         $command = new ProveGssfPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -184,8 +157,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function provePhonePossession($secondFactorId, $identity, $phoneNumber)
-    {
+    public function provePhonePossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $phoneNumber
+    ): void {
         $command = new ProvePhonePossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -195,8 +171,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function proveYubikeyPossession($secondFactorId, $identity, $yubikeyPublicId)
-    {
+    public function proveYubikeyPossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $yubikeyPublicId
+    ): void {
         $command = new ProveYubikeyPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -206,10 +185,12 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function verifyEmail(Identity $identity, string $tokenType)
-    {
+    public function verifyEmail(
+        Identity $identity,
+        string $tokenType
+    ): void {
         $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
-            ['identityId' => $identity->id, 'type' => $tokenType]
+            ['identityId' => $identity->id, 'type' => $tokenType],
         );
 
         $command = new VerifyEmailCommand();
@@ -220,8 +201,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function migrateVettedSecondFactor(Identity $sourceIdentity, Identity $targetIdentity, VettedSecondFactor $vettedSecondFactor)
-    {
+    public function migrateVettedSecondFactor(
+        Identity $sourceIdentity,
+        Identity $targetIdentity,
+        VettedSecondFactor $vettedSecondFactor,
+    ): void {
         $command = new CommandHandlingMigrateSecondFactorCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->sourceIdentityId = $sourceIdentity->id;
@@ -232,7 +216,7 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function enrichEventMetadata($actorId)
+    public function enrichEventMetadata(string $actorId): void
     {
         $actor = $this->identityRepository->findOneBy(['id' => $actorId]);
 
@@ -242,32 +226,25 @@ class BootstrapCommandService
         $this->enricher->setMetadata($metadata);
     }
 
-    /**
-     * @return Identity
-     */
-    public function getIdentity(NameId $nameId, Institution $institution)
+    public function getIdentity(NameId $nameId, Institution $institution): Identity
     {
         return $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
     }
 
-    /**
-     ** @return Identity
-     */
-    public function getIdentityByNameId(NameId $nameId)
+    public function getIdentityByNameId(NameId $nameId): ?Identity
     {
         return $this->identityRepository->findOneByNameId($nameId);
     }
 
-    public function identityExists(NameId $nameId, Institution $institution)
+    public function identityExists(NameId $nameId, Institution $institution): bool
     {
         return $this->identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution);
     }
 
     /**
-     * @param Identity $identity
      * @return array|VettedSecondFactor[]
      */
-    public function getVettedSecondFactorsFromIdentity(Identity $identity)
+    public function getVettedSecondFactorsFromIdentity(Identity $identity): array
     {
         return $this->vettedSecondFactorRepository->findBy(['identityId' => $identity->id]);
     }

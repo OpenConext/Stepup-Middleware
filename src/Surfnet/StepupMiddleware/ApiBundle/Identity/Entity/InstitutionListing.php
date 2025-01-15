@@ -21,21 +21,20 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository")
- */
+#[ORM\Entity(repositoryClass: InstitutionListingRepository::class)]
 class InstitutionListing implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="institution")
      *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
-    public static function createFrom(Institution $institution)
+    public static function createFrom(Institution $institution): self
     {
         $instance = new self();
         $instance->institution = $institution;
@@ -43,7 +42,7 @@ class InstitutionListing implements JsonSerializable
         return $instance;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return ['name' => $this->institution];
     }

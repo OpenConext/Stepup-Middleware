@@ -29,38 +29,32 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
 {
     /**
      * The ID of the identity that has the authority to issue the revocation of a registrant's second factor.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $authorityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $authorityId;
 
     /**
      * The ID of an identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of a verified or vetted second factor.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         // Returning null as opposed to having the institution on this command was done
         // because the RA (actor) institution can be loaded from the authorityId

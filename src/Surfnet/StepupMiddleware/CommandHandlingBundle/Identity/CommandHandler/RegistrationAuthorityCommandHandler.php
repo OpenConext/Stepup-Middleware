@@ -23,8 +23,9 @@ use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -43,33 +44,19 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeH
  */
 class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
-     */
-    private $repository;
-    /**
-     * @var InstitutionConfigurationRepository
-     */
-    private $institutionConfigurationRepository;
-
-    /**
-     * @var VettingTypeHintService;
-     */
-    private $vettingTypeHintService;
-
     public function __construct(
-        RepositoryInterface $repository,
-        InstitutionConfigurationRepository $institutionConfigurationRepository,
-        VettingTypeHintService $hintService
+        private readonly RepositoryInterface $repository,
+        private readonly InstitutionConfigurationRepository $institutionConfigurationRepository,
+        /**
+         * @var VettingTypeHintService;
+         */
+        private readonly VettingTypeHintService $vettingTypeHintService,
     ) {
-        $this->repository = $repository;
-        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
-        $this->vettingTypeHintService = $hintService;
     }
 
-    public function handleAccreditIdentityCommand(AccreditIdentityCommand $command)
+    public function handleAccreditIdentityCommand(AccreditIdentityCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->raInstitution));
@@ -81,29 +68,30 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
             new Institution($command->raInstitution),
             new Location($command->location),
             new ContactInformation($command->contactInformation),
-            $institutionConfiguration
+            $institutionConfiguration,
         );
 
         $this->repository->save($identity);
     }
 
-    public function handleAmendRegistrationAuthorityInformationCommand(AmendRegistrationAuthorityInformationCommand $command)
-    {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+    public function handleAmendRegistrationAuthorityInformationCommand(
+        AmendRegistrationAuthorityInformationCommand $command,
+    ): void {
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->amendRegistrationAuthorityInformation(
             new Institution($command->raInstitution),
             new Location($command->location),
-            new ContactInformation($command->contactInformation)
+            new ContactInformation($command->contactInformation),
         );
 
         $this->repository->save($identity);
     }
 
-    public function handleAppointRoleCommand(AppointRoleCommand $command)
+    public function handleAppointRoleCommand(AppointRoleCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->raInstitution));
@@ -115,9 +103,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command)
+    public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->retractRegistrationAuthority(new Institution($command->raInstitution));
@@ -125,23 +113,22 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command)
+    public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command): void
     {
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $collection = $this->vettingTypeHintService->collectionFrom($command->hints);
         $identity->saveVettingTypeHints(
             new Institution($command->institution),
-            $collection
+            $collection,
         );
         $this->repository->save($identity);
     }
 
     /**
-     * @param string $role
-     * @param string $commandId
      * @return RegistrationAuthorityRole
      */
-    private function assertValidRoleAndConvertIfValid($role, $commandId)
+    private function assertValidRoleAndConvertIfValid(string $role, string $commandId): RegistrationAuthorityRole
     {
         if ($role === 'ra') {
             return new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA);
@@ -149,34 +136,33 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
             return new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);
         }
 
-        throw new RuntimeException(sprintf(
-            'Unknown role "%s" given by AccreditIdentityCommand "%s", must be "ra" or "raa"',
-            $role,
-            $commandId
-        ));
+        throw new RuntimeException(
+            sprintf(
+                'Unknown role "%s" given by AccreditIdentityCommand "%s", must be "ra" or "raa"',
+                $role,
+                $commandId,
+            ),
+        );
     }
 
     /**
      * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
-     *
-     * @param Institution $institution
-     * @return InstitutionConfiguration
      */
-    private function loadInstitutionConfigurationFor(Institution $institution)
+    private function loadInstitutionConfigurationFor(Institution $institution): InstitutionConfiguration
     {
         $institution = new ConfigurationInstitution($institution->getInstitution());
         try {
             $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
             $institutionConfiguration = $this->institutionConfigurationRepository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
+                $institutionConfigurationId->getInstitutionConfigurationId(),
             );
-        } catch (AggregateNotFoundException $exception) {
+        } catch (AggregateNotFoundException) {
             $institutionConfigurationId = InstitutionConfigurationId::from($institution);
             $institutionConfiguration = $this->institutionConfigurationRepository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
+                $institutionConfigurationId->getInstitutionConfigurationId(),
             );
         }
-
+        assert($institutionConfiguration instanceof InstitutionConfiguration);
         return $institutionConfiguration;
     }
 }

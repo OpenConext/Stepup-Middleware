@@ -23,11 +23,9 @@ namespace Surfnet\Stepup\Identity\Value;
  */
 class HashedSecret implements Secret
 {
-    private $secret;
-
-    public function __construct(string $secret)
-    {
-        $this->secret = $secret;
+    public function __construct(
+        private readonly string $secret,
+    ) {
     }
 
     public function getSecret(): string

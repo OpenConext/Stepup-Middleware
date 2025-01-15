@@ -21,25 +21,15 @@ namespace Surfnet\Stepup\Configuration\Event;
 class ServiceProvidersUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var array
-     */
-    public $serviceProviders;
-
-    /**
      * @param string $configurationId
-     * @param array  $serviceProviders
+     * @param array $serviceProviders
      */
-    public function __construct($configurationId, array $serviceProviders)
+    public function __construct($configurationId, public array $serviceProviders)
     {
         parent::__construct($configurationId);
-
-        $this->serviceProviders = $serviceProviders;
     }
 
-    /**
-     * @return mixed The object instance
-     */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['service_providers']);
     }

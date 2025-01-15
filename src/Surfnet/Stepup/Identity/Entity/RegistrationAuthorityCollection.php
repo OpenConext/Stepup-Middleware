@@ -25,47 +25,29 @@ final class RegistrationAuthorityCollection
     /**
      * @var RegistrationAuthority[]
      */
-    private $registrationAuthorities = [];
+    private array $registrationAuthorities = [];
 
-    /**
-     * @param Institution $institution
-     * @param RegistrationAuthority $registrationAuthority
-     */
-    public function set(Institution $institution, RegistrationAuthority $registrationAuthority)
+    public function set(Institution $institution, RegistrationAuthority $registrationAuthority): void
     {
         $this->registrationAuthorities[(string)$institution] = $registrationAuthority;
     }
 
-    /**
-     * @param Institution $institution
-     * @return RegistrationAuthority
-     */
-    public function get(Institution $institution)
+    public function get(Institution $institution): RegistrationAuthority
     {
         return $this->registrationAuthorities[(string)$institution];
     }
 
-    /**
-     * @param Institution $institution
-     * @return RegistrationAuthority
-     */
-    public function exists(Institution $institution)
+    public function exists(Institution $institution): bool
     {
         return array_key_exists((string)$institution, $this->registrationAuthorities);
     }
 
-    /**
-     * @param Institution $institution
-     */
-    public function remove(Institution $institution)
+    public function remove(Institution $institution): void
     {
         unset($this->registrationAuthorities[(string)$institution]);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->registrationAuthorities);
     }
@@ -73,7 +55,7 @@ final class RegistrationAuthorityCollection
     /**
      * RegistrationAuthority[]
      */
-    public function getValues()
+    public function getValues(): array
     {
         return array_values($this->registrationAuthorities);
     }

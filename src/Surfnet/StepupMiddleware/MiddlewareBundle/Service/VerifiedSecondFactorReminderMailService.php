@@ -19,8 +19,9 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Assert\Assertion;
-use DateTime;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
@@ -32,156 +33,105 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class VerifiedSecondFactorReminderMailService
 {
-    /**
-     * @var Mailer
-     */
-    private $mailer;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
-
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
-
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
-
-    /**
-     * @var RaLocationService
-     */
-    private $raLocationService;
-
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
+    private readonly string $fallbackLocale;
 
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
-        TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        RaListingService $raListingService,
-        RaLocationService $raLocationService,
-        string $fallbackLocale
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
+        private readonly TranslatorInterface $translator,
+        private readonly EmailTemplateService $emailTemplateService,
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private readonly RaListingService $raListingService,
+        private readonly RaLocationService $raLocationService,
+        string $fallbackLocale,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->mailer = $mailer;
-        $this->sender = $sender;
-        $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->raListingService = $raListingService;
-        $this->raLocationService = $raLocationService;
         $this->fallbackLocale = $fallbackLocale;
     }
 
     /**
-     * @param VerifiedTokenInformation $tokenInformation
-     * @return int
+     * @throws TransportExceptionInterface
      */
-    public function sendReminder(VerifiedTokenInformation $tokenInformation)
+    public function sendReminder(VerifiedTokenInformation $tokenInformation): void
     {
-        $institution = new Institution((string) $tokenInformation->getInstitution());
+        $institution = new Institution($tokenInformation->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
         if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
-            return $this->sendReminderWithInstitution(
+            $this->sendReminderWithInstitution(
                 $tokenInformation->getPreferredLocale(),
                 $tokenInformation->getCommonName(),
                 $tokenInformation->getEmail(),
                 $tokenInformation->getRequestedAt(),
                 $tokenInformation->getRegistrationCode(),
-                $this->raLocationService->listRaLocationsFor($institution)
+                $this->raLocationService->listRaLocationsFor($institution),
             );
+            return;
         }
 
         $ras = $this->raListingService->listRegistrationAuthoritiesFor($tokenInformation->getInstitution());
 
         if ($institutionConfigurationOptions->showRaaContactInformationOption->isEnabled()) {
-            return $this->sendReminderWithRas(
+            $this->sendReminderWithRas(
                 $tokenInformation->getPreferredLocale(),
                 $tokenInformation->getCommonName(),
                 $tokenInformation->getEmail(),
                 $tokenInformation->getRequestedAt(),
                 $tokenInformation->getRegistrationCode(),
-                $ras
+                $ras,
             );
+            return;
         }
 
-        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
-            return !$ra->isRaa();
-        });
+        $rasWithoutRaas = array_filter($ras, fn(RegistrationAuthorityCredentials $ra): bool => !$ra->isRaa());
 
-        return $this->sendReminderWithRas(
+        $this->sendReminderWithRas(
             $tokenInformation->getPreferredLocale(),
             $tokenInformation->getCommonName(),
             $tokenInformation->getEmail(),
             $tokenInformation->getRequestedAt(),
             $tokenInformation->getRegistrationCode(),
-            $rasWithoutRaas
+            $rasWithoutRaas,
         );
     }
 
     /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param DateTime $requestedAt
-     * @param $registrationCode
-     * @return void
+     * @param RaLocation[]|null $raLocations
      * @throws TransportExceptionInterface
      */
     private function sendReminderWithInstitution(
-        $locale,
-        $commonName,
-        $email,
-        $requestedAt,
-        $registrationCode,
-        $raLocations
-    ) {
+        string   $locale,
+        string   $commonName,
+        string   $email,
+        DateTime $requestedAt,
+        string $registrationCode,
+        ?array $raLocations,
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_verification_reminder_with_ra_locations',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale,
             'commonName' => $commonName,
-            'expirationDate' => $requestedAt,
+            'expirationDate' => (string)$requestedAt,
             'registrationCode' => $registrationCode,
             'raLocations' => $raLocations,
         ];
@@ -195,32 +145,36 @@ class VerifiedSecondFactorReminderMailService
         $this->mailer->send($email);
     }
 
+    /**
+     * @param RegistrationAuthorityCredentials[] $ras
+     * @throws TransportExceptionInterface
+     */
     private function sendReminderWithRas(
-        $locale,
-        $commonName,
-        $email,
-        $requestedAt,
-        $registrationCode,
-        array $ras
-    ) {
+        string $locale,
+        string $commonName,
+        string $email,
+        DateTime $requestedAt,
+        string $registrationCode,
+        array $ras,
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_verification_reminder_with_ras',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale,
             'commonName' => $commonName,
-            'expirationDate' => $requestedAt,
+            'expirationDate' => (string)$requestedAt,
             'registrationCode' => $registrationCode,
             'ras' => $ras,
         ];
@@ -229,7 +183,7 @@ class VerifiedSecondFactorReminderMailService
             ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email, $commonName))
             ->subject($subject)
-            ->htmlTemplate('SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
         $this->mailer->send($email);
     }

@@ -19,75 +19,36 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class EmailVerificationMailService
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private readonly string $emailVerificationUrlTemplate;
 
     /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
-
-    /**
-     * @var string
-     */
-    private $emailVerificationUrlTemplate;
-
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
-
-    /**
-     * @var Mailer
-     */
-    private $mailer;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
-        TranslatorInterface $translator,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
+        private readonly TranslatorInterface $translator,
         string $emailVerificationUrlTemplate,
-        EmailTemplateService $emailTemplateService,
-        string $fallbackLocale,
-        string $selfServiceUrl
+        private readonly EmailTemplateService $emailTemplateService,
+        private readonly string $fallbackLocale,
+        private readonly string $selfServiceUrl,
     ) {
         Assertion::string(
             $emailVerificationUrlTemplate,
-            'Email verification URL template "%s" expected to be string, type %s given'
+            'Email verification URL template "%s" expected to be string, type %s given',
         );
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
-        $this->translator = $translator;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
-        $this->emailTemplateService = $emailTemplateService;
-        $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     /**
@@ -97,19 +58,19 @@ final class EmailVerificationMailService
         string $locale,
         string $commonName,
         string $email,
-        string $verificationNonce
+        string $verificationNonce,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.email_verification_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $verificationUrl = str_replace(
             '{nonce}',
             urlencode($verificationNonce),
-            $this->emailVerificationUrlTemplate
+            $this->emailVerificationUrlTemplate,
         );
 
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
@@ -119,7 +80,7 @@ final class EmailVerificationMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
 
         $parameters = [

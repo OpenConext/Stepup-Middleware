@@ -1,11 +1,27 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * Copyright 2021 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare(strict_types=1);
 
 namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use function json_decode;
-use function json_encode;
 
 /**
  * This migration removes sensitive data (vetting type) from the event stream
@@ -14,7 +30,7 @@ use function json_encode;
  */
 final class Version20210610131957 extends AbstractMigration
 {
-    private static $select = <<<SQL
+    private static string $select = <<<SQL
         SELECT uuid, playhead, payload
         FROM event_stream
         WHERE (type = 'Surfnet.Stepup.Identity.Event.SecondFactorVettedEvent'
@@ -23,23 +39,24 @@ final class Version20210610131957 extends AbstractMigration
         AND payload LIKE '%"vetting_type":%';
 SQL;
 
-    private static $update = <<<SQL
+    private static string $update = <<<SQL
         UPDATE event_stream
         SET payload = :payload
         WHERE uuid = :uuid
         AND playhead = :playhead;
 SQL;
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // Do not show warning on migrations.
         $this->addSql('# Updating entities.');
 
-        $affectedEventStreamRows = $this->connection->executeQuery(self::$select);
+        $result = $this->connection->executeQuery(self::$select);
 
-        $this->write("<info>Affected records: {$affectedEventStreamRows->rowCount()}</info>");
+        $affectedEventStreamRows = $result->fetchAllAssociative();
+        $this->write("<info>Affected records: {$result->rowCount()}</info>");
 
-        if ($affectedEventStreamRows->rowCount() === 0) {
+        if ($result->rowCount() === 0) {
             return;
         }
 
@@ -57,12 +74,12 @@ SQL;
                     'payload' => $payload,
                     'uuid' => $uuid,
                     'playhead' => $playhead,
-                ]
+                ],
             );
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // This migration can not be undone.
     }

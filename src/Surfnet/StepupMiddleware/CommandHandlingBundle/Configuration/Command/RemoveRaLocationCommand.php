@@ -25,25 +25,23 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RemoveRaLocationCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $raLocationId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $raLocationId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->institution;
     }

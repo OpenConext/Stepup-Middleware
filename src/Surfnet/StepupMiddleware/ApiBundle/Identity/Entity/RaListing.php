@@ -26,126 +26,107 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository")
- *
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_ra_listing_institution", columns={"institution"}),
- *          @ORM\Index(name="idx_ra_listing_ra_institution", columns={"ra_institution"}),
- *      },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="idx_ra_listing_unique_identity_institution", columns={"identity_id", "ra_institution"})
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_ra_listing_institution', columns: ['institution'])]
+#[ORM\Index(name: 'idx_ra_listing_ra_institution', columns: ['ra_institution'])]
+#[ORM\UniqueConstraint(name: 'idx_ra_listing_unique_identity_institution', columns: ['identity_id', 'ra_institution'])]
+#[ORM\Entity(repositoryClass: RaListingRepository::class)]
 class RaListing implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      *
      * @var integer
      */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    public int $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
-    public $raInstitution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $raInstitution;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
-    public $institution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Column(type="stepup_common_name")
-     *
      * @var CommonName
      */
-    public $commonName;
+    #[ORM\Column(type: 'stepup_common_name')]
+    public CommonName $commonName;
 
     /**
-     * @ORM\Column(type="stepup_email")
-     *
      * @var Email
      */
-    public $email;
+    #[ORM\Column(type: 'stepup_email')]
+    public Email $email;
 
     /**
-     * @ORM\Column(type="authority_role")
-     *
      * @var AuthorityRole
      */
-    public $role;
+    #[ORM\Column(type: 'authority_role')]
+    public AuthorityRole $role;
 
     /**
-     * @ORM\Column(type="stepup_location", nullable=true)
-     *
      * @var Location
      */
-    public $location;
+    #[ORM\Column(type: 'stepup_location', nullable: true)]
+    public Location $location;
 
     /**
-     * @ORM\Column(type="stepup_contact_information", nullable=true)
-     *
      * @var ContactInformation
      */
-    public $contactInformation;
+    #[ORM\Column(type: 'stepup_contact_information', nullable: true)]
+    public ContactInformation $contactInformation;
 
     public static function create(
-        $identityId,
+        string $identityId,
         Institution $institution,
         CommonName $commonName,
         Email $email,
         AuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $raInstitution
-    ) {
-        if (!is_string($identityId)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $identityId);
-        }
-
-        $entry                     = new self();
-        $entry->identityId         = $identityId;
-        $entry->institution        = $institution;
-        $entry->commonName         = $commonName;
-        $entry->email              = $email;
-        $entry->role               = $role;
-        $entry->location           = $location;
+        Institution $raInstitution,
+    ): self {
+        $entry = new self();
+        $entry->identityId = $identityId;
+        $entry->institution = $institution;
+        $entry->commonName = $commonName;
+        $entry->email = $email;
+        $entry->role = $role;
+        $entry->location = $location;
         $entry->contactInformation = $contactInformation;
-        $entry->raInstitution      = $raInstitution;
+        $entry->raInstitution = $raInstitution;
 
         return $entry;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'identity_id'         => $this->identityId,
-            'institution'         => (string) $this->institution,
-            'ra_institution'      => (string) $this->raInstitution,
-            'common_name'         => (string) $this->commonName,
-            'email'               => (string) $this->email,
-            'role'                => (string) $this->role,
-            'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation,
+            'identity_id' => $this->identityId,
+            'institution' => (string)$this->institution,
+            'ra_institution' => (string)$this->raInstitution,
+            'common_name' => (string)$this->commonName,
+            'email' => (string)$this->email,
+            'role' => (string)$this->role,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 }

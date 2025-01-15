@@ -25,50 +25,38 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContex
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RaListingController extends Controller
+class RaListingController extends AbstractController
 {
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
-
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
-
     public function __construct(
-        RaListingService $raListingService,
-        AuthorizationContextService $authorizationService
+        private readonly RaListingService $raListingService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raListingService = $raListingService;
-        $this->authorizationService = $authorizationService;
     }
 
-    public function getAction(Request $request, $identityId)
+    public function get(Request $request, string $identityId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
         $institution = new Institution($request->get('institution'));
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
             new IdentityId($identityId),
             $institution,
-            $authorizationContext
+            $authorizationContext,
         );
 
-        if ($raListing === null) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));
         }
 
@@ -76,12 +64,11 @@ class RaListingController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return JsonCollectionResponse
      */
-    public function searchAction(Request $request)
+    public function search(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -116,7 +103,7 @@ class RaListingController extends Controller
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $searchResults = $this->raListingService->search($query);

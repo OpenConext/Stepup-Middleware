@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2022 SURF B.V.
+ * Copyright 2022 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,37 +25,19 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 
 final class SelfAssertedTokensOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SelfAssertedTokensOption
-     */
-    public $selfAssertedTokensOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        SelfAssertedTokensOption $selfVetOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public SelfAssertedTokensOption $selfAssertedTokensOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->selfAssertedTokensOption = $selfVetOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new SelfAssertedTokensOption($data['self_asserted_tokens_option'])
+            new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );
     }
 

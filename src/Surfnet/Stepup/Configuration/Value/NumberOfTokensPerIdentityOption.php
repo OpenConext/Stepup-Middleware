@@ -23,36 +23,21 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class NumberOfTokensPerIdentityOption implements JsonSerializable
 {
-    const DISABLED = 0;
-    
-    /**
-     * @var int
-     */
-    private $numberOfTokensPerIdentity;
+    public const DISABLED = 0;
 
-    public static function getDefault()
+    private readonly int $numberOfTokensPerIdentity;
+
+    public static function getDefault(): self
     {
         return new self(self::DISABLED);
     }
 
-    public function __construct($numberOfTokensPerIdentity)
+    public function __construct(int $numberOfTokensPerIdentity)
     {
-        if (!is_numeric($numberOfTokensPerIdentity)) {
-            throw InvalidArgumentException::invalidType(
-                'integer',
-                'numberOfTokensPerIdentity',
-                $numberOfTokensPerIdentity
-            );
-        }
-
         $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
-    /**
-     * @param NumberOfTokensPerIdentityOption $other
-     * @return bool
-     */
-    public function equals(NumberOfTokensPerIdentityOption $other)
+    public function equals(NumberOfTokensPerIdentityOption $other): bool
     {
         return $this->numberOfTokensPerIdentity === $other->numberOfTokensPerIdentity;
     }
@@ -60,20 +45,17 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->numberOfTokensPerIdentity > self::DISABLED;
     }
 
-    /**
-     * @return int
-     */
-    public function getNumberOfTokensPerIdentity()
+    public function getNumberOfTokensPerIdentity(): int
     {
         return $this->numberOfTokensPerIdentity;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): int
     {
         return $this->numberOfTokensPerIdentity;
     }

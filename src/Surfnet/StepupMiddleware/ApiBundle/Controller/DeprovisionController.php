@@ -22,38 +22,31 @@ use Exception;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFormatterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
 {
-    private $deprovisionService;
-
-    private $formatHelper;
-
     public function __construct(
-        DeprovisionServiceInterface $deprovisionService,
-        UserDataFormatterInterface $formatHelper
+        private readonly DeprovisionServiceInterface $deprovisionService,
+        private readonly UserDataFormatterInterface $formatHelper,
     ) {
-        $this->deprovisionService = $deprovisionService;
-        $this->formatHelper = $formatHelper;
     }
 
-    public function deprovisionAction(string $collabPersonId): JsonResponse
+    public function deprovision(string $collabPersonId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_DEPROVISION']);
         $errors = [];
         try {
             $userData = $this->deprovisionService->readUserData($collabPersonId);
-            if (!empty($userData)) {
+            if ($userData !== []) {
                 $this->deprovisionService->deprovision($collabPersonId);
             }
-        } catch (DomainException $e) {
+        } catch (DomainException) {
             // On domain exceptions, like when the identity is forgotten, we return OK, with empty data
             // just so the deprovision run does not end prematurely. At this point, no other domain exceptions
             // are thrown.
             $userData = [];
-            $errors = [];
         } catch (Exception $e) {
             $userData = [];
             $errors = [$e->getMessage()];
@@ -61,9 +54,9 @@ class DeprovisionController extends AbstractController
         return new JsonResponse($this->formatHelper->format($userData, $errors));
     }
 
-    public function dryRunAction(string $collabPersonId): JsonResponse
+    public function dryRun(string $collabPersonId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_DEPROVISION']);
         $errors = [];
         try {
             $userData = $this->deprovisionService->readUserData($collabPersonId);

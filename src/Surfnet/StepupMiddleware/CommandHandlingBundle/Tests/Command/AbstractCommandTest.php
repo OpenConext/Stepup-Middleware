@@ -18,23 +18,26 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 
 class AbstractCommandTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group command
      */
-    public function to_string_generates_command_identifiable_information()
+    public function to_string_generates_command_identifiable_information(): void
     {
         $command = new FixedUuidStubCommand();
         $uuid = $command->UUID;
 
         $this->assertEquals(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand[' . $uuid . ']',
-            (string) $command,
-            'Command cast to string should give F\Q\C\N[UuidOfCommand]'
+            (string)$command,
+            'Command cast to string should give F\Q\C\N[UuidOfCommand]',
         );
     }
 }

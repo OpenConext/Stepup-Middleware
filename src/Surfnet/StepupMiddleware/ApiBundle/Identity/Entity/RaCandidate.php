@@ -25,57 +25,53 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
 /**
  * Be aware that this entity is used for the RA Candidate presentation only. This entity shouldn't be used to store any RA candidates.
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository", readOnly=true)
  */
+#[ORM\Entity(repositoryClass: RaCandidateRepository::class, readOnly: true)]
 class RaCandidate implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string
      */
-    public $identityId;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="institution")
      *
      * @var Institution
      */
-    public $raInstitution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'institution')]
+    public Institution $raInstitution;
 
     /**
-     * @ORM\Column(type="institution")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
-    public $institution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Column(type="stepup_name_id")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
-    public $nameId;
+    #[ORM\Column(type: 'stepup_name_id')]
+    public NameId $nameId;
 
     /**
-     * @ORM\Column(type="stepup_common_name")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
-    public $commonName;
+    #[ORM\Column(type: 'stepup_common_name')]
+    public CommonName $commonName;
 
     /**
-     * @ORM\Column(type="stepup_email")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
-    public $email;
+    #[ORM\Column(type: 'stepup_email')]
+    public Email $email;
 
     private function __construct()
     {
@@ -87,27 +83,27 @@ class RaCandidate implements JsonSerializable
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Institution $raInstitution
-    ) {
-        $candidate                = new self();
-        $candidate->identityId    = (string) $identityId;
-        $candidate->institution   = $institution;
-        $candidate->nameId        = $nameId;
-        $candidate->commonName    = $commonName;
-        $candidate->email         = $email;
+        Institution $raInstitution,
+    ): self {
+        $candidate = new self();
+        $candidate->identityId = (string)$identityId;
+        $candidate->institution = $institution;
+        $candidate->nameId = $nameId;
+        $candidate->commonName = $commonName;
+        $candidate->email = $email;
         $candidate->raInstitution = $raInstitution;
 
         return $candidate;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'identity_id'    => $this->identityId,
-            'institution'    => $this->institution,
-            'common_name'    => $this->commonName,
-            'email'          => $this->email,
-            'name_id'        => $this->nameId,
+            'identity_id' => $this->identityId,
+            'institution' => $this->institution,
+            'common_name' => $this->commonName,
+            'email' => $this->email,
+            'name_id' => $this->nameId,
             'ra_institution' => $this->raInstitution,
         ];
     }

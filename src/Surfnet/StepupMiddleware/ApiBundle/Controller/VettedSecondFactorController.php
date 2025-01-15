@@ -18,47 +18,44 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class VettedSecondFactorController extends Controller
+class VettedSecondFactorController extends AbstractController
 {
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
-
-    public function __construct(SecondFactorService $secondFactorService)
-    {
-        $this->secondFactorService = $secondFactorService;
+    public function __construct(
+        private readonly SecondFactorService $secondFactorService,
+    ) {
     }
 
-    public function getAction($id)
+    public function get(string $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findVetted(new SecondFactorId($id));
 
-        if ($secondFactor === null) {
+        if (!$secondFactor instanceof VettedSecondFactor) {
             throw new NotFoundHttpException(sprintf("Vetted second factor '%s' does not exist", $id));
         }
 
         return new JsonResponse($secondFactor);
     }
 
-    public function collectionAction(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
-        $query             = new VettedSecondFactorQuery();
-        $query->identityId = $request->get('identityId');
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query = new VettedSecondFactorQuery();
+        $query->identityId = new IdentityId($request->get('identityId'));
+        $query->pageNumber = (int)$request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchVettedSecondFactors($query);
 

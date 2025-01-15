@@ -23,49 +23,44 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 
+/**
+ * @extends EntityRepository<SecondFactor>
+ */
 class SecondFactorRepository extends EntityRepository
 {
-    /**
-     * @param SecondFactor $secondFactor
-     */
-    public function save(SecondFactor $secondFactor)
+    public function save(SecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @return SecondFactor|null
      */
-    public function findOneBySecondFactorId(SecondFactorId $secondFactorId)
+    public function findOneBySecondFactorId(SecondFactorId $secondFactorId): ?object
     {
-        return $this->findOneBy(['secondFactorId' => (string) $secondFactorId]);
+        return $this->findOneBy(['secondFactorId' => (string)$secondFactorId]);
     }
 
     /**
-     * @param IdentityId $identityId
      * @return SecondFactor[]
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): array
     {
-        return $this->findBy(['identityId' => (string) $identityId]);
+        return $this->findBy(['identityId' => (string)$identityId]);
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'sf')
+            ->delete($this->getEntityName(), 'sf')
             ->where('sf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
     }
 
-    /**
-     * @param SecondFactor $secondFactor
-     */
-    public function remove(SecondFactor $secondFactor)
+    public function remove(SecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();

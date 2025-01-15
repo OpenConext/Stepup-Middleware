@@ -23,11 +23,10 @@ interface Forgettable
     /**
      * @return SensitiveData
      */
-    public function getSensitiveData();
+    public function getSensitiveData(): SensitiveData;
 
     /**
-     * @param SensitiveData $sensitiveData
      * @return void
      */
-    public function setSensitiveData(SensitiveData $sensitiveData);
+    public function setSensitiveData(SensitiveData $sensitiveData): void;
 }

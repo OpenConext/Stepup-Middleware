@@ -18,15 +18,17 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
+use Surfnet\Stepup\Identity\Value\Institution;
+
 class RaaQuery extends AbstractQuery
 {
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     * @var string|Institution
      */
-    public $institution;
+    public string|Institution $institution;
 
     /**
      * @var string
      */
-    public $nameId;
+    public string|null $nameId;
 }

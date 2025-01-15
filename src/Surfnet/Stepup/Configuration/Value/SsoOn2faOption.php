@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Copyright 2022 SURF B.V.
+ * Copyright 2022 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +22,16 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
-final class SsoOn2faOption implements JsonSerializable
+final readonly class SsoOn2faOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $ssoOn2faOption;
-
     public static function getDefault(): self
     {
         return new self(false);
     }
 
-    public function __construct(bool $ssoOn2faOption)
-    {
-        $this->ssoOn2faOption = $ssoOn2faOption;
+    public function __construct(
+        private bool $ssoOn2faOption
+    ) {
     }
 
     public function equals(SsoOn2faOption $other): bool

@@ -21,39 +21,24 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorRevokedEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorRevocationMailService;
 
 final class SecondFactorRevocationEmailProcessor extends Processor
 {
-    /**
-     * @var SecondFactorRevocationMailService
-     */
-    private $mailService;
-
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
-    /**
-     * @param SecondFactorRevocationMailService $secondFactorRevocationMailService
-     * @param IdentityService $identityService
-     */
     public function __construct(
-        SecondFactorRevocationMailService $secondFactorRevocationMailService,
-        IdentityService $identityService
+        private readonly SecondFactorRevocationMailService $mailService,
+        private readonly IdentityService $identityService,
     ) {
-        $this->mailService = $secondFactorRevocationMailService;
-        $this->identityService = $identityService;
     }
 
     public function handleCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
-    ) {
+        CompliedWithVettedSecondFactorRevocationEvent $event,
+    ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -62,15 +47,15 @@ final class SecondFactorRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
         );
     }
 
-    public function handleVettedSecondFactorRevokedEvent(SecondFactorRevokedEvent $event)
+    public function handleVettedSecondFactorRevokedEvent(SecondFactorRevokedEvent $event): void
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -79,7 +64,7 @@ final class SecondFactorRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
         );
     }
 }

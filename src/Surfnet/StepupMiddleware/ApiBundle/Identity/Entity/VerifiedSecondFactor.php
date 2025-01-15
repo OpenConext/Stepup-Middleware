@@ -19,80 +19,47 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_institution", columns={"institution"})
- *      }
- * )
- */
-class VerifiedSecondFactor implements \JsonSerializable
+#[ORM\Table]
+#[ORM\Index(name: 'idx_institution', columns: ['institution'])]
+#[ORM\Entity(repositoryClass: VerifiedSecondFactorRepository::class)]
+class VerifiedSecondFactor implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
-    /**
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
-    /**
-     * @ORM\Column
-     *
-     * @var string
-     */
-    public $institution;
+    #[ORM\Column]
+    public string $institution;
 
-    /**
-     * @ORM\Column
-     *
-     * @var string
-     */
-    public $commonName;
+    #[ORM\Column]
+    public string $commonName;
 
-    /**
-     * @ORM\Column(length=16)
-     *
-     * @var string
-     */
-    public $type;
+    #[ORM\Column(length: 16)]
+    public string $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     *
-     * @ORM\Column(length=255)
-     *
-     * @var string
      */
-    public $secondFactorIdentifier;
+    #[ORM\Column(length: 255)]
+    public string $secondFactorIdentifier;
 
-    /**
-     * @ORM\Column(length=8)
-     *
-     * @var string
-     */
-    public $registrationCode;
+    #[ORM\Column(length: 8)]
+    public string $registrationCode;
 
-    /**
-     * @ORM\Column(type="stepup_datetime")
-     *
-     * @var \DateTime
-     */
-    public $registrationRequestedAt;
+    #[ORM\Column(type: 'stepup_datetime')]
+    public DateTime $registrationRequestedAt;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'registration_code' => $this->registrationCode,

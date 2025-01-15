@@ -28,25 +28,21 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'id',
         'institution',
         'common_name',
     ];
 
-    /**
-     * @var CommonName
-     */
-    public $commonName;
-
-    public function __construct(IdentityId $id, Institution $institution, CommonName $commonName)
+    public function __construct(IdentityId $id, Institution $institution, public CommonName $commonName)
     {
         parent::__construct($id, $institution);
-
-        $this->commonName = $commonName;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -59,33 +55,35 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
      * @param array $data
      * @return IdentityRenamedEvent The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            CommonName::unknown()
+            CommonName::unknown(),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->commonName = $sensitiveData->getCommonName();
     }
@@ -97,6 +95,9 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

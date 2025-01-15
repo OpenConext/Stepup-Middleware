@@ -20,23 +20,57 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository")
- * @ORM\Table(
- *      name="audit_log",
- *      indexes={
- *          @ORM\Index(name="idx_auditlog_actorid", columns={"actor_id"}),
- *          @ORM\Index(name="idx_auditlog_identityid", columns={"identity_id"}),
- *          @ORM\Index(name="idx_auditlog_identityinstitution", columns={"identity_institution"}),
- *          @ORM\Index(name="idx_auditlog_secondfactorid", columns={"second_factor_id"}),
- *          @ORM\Index(name="idx_auditlog_ra_institution", columns={"ra_institution"}),
- *      }
- * )
  */
+#[ORM\Table(name: 'audit_log')]
+#[ORM\Index(name: 'idx_auditlog_actorid', columns: ['actor_id'])]
+#[ORM\Index(name: 'idx_auditlog_identityid', columns: ['identity_id'])]
+#[ORM\Index(name: 'idx_auditlog_identityinstitution', columns: ['identity_institution'])]
+#[ORM\Index(name: 'idx_auditlog_secondfactorid', columns: ['second_factor_id'])]
+#[ORM\Index(name: 'idx_auditlog_ra_institution', columns: ['ra_institution'])]
+#[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLogEntry implements JsonSerializable
 {
     /**
@@ -44,153 +78,98 @@ class AuditLogEntry implements JsonSerializable
      *
      * @var string[]
      */
-    private $eventActionMap = [
-        'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent'                                => 'email_verified',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent'                         => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent'              => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\IdentityCreatedEvent'                              => 'created',
-        'Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent'                         => 'email_changed',
-        'Surfnet\Stepup\Identity\Event\IdentityRenamedEvent'                              => 'renamed',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent'                        => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent'             => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession' => 'vetted_possession_unknown',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent' => 'migrated_to',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent' => 'migrated_from',
-        'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
-        'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
-        'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
-        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent'                      => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent'           => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent'              => 'bootstrapped',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent'                      => 'accredited_as_raa',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent'                       => 'accredited_as_ra',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent'         => 'accredited_as_ra',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent'        => 'accredited_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent'                               => 'appointed_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent'                                => 'appointed_as_ra',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent'                 => 'appointed_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent'                  => 'appointed_as_ra',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent'               => 'retracted_as_ra',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent' => 'retracted_as_ra',
-        'Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent' => 'recovery_token_possession_promised',
-        'Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent' => 'recovery_token_revoked',
-        'Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent' => 'recovery_token_possession_proven',
-        'Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent' => 'recovery_token_revoked',
+    private array $eventActionMap = [
+        CompliedWithUnverifiedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        CompliedWithVerifiedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        CompliedWithVettedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        EmailVerifiedEvent::class => 'email_verified',
+        GssfPossessionProvenEvent::class => 'possession_proven',
+        GssfPossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        IdentityCreatedEvent::class => 'created',
+        IdentityEmailChangedEvent::class => 'email_changed',
+        IdentityRenamedEvent::class => 'renamed',
+        PhonePossessionProvenEvent::class => 'possession_proven',
+        PhonePossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        SecondFactorVettedEvent::class => 'vetted',
+        SecondFactorVettedWithoutTokenProofOfPossession::class => 'vetted_possession_unknown',
+        SecondFactorMigratedToEvent::class => 'migrated_to',
+        SecondFactorMigratedEvent::class => 'migrated_from',
+        UnverifiedSecondFactorRevokedEvent::class => 'revoked',
+        VerifiedSecondFactorRevokedEvent::class => 'revoked',
+        VettedSecondFactorRevokedEvent::class => 'revoked',
+        YubikeyPossessionProvenEvent::class => 'possession_proven',
+        YubikeyPossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        YubikeySecondFactorBootstrappedEvent::class => 'bootstrapped',
+        IdentityAccreditedAsRaaEvent::class => 'accredited_as_raa',
+        IdentityAccreditedAsRaEvent::class => 'accredited_as_ra',
+        IdentityAccreditedAsRaForInstitutionEvent::class => 'accredited_as_ra',
+        IdentityAccreditedAsRaaForInstitutionEvent::class => 'accredited_as_raa',
+        AppointedAsRaaEvent::class => 'appointed_as_raa',
+        AppointedAsRaEvent::class => 'appointed_as_ra',
+        AppointedAsRaaForInstitutionEvent::class => 'appointed_as_raa',
+        AppointedAsRaForInstitutionEvent::class => 'appointed_as_ra',
+        RegistrationAuthorityRetractedEvent::class => 'retracted_as_ra',
+        RegistrationAuthorityRetractedForInstitutionEvent::class => 'retracted_as_ra',
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent::class => 'recovery_token_possession_promised',
+        RecoveryTokenRevokedEvent::class => 'recovery_token_revoked',
+        PhoneRecoveryTokenPossessionProvenEvent::class => 'recovery_token_possession_proven',
+        CompliedWithRecoveryCodeRevocationEvent::class => 'recovery_token_revoked',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
-    /**
-     * @ORM\Column(length=36, nullable=true)
-     *
-     * @var string|null
-     */
-    public $actorId;
+    #[ORM\Column(length: 36, nullable: true)]
+    public ?string $actorId = null;
 
-    /**
-     * @ORM\Column(type="stepup_common_name", nullable=true)
-     *
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $actorCommonName;
+    #[ORM\Column(type: 'stepup_common_name', nullable: true)]
+    public ?CommonName $actorCommonName = null;
 
-    /**
-     * @ORM\Column(type="institution", nullable=true)
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Institution|null
-     */
-    public $actorInstitution;
+    #[ORM\Column(type: 'institution', nullable: true)]
+    public ?Institution $actorInstitution = null;
 
     /**
      * Only in certain situations will this field be filled, It represents the RA institution the
      * event log entry is targeted at. For example. John Doe is accredited to become RA by Joe from
      * institution-a. The actual institution John is appointed RA for is stored in this field.
-     *
-     * @ORM\Column(length=255, nullable=true)
-     *
-     * @var string|null
      */
-    public $raInstitution;
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $raInstitution = null;
 
-    /**
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
-    /**
-     * @ORM\Column(type="institution")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $identityInstitution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $identityInstitution;
 
-    /**
-     * @ORM\Column(length=36, nullable=true)
-     *
-     * @var string|null
-     */
-    public $secondFactorId;
+    #[ORM\Column(length: 36, nullable: true)]
+    public ?string $secondFactorId = null;
 
-    /**
-     * @ORM\Column(length=255, nullable=true)
-     *
-     * @var string
-     */
-    public $secondFactorIdentifier;
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $secondFactorIdentifier = null;
 
-    /**
-     * @ORM\Column(length=36, nullable=true)
-     *
-     * @var string|null
-     */
-    public $secondFactorType;
+    #[ORM\Column(length: 36, nullable: true)]
+    public ?string $secondFactorType = null;
 
-    /**
-     * @ORM\Column(length=255, nullable=true)
-     *
-     * @var string
-     */
-    public $recoveryTokenIdentifier;
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $recoveryTokenIdentifier;
 
-    /**
-     * @ORM\Column(length=36, nullable=true)
-     *
-     * @var string|null
-     */
-    public $recoveryTokenType;
+    #[ORM\Column(length: 36, nullable: true)]
+    public ?string $recoveryTokenType = null;
 
-    /**
-     * @ORM\Column(length=255)
-     *
-     * @var string
-     */
-    public $event;
+    #[ORM\Column(length: 255)]
+    public string $event;
 
-    /**
-     * @ORM\Column(type="stepup_datetime")
-     *
-     * @var \Surfnet\Stepup\DateTime\DateTime
-     */
-    public $recordedOn;
+    #[ORM\Column(type: 'stepup_datetime')]
+    public DateTime $recordedOn;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'actor_id' => $this->actorId,
-            'actor_institution' => $this->actorInstitution ? (string)$this->actorInstitution : null,
-            'actor_common_name' => $this->actorCommonName,
+            'actor_institution' => $this->actorInstitution instanceof Institution ? (string)$this->actorInstitution : null,
+            'actor_common_name' => (string)$this->actorCommonName,
             'identity_id' => $this->identityId,
             'identity_institution' => (string)$this->identityInstitution,
             'ra_institution' => (string)$this->raInstitution,
@@ -200,7 +179,7 @@ class AuditLogEntry implements JsonSerializable
             'recovery_token_type' => $this->recoveryTokenType,
             'recovery_token_identifier' => $this->recoveryTokenIdentifier,
             'action' => $this->mapEventToAction($this->event),
-            'recorded_on' => (string) $this->recordedOn,
+            'recorded_on' => (string)$this->recordedOn,
         ];
     }
 
@@ -210,7 +189,7 @@ class AuditLogEntry implements JsonSerializable
      * @param string $event Event FQCN
      * @return string Action name
      */
-    private function mapEventToAction($event)
+    private function mapEventToAction(string $event): string
     {
         if (!isset($this->eventActionMap[$event])) {
             throw new LogicException(sprintf("Action name for event '%s' not registered", $event));

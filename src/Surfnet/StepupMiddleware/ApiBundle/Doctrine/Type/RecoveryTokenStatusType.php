@@ -28,26 +28,25 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
  */
 class RecoveryTokenStatusType extends Type
 {
-    const NAME = 'stepup_recovery_token_status';
+    public const NAME = 'stepup_recovery_token_status';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     /**
-     * @param mixed $value
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): int
     {
         if (!$value instanceof RecoveryTokenStatus) {
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal recovery token status of type %s '%s', expected a RecoveryTokenStatus instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -59,15 +58,18 @@ class RecoveryTokenStatusType extends Type
             return 20;
         }
 
-        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
+        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string)$value));
     }
 
     /**
-     * @param mixed $value
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): RecoveryTokenStatus
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): RecoveryTokenStatus
     {
+        if (is_scalar($value)) {
+            $value = (string)$value;
+        }
+
         if ($value === '0') {
             return RecoveryTokenStatus::active();
         } elseif ($value === '10') {
@@ -79,13 +81,13 @@ class RecoveryTokenStatusType extends Type
         throw new ConversionException(
             sprintf(
                 "Encountered illegal recovery token status of type %s '%s', expected it to be one of [0,10,20]",
-                is_object($value) ? get_class($value) : gettype($value),
-                is_scalar($value) ? (string) $value : ''
-            )
+                get_debug_type($value),
+                is_scalar($value) ? (string)$value : '',
+            ),
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

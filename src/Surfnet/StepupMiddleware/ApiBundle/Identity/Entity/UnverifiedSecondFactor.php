@@ -19,59 +19,51 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Surfnet\Stepup\DateTime\DateTime;
+use JsonSerializable;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository"
- * )
- */
-class UnverifiedSecondFactor implements \JsonSerializable
+#[ORM\Entity(repositoryClass: UnverifiedSecondFactorRepository::class)]
+class UnverifiedSecondFactor implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string
      */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
-    public $type;
+    #[ORM\Column(length: 16)]
+    public string $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     *
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
-    public $secondFactorIdentifier;
+    #[ORM\Column(length: 255)]
+    public string $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(length=32)
-     *
      * @var string
      */
-    public $verificationNonce;
+    #[ORM\Column(length: 32)]
+    public string $verificationNonce;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'id'                       => $this->id,
-            'type'                     => $this->type,
-            'second_factor_identifier' => $this->secondFactorIdentifier
+            'id' => $this->id,
+            'type' => $this->type,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
         ];
     }
 }

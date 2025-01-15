@@ -22,21 +22,15 @@ use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 
 class InstitutionsAddedToWhitelistEvent implements WhitelistEvent
 {
-    /**
-     * @var InstitutionCollection
-     */
-    public $addedInstitutions;
-
-    public function __construct(InstitutionCollection $addedInstitutions)
+    public function __construct(public InstitutionCollection $addedInstitutions)
     {
-        $this->addedInstitutions = $addedInstitutions;
     }
 
     /**
      * @param array $data
      * @return InstitutionsAddedToWhitelistEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(InstitutionCollection::deserialize($data['added_institutions']));
     }
@@ -44,6 +38,8 @@ class InstitutionsAddedToWhitelistEvent implements WhitelistEvent
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {

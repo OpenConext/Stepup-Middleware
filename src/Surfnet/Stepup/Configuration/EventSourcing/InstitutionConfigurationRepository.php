@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Configuration\EventSourcing;
 
 use Broadway\EventHandling\EventBus as EventBusInterface;
-use Broadway\EventSourcing\AggregateFactory\AggregateFactory as  AggregateFactoryInterface;
+use Broadway\EventSourcing\AggregateFactory\AggregateFactory as AggregateFactoryInterface;
 use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
@@ -29,13 +29,13 @@ class InstitutionConfigurationRepository extends EventSourcingRepository
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
-        AggregateFactoryInterface $aggregateFactory
+        AggregateFactoryInterface $aggregateFactory,
     ) {
         parent::__construct(
             $eventStore,
             $eventBus,
             InstitutionConfiguration::class,
-            $aggregateFactory
+            $aggregateFactory,
         );
     }
 }

@@ -24,39 +24,32 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class IdentityId implements Id, JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $value;
+    private readonly string $value;
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
         $this->value = $value;
     }
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals(Id $other): bool
     {
         return $this == $other;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

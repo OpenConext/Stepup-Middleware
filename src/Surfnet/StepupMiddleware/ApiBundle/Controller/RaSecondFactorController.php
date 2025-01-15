@@ -24,33 +24,21 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContex
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-final class RaSecondFactorController extends Controller
+final class RaSecondFactorController extends AbstractController
 {
-    /**
-     * @var RaSecondFactorService
-     */
-    private $raSecondFactorService;
-
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
-
     public function __construct(
-        RaSecondFactorService $raSecondFactorService,
-        AuthorizationContextService $authorizationService
+        private readonly RaSecondFactorService $raSecondFactorService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raSecondFactorService = $raSecondFactorService;
-        $this->authorizationService = $authorizationService;
     }
 
-    public function collectionAction(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $query = $this->buildRaSecondFactorQuery($request);
 
@@ -61,9 +49,9 @@ final class RaSecondFactorController extends Controller
         return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 
-    public function exportAction(Request $request)
+    public function export(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $query = $this->buildRaSecondFactorQuery($request);
 
@@ -73,10 +61,9 @@ final class RaSecondFactorController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RaSecondFactorQuery
      */
-    private function buildRaSecondFactorQuery(Request $request)
+    private function buildRaSecondFactorQuery(Request $request): RaSecondFactorQuery
     {
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -92,7 +79,7 @@ final class RaSecondFactorController extends Controller
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         return $query;

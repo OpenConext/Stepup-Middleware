@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
@@ -36,18 +37,15 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @extends ServiceEntityRepository<InstitutionCollection>
  */
 class AuthorizationRepository extends ServiceEntityRepository
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct($registry, AuditLogEntry::class);
-        $this->logger = $logger;
     }
 
     /**
@@ -56,10 +54,10 @@ class AuthorizationRepository extends ServiceEntityRepository
      *
      * @return InstitutionCollection
      */
-    public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId) :InstitutionCollection
+    public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId): InstitutionCollection
     {
         $result = new InstitutionCollection();
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select("a.institution")
             ->from(ConfiguredInstitution::class, 'i')
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
@@ -67,7 +65,7 @@ class AuthorizationRepository extends ServiceEntityRepository
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
-                "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)"
+                "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)",
             )
             ->where("r.identityId = :identityId AND r.role IN(:roles)")
             ->groupBy("a.institution");
@@ -75,18 +73,18 @@ class AuthorizationRepository extends ServiceEntityRepository
         $qb->setParameter('identityId', (string)$actorId);
         $qb->setParameter(
             'authorizationRoles',
-            $this->getAllowedInstitutionRoles($role)
+            $this->getAllowedInstitutionRoles($role),
         );
         $identityRoles = $this->getAllowedIdentityRoles($role);
         $qb->setParameter(
             'roles',
-            $identityRoles
+            $identityRoles,
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
         foreach ($institutions as $institution) {
             $this->logger->notice(
-                sprintf('Adding %s to authorized institutions', $institution['institution'])
+                sprintf('Adding %s to authorized institutions', $institution['institution']),
             );
             $result->add(new Institution((string)$institution['institution']));
         }
@@ -94,13 +92,18 @@ class AuthorizationRepository extends ServiceEntityRepository
         // Also get the institutions that are linked to the user via the 'institution_relation' field.
         // Effectively getting the use_raa relation.
         // See https://www.pivotaltracker.com/story/show/181537313
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('ia.institution')
             ->from(InstitutionAuthorization::class, 'ia')
             // Filter the RA listing on the authorizations that apply for the RA(A) listed there
             // For example, when testing a USE_RA institution authorization, the listed RA should have
             // at least a RA or RAA role
-            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)')
+            ->join(
+                RaListing::class,
+                'r',
+                Join::WITH,
+                'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)',
+            )
             ->where('r.identityId = :identityId')
             ->andWhere("ia.institutionRole = :role") // Only filter on use_ra and use_raa roles here.
             ->groupBy('ia.institution');
@@ -115,7 +118,11 @@ class AuthorizationRepository extends ServiceEntityRepository
             if (!$result->contains($institutionVo)) {
                 $result->add($institutionVo);
                 $this->logger->notice(
-                    sprintf('Adding %s to authorized institutions from %s', $role->getType(), $institution['institution'])
+                    sprintf(
+                        'Adding %s to authorized institutions from %s',
+                        $role,
+                        $institution['institution'],
+                    ),
                 );
             }
         }
@@ -127,9 +134,9 @@ class AuthorizationRepository extends ServiceEntityRepository
      * Finds the institutions that have the Select RAA authorization based on
      * the institution of the specified identity.
      */
-    public function getInstitutionsForSelectRaaRole(IdentityId $actorId)
+    public function getInstitutionsForSelectRaaRole(IdentityId $actorId): InstitutionCollection
     {
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select("ci.institution")
             ->from(InstitutionAuthorization::class, 'ia')
             ->innerJoin(ConfiguredInstitution::class, 'ci', Join::WITH, 'ia.institutionRelation = ci.institution')
@@ -142,12 +149,12 @@ class AuthorizationRepository extends ServiceEntityRepository
         // The identity requires RAA role to perform this search
         $qb->setParameter(
             'authorizationRole',
-            AuthorityRole::ROLE_RAA
+            AuthorityRole::ROLE_RAA,
         );
         // Filter on the SELECT_RAA authorization in the institution authorization projection
         $qb->setParameter(
             'institutionRole',
-            InstitutionRole::ROLE_SELECT_RAA
+            InstitutionRole::ROLE_SELECT_RAA,
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
@@ -167,14 +174,11 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     private function getAllowedInstitutionRoles(RegistrationAuthorityRole $role): array
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return [InstitutionRole::ROLE_USE_RA];
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return [InstitutionRole::ROLE_USE_RAA];
-            default:
-                return [];
-        }
+        return match (true) {
+            $role->equals(RegistrationAuthorityRole::ra()) => [InstitutionRole::ROLE_USE_RA],
+            $role->equals(RegistrationAuthorityRole::raa()) => [InstitutionRole::ROLE_USE_RAA],
+            default => [],
+        };
     }
 
     /**
@@ -185,23 +189,27 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     private function getAllowedIdentityRoles(RegistrationAuthorityRole $role): array
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return [AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA];
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return [AuthorityRole::ROLE_RAA];
-            default:
-                return [];
-        }
+        return match (true) {
+            $role->equals(RegistrationAuthorityRole::ra()) => [AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA],
+            $role->equals(RegistrationAuthorityRole::raa()) => [AuthorityRole::ROLE_RAA],
+            default => [],
+        };
     }
 
     private function getInstitutionRoleByRaRole(RegistrationAuthorityRole $role): string
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return AuthorityRole::ROLE_RA;
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return AuthorityRole::ROLE_RAA;
+        if ($role->equals(RegistrationAuthorityRole::ra())) {
+            return AuthorityRole::ROLE_RA;
         }
+        if ($role->equals(RegistrationAuthorityRole::raa())) {
+            return AuthorityRole::ROLE_RAA;
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                'The role "%s did not match any of our supported AuthorityRoles (ra, raa)',
+                $role->jsonSerialize()
+            )
+        );
     }
 }

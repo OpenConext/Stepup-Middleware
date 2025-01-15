@@ -19,20 +19,27 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline;
 
 class StagedPipelineTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group pipeline
      */
-    public function it_passes_a_command_through_a_single_stage()
+    public function it_passes_a_command_through_a_single_stage(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $stage = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
+        $command = m::mock(AbstractCommand::class);
+        /** @var Stage&MockInterface $stage */
+        $stage = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
 
@@ -46,13 +53,15 @@ class StagedPipelineTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_passes_a_command_through_multiple_stages()
+    public function it_passes_a_command_through_multiple_stages(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $stage1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
+        $command = m::mock(AbstractCommand::class);
+        /** @var Stage&MockInterface $stage1 */
+        $stage1 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
-        $stage2 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
+        /** @var Stage&MockInterface $stage2 */
+        $stage2 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
 
@@ -67,14 +76,16 @@ class StagedPipelineTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next()
+    public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next(): void
     {
-        $command1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $command2 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $stage1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
+        $command1 = m::mock(AbstractCommand::class);
+        $command2 = m::mock(AbstractCommand::class);
+        /** @var Stage&MockInterface $stage1 */
+        $stage1 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command1)->andReturn($command2)
             ->getMock();
-        $stage2 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
+        /** @var Stage&MockInterface $stage2 */
+        $stage2 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command2)->andReturn($command2)
             ->getMock();
 

@@ -20,26 +20,28 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
+use phpseclib3\Math\PrimeField\Integer;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use TypeError;
 
 /**
  * Custom Type for the SelfAssertedTokens options Value Object
  */
-class SelfAssertedTokensOptionType extends Type
+class SelfAssertedTokensOptionType extends IntegerType
 {
-    const NAME = 'stepup_self_asserted_tokens_option';
+    public const NAME = 'stepup_self_asserted_tokens_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof SelfAssertedTokensOption) {
@@ -47,28 +49,28 @@ class SelfAssertedTokensOptionType extends Type
                 sprintf(
                     "Encountered illegal self vet option %s '%s', expected a 
                     SelfAssertedTokensOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfAssertedTokensOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
-            $selfAssertedTokensOption = new SelfAssertedTokensOption((bool) $value);
+            $selfAssertedTokensOption = new SelfAssertedTokensOption((bool)$value);
         } catch (TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -77,7 +79,7 @@ class SelfAssertedTokensOptionType extends Type
         return $selfAssertedTokensOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

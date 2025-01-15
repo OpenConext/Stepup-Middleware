@@ -20,13 +20,13 @@ namespace Surfnet\Stepup\Identity\Collection;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\VettingTypeHint;
-use function json_encode;
 
-final class VettingTypeHintCollection implements JsonSerializable, SerializableInterface
+final class VettingTypeHintCollection implements JsonSerializable, SerializableInterface, Stringable
 {
-    private $elements = [];
+    private array $elements = [];
 
     public function __construct(array $hints = [])
     {
@@ -35,56 +35,42 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         }
     }
 
-    public function add(VettingTypeHint $hint)
+    public function add(VettingTypeHint $hint): void
     {
         if (in_array($hint, $this->elements)) {
-            throw new RuntimeException(sprintf(
-                'Vetting type hint "%s" is already in this collection',
-                $hint
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Vetting type hint "%s" is already in this collection',
+                    $hint,
+                ),
+            );
         }
 
         $this->elements[] = $hint;
     }
 
-    public function remove(VettingTypeHint $hint)
-    {
-        if (!in_array($hint, $this->elements)) {
-            throw new RuntimeException(sprintf(
-                'Cannot remove vetting type hint "%s" from the collection as it is not in the collection',
-                $hint
-            ));
-        }
-
-        $elements = array_filter($this->elements, function ($inst) use ($hint) {
-            return !$hint->equals($inst);
-        });
-        $this->elements = $elements;
-    }
-
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->elements;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
-        $institutions = array_map(function ($hint) {
-            return new VettingTypeHint($hint['locale'], $hint['hint']);
-        }, $data);
+        $institutions = array_map(
+            fn(array $hint): VettingTypeHint => new VettingTypeHint($hint['locale'], $hint['hint']),
+            $data,
+        );
 
         return new self($institutions);
     }
 
     public function __toString(): string
     {
-        return (string) json_encode($this->jsonSerialize());
+        return (string)json_encode($this->jsonSerialize());
     }
 
     public function serialize(): array
     {
-        return array_map(function (VettingTypeHint $hint) {
-            return $hint->jsonSerialize();
-        }, $this->elements);
+        return array_map(fn(VettingTypeHint $hint): array => $hint->jsonSerialize(), $this->elements);
     }
 }

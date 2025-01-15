@@ -20,16 +20,20 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use ArrayIterator;
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Iterator;
 use IteratorAggregate;
 use JsonSerializable;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
+/**
+ * @implements IteratorAggregate<SecondFactorType>
+ */
 final class AllowedSecondFactorList implements JsonSerializable, IteratorAggregate, SerializableInterface
 {
     /**
      * @var SecondFactorType[]
      */
-    private $allowedSecondFactors = [];
+    private array $allowedSecondFactors = [];
 
     private function __construct(array $allowedSecondFactors)
     {
@@ -41,42 +45,27 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
     /**
      * @return AllowedSecondFactorList
      */
-    public static function blank()
+    public static function blank(): self
     {
         return new self([]);
     }
 
-    /**
-     * @param $allowedSecondFactors
-     * @return AllowedSecondFactorList
-     */
-    public static function ofTypes($allowedSecondFactors)
+    public static function ofTypes(array $allowedSecondFactors): self
     {
         return new self($allowedSecondFactors);
     }
 
-    /**
-     * @param SecondFactorType $secondFactor
-     * @return bool
-     */
-    public function allows(SecondFactorType $secondFactor)
+    public function allows(SecondFactorType $secondFactor): bool
     {
         return $this->isBlank() || $this->contains($secondFactor);
     }
 
-    /**
-     * @return bool
-     */
-    public function isBlank()
+    public function isBlank(): bool
     {
-        return empty($this->allowedSecondFactors);
+        return $this->allowedSecondFactors === [];
     }
 
-    /**
-     * @param SecondFactorType $secondFactor
-     * @return bool
-     */
-    public function contains(SecondFactorType $secondFactor)
+    public function contains(SecondFactorType $secondFactor): bool
     {
         foreach ($this->allowedSecondFactors as $allowedSecondFactor) {
             if ($allowedSecondFactor->equals($secondFactor)) {
@@ -87,7 +76,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return false;
     }
 
-    public function equals(AllowedSecondFactorList $other)
+    public function equals(AllowedSecondFactorList $other): bool
     {
         if (count($other->allowedSecondFactors) !== count($this->allowedSecondFactors)) {
             return false;
@@ -102,13 +91,11 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return true;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $secondFactorTypes = array_map(
-            function ($secondFactorString) {
-                return new SecondFactorType($secondFactorString);
-            },
-            $data['allowed_second_factors']
+            fn($secondFactorString): SecondFactorType => new SecondFactorType($secondFactorString),
+            $data['allowed_second_factors'],
         );
 
         return new self($secondFactorTypes);
@@ -117,10 +104,8 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
     public function serialize(): array
     {
         $allowedSecondFactors = array_map(
-            function (SecondFactorType $secondFactorType) {
-                return $secondFactorType->getSecondFactorType();
-            },
-            $this->allowedSecondFactors
+            fn(SecondFactorType $secondFactorType): string => $secondFactorType->getSecondFactorType(),
+            $this->allowedSecondFactors,
         );
 
         return [
@@ -128,17 +113,17 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         ];
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->allowedSecondFactors);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->allowedSecondFactors;
     }
 
-    private function initializeWith(SecondFactorType $allowedSecondFactor)
+    private function initializeWith(SecondFactorType $allowedSecondFactor): void
     {
         if (!$this->contains($allowedSecondFactor)) {
             $this->allowedSecondFactors[] = $allowedSecondFactor;

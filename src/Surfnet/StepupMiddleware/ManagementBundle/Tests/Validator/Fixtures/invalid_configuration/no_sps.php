@@ -25,13 +25,13 @@ return [
         ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [
-            'confirm_email'                       => ['en_GB' => 'Verify {{ commonName }}'],
-            'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
+            'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
+            'registration_code_with_ras' => ['en_GB' => 'Code {{ commonName }}'],
             'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
-            'vetted'                              => ['en_GB' => 'Vetted {{ commonName }}'],
-            'second_factor_revoked'               => ['en_GB' => 'Revoked token for {{ commonName }}'],
+            'vetted' => ['en_GB' => 'Vetted {{ commonName }}'],
+            'second_factor_revoked' => ['en_GB' => 'Revoked token for {{ commonName }}'],
             'second_factor_verification_reminder_with_ras' => ['en_GB' => 'Code {{ commonName }}'],
             'second_factor_verification_reminder_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
         ],
-    ]
+    ],
 ];

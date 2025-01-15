@@ -24,41 +24,21 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 
 class InstitutionConfigurationOptionsService
 {
-    /**
-     * @var InstitutionConfigurationOptionsRepository
-     */
-    private $repository;
-
-    /**
-     * @var int
-     */
-    private $numberOfTokensPerIdentity;
-
-    /**
-     * @param InstitutionConfigurationOptionsRepository $repository
-     * @param int $numberOfTokensPerIdentity
-     */
     public function __construct(
-        InstitutionConfigurationOptionsRepository $repository,
-        $numberOfTokensPerIdentity
+        private readonly InstitutionConfigurationOptionsRepository $repository,
+        private int $numberOfTokensPerIdentity,
     ) {
-        $this->repository = $repository;
-        $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
     /**
      * @return InstitutionConfigurationOptions[]
      */
-    public function findAllInstitutionConfigurationOptions()
+    public function findAllInstitutionConfigurationOptions(): array
     {
         return $this->repository->findAll();
     }
 
-    /**
-     * @param Institution $institution
-     * @return InstitutionConfigurationOptions|null
-     */
-    public function findInstitutionConfigurationOptionsFor(Institution $institution)
+    public function findInstitutionConfigurationOptionsFor(Institution $institution): ?InstitutionConfigurationOptions
     {
         return $this->repository->findConfigurationOptionsFor($institution);
     }
@@ -68,15 +48,14 @@ class InstitutionConfigurationOptionsService
      *
      * When the DISABLED value is set on the institution (when no specific configuration was pushed) the application
      * default is returned.
-     *
-     * @param Institution $institution
-     * @return int
      */
-    public function getMaxNumberOfTokensFor(Institution $institution)
+    public function getMaxNumberOfTokensFor(Institution $institution): int
     {
         $configuration = $this->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($configuration !== null && $configuration->numberOfTokensPerIdentityOption->isEnabled()) {
+        if ($configuration instanceof InstitutionConfigurationOptions &&
+            $configuration->numberOfTokensPerIdentityOption->isEnabled()
+        ) {
             return $configuration->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         }
 

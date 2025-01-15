@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -19,32 +21,23 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationName implements JsonSerializable
+final class RaLocationName implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $raLocationName;
+    private readonly string $raLocationName;
 
-    /**
-     * @param string $raLocationName
-     */
-    public function __construct($raLocationName)
+    public function __construct(string $raLocationName)
     {
-        if (!is_string($raLocationName) || trim($raLocationName) === '') {
+        if (trim($raLocationName) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'raLocationName', $raLocationName);
         }
 
         $this->raLocationName = $raLocationName;
     }
 
-    /**
-     * @param RaLocationName $otherRaLocationName
-     * @return bool
-     */
-    public function equals(RaLocationName $otherRaLocationName)
+    public function equals(RaLocationName $otherRaLocationName): bool
     {
         return $this->raLocationName === $otherRaLocationName->raLocationName;
     }
@@ -52,17 +45,17 @@ final class RaLocationName implements JsonSerializable
     /**
      * @return string
      */
-    public function getRaLocationName()
+    public function getRaLocationName(): string
     {
         return $this->raLocationName;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->raLocationName;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->raLocationName;
     }

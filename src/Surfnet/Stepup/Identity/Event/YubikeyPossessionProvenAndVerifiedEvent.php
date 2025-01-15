@@ -32,9 +32,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,88 +53,46 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    public $secondFactorId;
-
-    /**
-     * The Yubikey's public ID.
-     *
-     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
-     */
-    public $yubikeyPublicId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
-
-    /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
-     */
-    public $registrationRequestedAt;
-
-    /**
-     * @var string
-     */
-    public $registrationCode;
-
-    /**
-     * @param IdentityId              $identityId
-     * @param Institution             $institution
-     * @param SecondFactorId          $secondFactorId
-     * @param YubikeyPublicId         $yubikeyPublicId
-     * @param CommonName              $commonName
-     * @param Email                   $email
-     * @param Locale                  $locale
-     * @param DateTime                $registrationRequestedAt
-     * @param string                  $registrationCode
+     * @param IdentityId $identityId
+     * @param Institution $institution
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param Locale $preferredLocale
+     * @param DateTime $registrationRequestedAt
+     * @param string $registrationCode
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $institution,
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        CommonName $commonName,
-        Email $email,
-        Locale $locale,
-        DateTime $registrationRequestedAt,
-        $registrationCode
+        IdentityId      $identityId,
+        Institution     $institution,
+        public SecondFactorId  $secondFactorId,
+        /**
+         * The Yubikey's public ID.
+         */
+        public YubikeyPublicId $yubikeyPublicId,
+        public CommonName      $commonName,
+        public Email           $email,
+        public Locale          $preferredLocale,
+        public DateTime        $registrationRequestedAt,
+        public string   $registrationCode,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->secondFactorId            = $secondFactorId;
-        $this->yubikeyPublicId           = $yubikeyPublicId;
-        $this->commonName                = $commonName;
-        $this->email                     = $email;
-        $this->preferredLocale           = $locale;
-        $this->registrationRequestedAt   = $registrationRequestedAt;
-        $this->registrationCode          = $registrationCode;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('yubikey');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
         $metadata->secondFactorIdentifier = $this->yubikeyPublicId;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // BC compatibility for event replay in test-environment only (2.8.0, fixed in 2.8.1)
         if (!isset($data['preferred_locale'])) {
@@ -144,26 +108,28 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
             Email::unknown(),
             new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
-            (string) $data['registration_code']
+            (string)$data['registration_code'],
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'registration_requested_at'   => (string) $this->registrationRequestedAt,
-            'registration_code'           => $this->registrationCode,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -171,9 +137,12 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
             ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        $yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        assert($yubikeyPublicId instanceof YubikeyPublicId);
+        $this->yubikeyPublicId = $yubikeyPublicId;
+
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
@@ -185,6 +154,9 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

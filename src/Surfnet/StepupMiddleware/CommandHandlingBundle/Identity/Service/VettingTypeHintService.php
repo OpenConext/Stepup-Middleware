@@ -28,29 +28,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintReposi
 
 class VettingTypeHintService
 {
-    /**
-     * @var VettingTypeHintRepository
-     */
-    private $repository;
-
-    /**
-     * @var array
-     */
-    private $locales;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     public function __construct(
-        VettingTypeHintRepository $repository,
-        array $locales,
-        LoggerInterface $logger
+        private readonly VettingTypeHintRepository $repository,
+        private readonly array $locales,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->repository = $repository;
-        $this->locales = $locales;
-        $this->logger = $logger;
     }
 
     public function collectionFrom(array $hints): VettingTypeHintCollection
@@ -60,11 +42,10 @@ class VettingTypeHintService
             if ($this->unknownLocale($locale)) {
                 $this->logger->warning(
                     sprintf(
-                        'Received unsupported locale %s while processing the vetting type hints. ' .
-                        'Allowed locales are: %s.',
+                        'Received unsupported locale %s while processing the vetting type hints. Allowed locales are: %s.',
                         $locale,
-                        implode(', ', $this->locales)
-                    )
+                        implode(', ', $this->locales),
+                    ),
                 );
                 continue;
             }
@@ -80,7 +61,7 @@ class VettingTypeHintService
 
     public function findBy(Institution $institution): VettingTypeHintEntity
     {
-        $result = $this->repository->find((string) $institution);
+        $result = $this->repository->find((string)$institution);
         if (!$result) {
             throw new NotFoundException(sprintf('Vetting type hint not found for institution %s', $institution));
         }

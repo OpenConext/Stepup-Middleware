@@ -23,35 +23,29 @@ use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventHandling\EventListener as EventListenerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\Exception;
+use Throwable;
 
 class BufferedEventBus implements EventBusInterface
 {
     /**
      * @var EventListenerInterface[]
      */
-    private $eventListeners = [];
+    private array $eventListeners = [];
 
     /**
      * @var DomainMessage[]
      */
-    private $buffer = [];
+    private array $buffer = [];
 
     /**
      * Flag to ensure only one loop is publishing domain messages from the buffer.
-     *
-     * @var bool
      */
-    private $isFlushing = false;
+    private bool $isFlushing = false;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function subscribe(EventListenerInterface $eventListener): void
@@ -68,8 +62,9 @@ class BufferedEventBus implements EventBusInterface
 
     /**
      * Flushes the buffered domain messages to all event listeners.
+     * @throws Exception
      */
-    public function flush()
+    public function flush(): void
     {
         if ($this->isFlushing) {
             // If already flushing, we're in a nested pipeline. This means that an event that is currently being
@@ -95,7 +90,7 @@ class BufferedEventBus implements EventBusInterface
                 // This comes with a caveat: event listeners cannot hold references to certain entities between events
                 $this->entityManager->clear();
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->isFlushing = false;
 
             array_splice($this->buffer, 0, 0, $buffer);
@@ -107,7 +102,7 @@ class BufferedEventBus implements EventBusInterface
         unset($buffer);
 
         // if during the handling of events new events have been queued, we need to flush them
-        if (!empty($this->buffer)) {
+        if (count($this->buffer) > 0) {
             $this->flush();
         }
     }

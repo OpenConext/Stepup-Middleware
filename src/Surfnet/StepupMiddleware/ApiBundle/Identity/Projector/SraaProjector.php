@@ -26,20 +26,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
 class SraaProjector extends Projector
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
-     */
-    private $sraaRepository;
-
-    public function __construct(SraaRepository $raaRepository)
+    public function __construct(private readonly SraaRepository $sraaRepository)
     {
-        $this->sraaRepository = $raaRepository;
     }
 
-    /**
-     * @param SraaUpdatedEvent $event
-     */
-    public function applySraaUpdatedEvent(SraaUpdatedEvent $event)
+    public function applySraaUpdatedEvent(SraaUpdatedEvent $event): void
     {
         $this->sraaRepository->removeAll();
 

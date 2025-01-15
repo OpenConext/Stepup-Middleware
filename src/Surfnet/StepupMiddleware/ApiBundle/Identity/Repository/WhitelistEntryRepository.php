@@ -20,10 +20,13 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
 
+/**
+ * @extends ServiceEntityRepository<WhitelistEntry>
+ */
 class WhitelistEntryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -35,7 +38,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
      * @param Institution[] $institutions
      * @return array
      */
-    public function findEntriesByInstitutions(array $institutions)
+    public function findEntriesByInstitutions(array $institutions): array
     {
         $qb = $this->createQueryBuilder('w');
 
@@ -48,7 +51,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function saveEntries(array $whitelistEntries)
+    public function saveEntries(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -62,19 +65,21 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * Removes all WhitelistEntries
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this->createQueryBuilder('w')
             ->delete()
             ->where('1 = 1')
             ->getQuery()
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function remove(array $whitelistEntries)
+    public function remove(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -85,7 +90,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function hasEntryFor($institution)
+    public function hasEntryFor(string $institution): bool
     {
         $count = $this->createQueryBuilder('w')
             ->select('COUNT(w.institution)')
@@ -94,13 +99,13 @@ class WhitelistEntryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
 
-        return (bool) $count;
+        return (bool)$count;
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection<WhitelistEntry>
      */
-    public function getAll()
+    public function getAll(): ArrayCollection
     {
         $results = $this->findAll();
 

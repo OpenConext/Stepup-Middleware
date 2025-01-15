@@ -18,21 +18,25 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 
 class StepupProviderTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     *
-     * @param mixed $invalidValue
      */
-    public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
-    {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+    public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string(
+        string $invalidValue,
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
 
         new StepupProvider($invalidValue);
     }
@@ -41,11 +45,11 @@ class StepupProviderTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_stepup_providers_with_the_same_value_are_equal()
+    public function two_stepup_providers_with_the_same_value_are_equal(): void
     {
         $institution = new StepupProvider('a');
-        $theSame     = new StepupProvider('a');
-        $different   = new StepupProvider('A');
+        $theSame = new StepupProvider('a');
+        $different = new StepupProvider('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertFalse($institution->equals($different));
@@ -54,15 +58,11 @@ class StepupProviderTest extends UnitTest
     /**
      * DataProvider for {@see a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidValueProvider()
+    public function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 }

@@ -18,18 +18,20 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType;
 
 class UseRaLocationsOptionTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -38,20 +40,20 @@ class UseRaLocationsOptionTypeTest extends UnitTest
     {
         Type::addType(
             UseRaLocationsOptionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType'
+            UseRaLocationsOptionType::class,
         );
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
 
@@ -65,11 +67,10 @@ class UseRaLocationsOptionTypeTest extends UnitTest
      * @group doctrine
      *
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_use_ra_locations_option_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_use_ra_locations_option_or_null(mixed $incorrectValue,): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(UseRaLocationsOptionType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -79,13 +80,13 @@ class UseRaLocationsOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
 
         $expected = true;
-        $input    = new UseRaLocationsOption($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new UseRaLocationsOption($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -95,7 +96,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
 
@@ -108,7 +109,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_use_ra_locations_option_value_object()
+    public function a_non_null_value_is_converted_to_a_use_ra_locations_option_value_object(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
 
@@ -116,7 +117,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\UseRaLocationsOption', $output);
+        $this->assertInstanceOf(UseRaLocationsOption::class, $output);
         $this->assertEquals(new UseRaLocationsOption($input), $output);
     }
 }

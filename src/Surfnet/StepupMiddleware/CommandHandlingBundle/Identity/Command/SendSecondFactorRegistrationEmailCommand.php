@@ -26,25 +26,21 @@ class SendSecondFactorRegistrationEmailCommand extends AbstractCommand implement
 {
     /**
      * The ID of an identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of a second factor token
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
 
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

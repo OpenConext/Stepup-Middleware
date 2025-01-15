@@ -18,8 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\InstitutionConfiguration;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -38,11 +39,13 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguratio
 
 class MappedInstitutionConfigurationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_remove_institution_configuration_command()
+    public function infers_the_correct_remove_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
@@ -59,7 +62,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $command = $mapped->inferRemoveInstitutionConfigurationByIdCommand();
@@ -72,7 +75,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_create_institution_configuration_command()
+    public function infers_the_correct_create_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
@@ -89,7 +92,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $command = $mapped->inferCreateInstitutionConfigurationCommand();
@@ -102,7 +105,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_reconfigure_institution_configuration_command()
+    public function infers_the_correct_reconfigure_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = new UseRaLocationsOption(true);
@@ -119,7 +122,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $command = $mapped->inferReconfigureInstitutionConfigurationCommand();
@@ -136,15 +139,15 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function no_ra_locations_means_no_add_ra_location_command()
+    public function no_ra_locations_means_no_add_ra_location_command(): void
     {
-        $institution                     = new Institution('Babelfish Inc.');
-        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $institution = new Institution('Babelfish Inc.');
+        $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
-        $verifyEmailOption               = new VerifyEmailOption(true);
+        $verifyEmailOption = new VerifyEmailOption(true);
         $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(1);
-        $raLocations                     = [];
+        $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
@@ -153,7 +156,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $commands = $mapped->inferAddRaLocationCommands();
@@ -165,22 +168,22 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function a_single_ra_location_means_a_single_correct_add_ra_location_command()
+    public function a_single_ra_location_means_a_single_correct_add_ra_location_command(): void
     {
-        $institution                     = new Institution('Babelfish Inc.');
-        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $institution = new Institution('Babelfish Inc.');
+        $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
-        $verifyEmailOption               = new VerifyEmailOption(true);
+        $verifyEmailOption = new VerifyEmailOption(true);
         $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
-        $raLocation                      = RaLocation::create(
-            (string) Uuid::uuid4(),
+        $raLocation = RaLocation::create(
+            (string)Uuid::uuid4(),
             $institution,
             new RaLocationName('Some Location'),
             new Location('Somewhere here or there'),
-            new ContactInformation('Per phone.')
+            new ContactInformation('Per phone.'),
         );
-        $raLocations                     = [$raLocation];
+        $raLocations = [$raLocation];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
@@ -189,7 +192,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $commands = $mapped->inferAddRaLocationCommands();
@@ -197,6 +200,9 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals(1, count($commands));
 
         $command = reset($commands);
+        if (!$command) {
+            $this->fail('The command should be in the set of commands');
+        }
         $this->assertCommandMatches($command, $institution, $raLocation);
     }
 
@@ -204,30 +210,30 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function multiple_ra_locations_mean_multiple_correct_add_ra_location_commands()
+    public function multiple_ra_locations_mean_multiple_correct_add_ra_location_commands(): void
     {
-        $institution                     = new Institution('Babelfish Inc.');
-        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $institution = new Institution('Babelfish Inc.');
+        $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
-        $verifyEmailOption               = new VerifyEmailOption(true);
+        $verifyEmailOption = new VerifyEmailOption(true);
         $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(2);
 
-        $firstRaLocation                 = RaLocation::create(
-            (string) Uuid::uuid4(),
+        $firstRaLocation = RaLocation::create(
+            (string)Uuid::uuid4(),
             $institution,
             new RaLocationName('Some Location'),
             new Location('Somewhere here or there'),
-            new ContactInformation('Per phone.')
+            new ContactInformation('Per phone.'),
         );
-        $secondRaLocation                = RaLocation::create(
-            (string) Uuid::uuid4(),
+        $secondRaLocation = RaLocation::create(
+            (string)Uuid::uuid4(),
             $institution,
             new RaLocationName('Somewhere else'),
             new Location('Utrecht, The Netherlands'),
-            new ContactInformation('Shout really hard')
+            new ContactInformation('Shout really hard'),
         );
-        $raLocations                     = [$firstRaLocation, $secondRaLocation];
+        $raLocations = [$firstRaLocation, $secondRaLocation];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
@@ -236,7 +242,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $verifyEmailOption,
             $selfVetOption,
             $numberOfTokensPerIdentityOption,
-            $raLocations
+            $raLocations,
         );
 
         $commands = $mapped->inferAddRaLocationCommands();
@@ -249,15 +255,15 @@ class MappedInstitutionConfigurationTest extends UnitTest
     public function assertCommandMatches(
         AddRaLocationCommand $command,
         Institution $institution,
-        RaLocation $raLocation
-    ) {
+        RaLocation $raLocation,
+    ): void {
         $this->assertEquals($institution->getInstitution(), $command->institution);
         $this->assertEquals($raLocation->id, $command->raLocationId);
         $this->assertEquals($raLocation->name->getRaLocationName(), $command->raLocationName);
         $this->assertEquals($raLocation->location->getLocation(), $command->location);
         $this->assertEquals(
             $raLocation->contactInformation->getContactInformation(),
-            $command->contactInformation
+            $command->contactInformation,
         );
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 SURF B.V.
+ * Copyright 2021 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,16 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
-final class SelfVetOption implements JsonSerializable
+final readonly class SelfVetOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $selfVetOption;
-
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }
 
-    public function __construct(bool $selfVetOption)
-    {
-        $this->selfVetOption = $selfVetOption;
+    public function __construct(
+        private bool $selfVetOption
+    ) {
     }
 
     public function equals(SelfVetOption $other): bool

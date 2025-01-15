@@ -27,4 +27,12 @@ nelmio_security:
         enabled: true
         mode_block: true
 
+when@dev: &devOverride
+    nelmio_security:
+        csp:
+            report:
+                level1_fallback: true
 
+when@dev_event_replay: *devOverride
+when@smoketest: *devOverride
+when@smoketest_event_replay:  *devOverride

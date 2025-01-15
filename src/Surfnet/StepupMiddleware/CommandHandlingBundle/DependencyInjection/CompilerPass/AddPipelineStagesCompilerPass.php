@@ -30,7 +30,7 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
      * {@inheritdoc} Since the priorities cannot be changed runtime but only through configuration, we're doing the
      * sorting based on priority here. A higher priority means the stage is added earlier.
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline');
         $stageDefinitions = $container->findTaggedServiceIds('pipeline.stage');
@@ -39,13 +39,15 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
         foreach ($stageDefinitions as $stageServiceId => $tagAttributes) {
             $priority = $tagAttributes[0]['priority'];
             if (isset($prioritized[$priority])) {
-                throw new InvalidConfigurationException(sprintf(
-                    'Cannot add stage with service_id "%s" to StagedPipeline at priority "%d", Stage with service_id '
-                    . '"%s" is already registered at that position',
-                    $stageServiceId,
-                    $tagAttributes['priority'],
-                    (string) $prioritized[$priority]
-                ));
+                throw new InvalidConfigurationException(
+                    sprintf(
+                        'Cannot add stage with service_id "%s" to StagedPipeline at priority "%d", Stage with service_id '
+                        . '"%s" is already registered at that position',
+                        $stageServiceId,
+                        $tagAttributes['priority'],
+                        (string)$prioritized[$priority],
+                    ),
+                );
             }
 
             $prioritized[$priority] = new Reference($stageServiceId);

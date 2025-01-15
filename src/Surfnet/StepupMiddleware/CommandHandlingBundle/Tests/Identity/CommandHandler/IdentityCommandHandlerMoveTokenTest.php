@@ -23,6 +23,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -69,27 +70,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
  */
 class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
-    /**
-     * @var AllowedSecondFactorListService|m\MockInterface
-     */
-    private $allowedSecondFactorListServiceMock;
+    private AllowedSecondFactorListService&MockInterface $allowedSecondFactorListServiceMock;
 
-    /**
-     * @var LoaResolutionService
-     */
-    private $loaResolutionService;
+    private LoaResolutionService&MockInterface $loaResolutionService;
 
-    /**
-     * @var m\Mock|InstitutionConfigurationOptionsService
-     */
-    private $configService;
+    private InstitutionConfigurationOptionsService&MockInterface $configService;
 
-    /**
-     * @var IdentityProjectionRepository|m\MockInterface
-     */
-    private $identityProjectionRepository;
+    private IdentityProjectionRepository&MockInterface $identityProjectionRepository;
 
 
     public function setUp(): void
@@ -100,8 +89,10 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
         parent::setUp();
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
         $secondFactorTypeService = m::mock(SecondFactorTypeService::class);
@@ -118,7 +109,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory,
                 m::mock(UserDataFilterInterface::class),
-                $logger
+                $logger,
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
@@ -128,7 +119,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $this->configService,
             $this->loaResolutionService,
             m::mock(RecoveryTokenSecretHelper::class),
-            $registrationMailService
+            $registrationMailService,
         );
     }
 
@@ -136,7 +127,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_second_factor_can_be_moved()
+    public function test_a_second_factor_can_be_moved(): void
     {
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
@@ -173,7 +164,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -184,7 +175,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -194,8 +185,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([
@@ -211,7 +202,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedToEvent(
                     $sourceRegistrantId,
@@ -220,12 +211,12 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ]);
     }
 
-    public function test_can_not_be_moved_if_already_moved()
+    public function test_can_not_be_moved_if_already_moved(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -265,7 +256,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedEvent(
                     $targetRegistrantId,
@@ -279,7 +270,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedToEvent(
                     $sourceRegistrantId,
@@ -288,7 +279,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -299,7 +290,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -309,14 +300,14 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_bootstrapped_thus_vetted_token()
+    public function test_can_not_be_moved_if_already_present_as_bootstrapped_thus_vetted_token(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -357,7 +348,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $targetRegistrantId,
@@ -367,7 +358,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
                     $targetRegistrantSecFacId,
-                    $targetYubikeySecFacId
+                    $targetYubikeySecFacId,
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -378,7 +369,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -388,7 +379,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -396,7 +387,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
     }
 
 
-    public function test_can_not_be_moved_if_already_present_as_vetted_token()
+    public function test_can_not_be_moved_if_already_present_as_vetted_token(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -437,7 +428,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -446,13 +437,13 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        TimeFrame::ofSeconds(self::$window),
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $targetRegistrantId,
@@ -464,7 +455,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     'REGCODE',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $targetRegistrantId,
@@ -476,7 +467,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('NH9392')),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -487,7 +478,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -497,14 +488,14 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_verified_token()
+    public function test_can_not_be_moved_if_already_present_as_verified_token(): void
     {
         $this->expectExceptionMessage("The second factor was already registered as a verified second factor");
         $this->expectException(DomainException::class);
@@ -545,7 +536,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -554,13 +545,13 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        TimeFrame::ofSeconds(self::$window),
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $targetRegistrantId,
@@ -572,7 +563,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     'REGCODE',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -583,7 +574,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -593,14 +584,14 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_unverified_token()
+    public function test_can_not_be_moved_if_already_present_as_unverified_token(): void
     {
         $this->expectExceptionMessage("The second factor was already registered as a unverified second factor");
         $this->expectException(DomainException::class);
@@ -641,7 +632,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -650,13 +641,13 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        TimeFrame::ofSeconds(self::$window),
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -667,7 +658,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -677,14 +668,14 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    public function test_can_not_be_moved_to_same_institution()
+    public function test_can_not_be_moved_to_same_institution(): void
     {
         $this->expectExceptionMessage("Cannot move the second factor to the same institution");
         $this->expectException(DomainException::class);
@@ -723,7 +714,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -734,7 +725,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -744,14 +735,14 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_token_type_not_allowed_for_institution()
+    public function test_can_not_be_moved_if_token_type_not_allowed_for_institution(): void
     {
         $this->expectExceptionMessage('Institution "institution2.com" does not support second factor "yubikey"');
         $this->expectException(SecondFactorNotAllowedException::class);
@@ -791,7 +782,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -802,7 +793,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -812,24 +803,24 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([
                 new SecondFactorMigratedToEvent(
                     $targetRegistrantId,
-                    $sourceRegistrantNameId,
-                    $targetRegistrantNameId,
+                    $sourceRegistrantInstitution,
                     $targetRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
-                    new SecondFactorType('yubikey')
+                    new SecondFactorType('yubikey'),
+                    $sourceYubikeySecFacId,
                 ),
             ]);
     }
 
-    public function test_the_max_number_of_tokens_can_not_be_exceeded()
+    public function test_the_max_number_of_tokens_can_not_be_exceeded(): void
     {
         $this->expectExceptionMessage("User may not have more than 1 token(s)");
         $this->expectException(DomainException::class);
@@ -870,7 +861,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $targetRegistrantId,
@@ -880,8 +871,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
                     $targetRegistrantSecFacId,
-                    $targetYubikeySecFacId
-                )
+                    $targetYubikeySecFacId,
+                ),
             ])
             ->withAggregateId($sourceRegistrantId)
             ->given([
@@ -891,7 +882,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -901,21 +892,23 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([]);
     }
 
-    private function setUpInstitutionConfiguration(int $allowedMaxNumberOfTokens, array $allowedTokenTypes)
+    private function setUpInstitutionConfiguration(int $allowedMaxNumberOfTokens, array $allowedTokenTypes): void
     {
         $secondFactorTypes = [];
         foreach ($allowedTokenTypes as $type) {
             $secondFactorTypes[] = new SecondFactorType($type);
         }
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn($allowedMaxNumberOfTokens);
-        $this->allowedSecondFactorListServiceMock->shouldReceive('getAllowedSecondFactorListFor')->andReturn(AllowedSecondFactorList::ofTypes($secondFactorTypes));
+        $this->allowedSecondFactorListServiceMock->shouldReceive('getAllowedSecondFactorListFor')->andReturn(
+            AllowedSecondFactorList::ofTypes($secondFactorTypes),
+        );
         $this->configService->shouldIgnoreMissing();
     }
 }

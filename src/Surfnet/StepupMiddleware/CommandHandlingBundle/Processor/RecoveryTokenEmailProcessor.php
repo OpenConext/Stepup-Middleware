@@ -23,35 +23,24 @@ use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService;
 
 final class RecoveryTokenEmailProcessor extends Processor
 {
-    /**
-     * @var RecoveryTokenMailService
-     */
-    private $mailService;
-
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
     public function __construct(
-        RecoveryTokenMailService $recoveryTokenMailService,
-        IdentityService $identityService
+        private readonly RecoveryTokenMailService $mailService,
+        private readonly IdentityService $identityService,
     ) {
-        $this->mailService = $recoveryTokenMailService;
-        $this->identityService = $identityService;
     }
 
     public function handleCompliedWithRecoveryCodeRevocationEvent(
-        CompliedWithRecoveryCodeRevocationEvent $event
-    ) {
+        CompliedWithRecoveryCodeRevocationEvent $event,
+    ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -61,15 +50,15 @@ final class RecoveryTokenEmailProcessor extends Processor
             $identity->email,
             $event->recoveryTokenType,
             $event->recoveryTokenId,
-            true
+            true,
         );
     }
 
-    public function handleRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event)
+    public function handleRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event): void
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -79,7 +68,7 @@ final class RecoveryTokenEmailProcessor extends Processor
             $identity->email,
             $event->recoveryTokenType,
             $event->recoveryTokenId,
-            false
+            false,
         );
     }
 
@@ -87,28 +76,28 @@ final class RecoveryTokenEmailProcessor extends Processor
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
         $this->mailService->sendCreated(
             $identity->preferredLocale,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
     public function handleSafeStoreSecretRecoveryTokenPossessionPromisedEvent(
-        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event,
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
         $this->mailService->sendCreated(
             $identity->preferredLocale,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 }

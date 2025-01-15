@@ -24,66 +24,66 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractCommand
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $nameId;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $nameId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $institution;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $commonName;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $commonName;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Email()
      *
      * @var string
      */
-    public $email;
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    public string $email;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $preferredLocale;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $preferredLocale;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $secondFactorId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
      *
      * @var string
      */
-    public $yubikeyPublicId;
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    public string $yubikeyPublicId;
 }

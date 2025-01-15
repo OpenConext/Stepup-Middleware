@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use TypeError;
@@ -27,19 +28,19 @@ use TypeError;
 /**
  * Custom Type for the SelfVetOption Value Object
  */
-class SelfVetOptionType extends Type
+class SelfVetOptionType extends IntegerType
 {
-    const NAME = 'stepup_self_vet_option';
+    public const NAME = 'stepup_self_vet_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof SelfVetOption) {
@@ -47,28 +48,28 @@ class SelfVetOptionType extends Type
                 sprintf(
                     "Encountered illegal self vet option %s '%s', expected a 
                     SelfVetOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfVetOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
-            $selfVetOption = new SelfVetOption((bool) $value);
+            $selfVetOption = new SelfVetOption((bool)$value);
         } catch (TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -77,7 +78,7 @@ class SelfVetOptionType extends Type
         return $selfVetOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

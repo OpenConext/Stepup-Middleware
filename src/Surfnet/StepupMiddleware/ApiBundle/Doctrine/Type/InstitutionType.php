@@ -21,34 +21,34 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
  * Custom Type for the Institution Value Object
  */
 class InstitutionType extends Type
 {
-    const NAME = 'institution';
+    public const NAME = 'institution';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Institution
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
@@ -57,7 +57,7 @@ class InstitutionType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -66,7 +66,7 @@ class InstitutionType extends Type
         return $institution;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

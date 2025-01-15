@@ -18,6 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use SensitiveParameter;
+
 /**
  * Unhashed secret
  *
@@ -41,21 +43,18 @@ class UnhashedSecret implements HashableSecret
      */
     private const ALGORITHM = PASSWORD_BCRYPT;
 
-    private $secret;
-
-    public function hashSecret(): Secret
+    public function hashSecret(): HashedSecret
     {
         $hashedSecret = password_hash(
             $this->secret,
             self::ALGORITHM,
-            ['cost' => self::COST]
+            ['cost' => self::COST],
         );
         return new HashedSecret($hashedSecret);
     }
 
-    public function __construct(string $secret)
+    public function __construct(#[SensitiveParameter] private readonly string $secret)
     {
-        $this->secret = $secret;
     }
 
     public function getSecret(): string

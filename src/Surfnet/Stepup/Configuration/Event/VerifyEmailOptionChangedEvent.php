@@ -25,37 +25,19 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 final class VerifyEmailOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var VerifyEmailOption
-     */
-    public $verifyEmailOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        VerifyEmailOption $verifyEmailOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public VerifyEmailOption $verifyEmailOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->verifyEmailOption = $verifyEmailOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new VerifyEmailOption($data['verify_email_option'])
+            new VerifyEmailOption($data['verify_email_option']),
         );
     }
 
@@ -63,8 +45,8 @@ final class VerifyEmailOptionChangedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'verify_email_option'          => $this->verifyEmailOption->isEnabled(),
+            'institution' => $this->institution->getInstitution(),
+            'verify_email_option' => $this->verifyEmailOption->isEnabled(),
         ];
     }
 }

@@ -23,27 +23,28 @@ use Broadway\EventSourcing\AggregateFactory\AggregateFactory;
 use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\EventSourcing\EventStreamDecorator;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Surfnet\Stepup\Identity\Whitelist;
 
 class WhitelistRepository extends EventSourcingRepository
 {
     /**
-     * @param EventStoreInterface             $eventStore
-     * @param EventBusInterface               $eventBus
-     * @param AggregateFactory       $aggregateFactory
+     * @param EventStoreInterface $eventStore
+     * @param EventBusInterface $eventBus
+     * @param AggregateFactory $aggregateFactory
      * @param EventStreamDecorator[] $eventStreamDecorators
      */
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
         AggregateFactory $aggregateFactory,
-        array $eventStreamDecorators = []
+        array $eventStreamDecorators = [],
     ) {
         parent::__construct(
             $eventStore,
             $eventBus,
-            \Surfnet\Stepup\Identity\Whitelist::class,
+            Whitelist::class,
             $aggregateFactory,
-            $eventStreamDecorators
+            $eventStreamDecorators,
         );
     }
 }

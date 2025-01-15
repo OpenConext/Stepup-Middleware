@@ -19,6 +19,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Assert\Assertion;
 use DateTime;
+use Exception;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -31,71 +32,39 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\VerifiedTokenInformation;
  */
 class VerifiedSecondFactorReminderService
 {
-    /**
-     * @var VerifiedSecondFactorRepository
-     */
-    private $verifiedRepository;
-
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
-
-    /**
-     * @var VerifiedSecondFactorReminderMailService
-     */
-    private $mailService;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param VerifiedSecondFactorRepository $verifiedRepository
-     * @param IdentityRepository $identityRepository
-     * @param VerifiedSecondFactorReminderMailService $mailService
-     * @param LoggerInterface $logger
-     */
     public function __construct(
-        VerifiedSecondFactorRepository $verifiedRepository,
-        IdentityRepository $identityRepository,
-        VerifiedSecondFactorReminderMailService $mailService,
-        LoggerInterface $logger
+        private readonly VerifiedSecondFactorRepository $verifiedRepository,
+        private readonly IdentityRepository $identityRepository,
+        private readonly VerifiedSecondFactorReminderMailService $mailService,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->verifiedRepository = $verifiedRepository;
-        $this->identityRepository = $identityRepository;
-        $this->mailService = $mailService;
-        $this->logger = $logger;
     }
 
-    /**
-     * @param DateTime $date
-     * @param bool $dryRun
-     */
-    public function sendReminders(DateTime $date, $dryRun)
+    public function sendReminders(DateTime $date, bool $dryRun): void
     {
         $this->logger->info(
             sprintf(
                 'Sending reminders for date: %s. dry run mode is %s',
                 $date->format('Y-m-d'),
-                ($dryRun ? 'enabled' : 'disabled')
-            )
+                ($dryRun ? 'enabled' : 'disabled'),
+            ),
         );
 
         $totalNumberSent = 0;
 
         $tokenInformationCollection = $this->buildCollection($date);
 
-        if (!empty($tokenInformationCollection)) {
+        if ($tokenInformationCollection !== []) {
             $this->logger->info(sprintf('%d token reminder(s) will be sent', count($tokenInformationCollection)));
 
             foreach ($tokenInformationCollection as $tokenInformation) {
-                if (!$dryRun) {
-                    $numberSent = $this->mailService->sendReminder($tokenInformation);
-                } else {
-                    $numberSent = 1;
+                try {
+                    $this->mailService->sendReminder($tokenInformation);
+                    $wasSent = 1;
+                } catch (Exception) {
+                    $wasSent = 0;
                 }
+                $numberSent = $dryRun ? 1 : $wasSent;
 
                 $this->logger->info(
                     sprintf(
@@ -104,8 +73,8 @@ class VerifiedSecondFactorReminderService
                         ($dryRun ? 'in dry run mode ' : ''),
                         $tokenInformation->getEmail(),
                         $tokenInformation->getTokenId(),
-                        $tokenInformation->getTokenType()
-                    )
+                        $tokenInformation->getTokenType(),
+                    ),
                 );
                 $totalNumberSent += $numberSent;
             }
@@ -115,16 +84,15 @@ class VerifiedSecondFactorReminderService
             sprintf(
                 '%d reminders %s been sent',
                 $totalNumberSent,
-                ($dryRun ? 'would have' : 'have')
-            )
+                ($dryRun ? 'would have' : 'have'),
+            ),
         );
     }
 
     /**
-     * @param DateTime $date
      * @return VerifiedTokenInformation[]
      */
-    private function buildCollection(DateTime $date)
+    private function buildCollection(DateTime $date): array
     {
         $collection = [];
 
@@ -136,8 +104,8 @@ class VerifiedSecondFactorReminderService
                     sprintf(
                         'Identity not found with id "%s" for second factor token "%s"',
                         $token->identityId,
-                        $token->id
-                    )
+                        $token->id,
+                    ),
                 );
                 $collection[] = VerifiedTokenInformation::fromEntity($token, $identity);
             } catch (InvalidArgumentException $e) {

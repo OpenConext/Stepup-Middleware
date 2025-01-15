@@ -24,17 +24,10 @@ use Symfony\Component\Form\Exception\LogicException;
 
 abstract class ConfigurationEvent implements SerializableInterface
 {
-    /**
-     * @var string
-     */
-    public $id;
+    public string $id;
 
-    public function __construct($id)
+    public function __construct(string $id)
     {
-        if ($id !== Configuration::CONFIGURATION_ID) {
-            throw new LogicException('Configuration Events must use the fixed Configuration::CONFIGURATION_ID as id');
-        }
-
         $this->id = $id;
     }
 }

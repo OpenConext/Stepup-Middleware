@@ -3,7 +3,7 @@
 /web/app_dev.php
 /web/app_test.php
 /web/app_dev.php.dist
-/config/legacy/parameters.yaml
+/config/openconext/parameters.yaml
 /var/cache/*
 /var/logs/*
 !var/cache/.gitkeep
@@ -36,3 +36,7 @@ config/services.yml
 ###> symfony/phpunit-bridge ###
 .phpunit
 ###< symfony/phpunit-bridge ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

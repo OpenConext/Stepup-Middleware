@@ -23,6 +23,9 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\InstitutionConfiguration;
 
+/**
+ * @extends EntityRepository<InstitutionConfiguration>
+ */
 class InstitutionConfigurationRepository extends EntityRepository
 {
     public function findByInstitution(string $institution): ?InstitutionConfiguration

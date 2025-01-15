@@ -23,11 +23,10 @@ class UnknownVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type;
+    protected string $type = VettingType::TYPE_UNKNOWN;
 
     public function __construct()
     {
-        $this->type = VettingType::TYPE_UNKNOWN;
     }
 
     public function auditLog(): string

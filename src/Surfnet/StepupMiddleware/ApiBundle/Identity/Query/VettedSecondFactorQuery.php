@@ -22,8 +22,5 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 
 class VettedSecondFactorQuery extends AbstractQuery
 {
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
+    public ?IdentityId $identityId = null;
 }

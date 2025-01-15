@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\DeprovisionExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
@@ -29,27 +29,13 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizingStage implements Stage
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @param LoggerInterface               $logger
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
-    public function __construct(LoggerInterface $logger, AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->logger = $logger;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+    ) {
     }
 
-    public function process(Command $command)
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(sprintf('Processing authorization for command "%s"', $command));
 
@@ -70,18 +56,20 @@ class AuthorizingStage implements Stage
             $allowedRoles[] = 'ROLE_DEPROVISION';
         }
 
-        if (empty($allowedRoles)) {
+        if ($allowedRoles === []) {
             $this->logger->debug(sprintf('No authorization required for command "%s"', $command));
 
             return $command;
         }
 
         if (!$this->clientHasAtLeastOneRole($allowedRoles)) {
-            $this->logger->error(sprintf(
-                'Client is not authorized to execute command "%s", it does not have (one of) the required role(s) "%s"',
-                $command,
-                implode(', ', $allowedRoles)
-            ));
+            $this->logger->error(
+                sprintf(
+                    'Client is not authorized to execute command "%s", it does not have (one of) the required role(s) "%s"',
+                    $command,
+                    implode(', ', $allowedRoles),
+                ),
+            );
 
             throw new ForbiddenException(sprintf('Processing of Command "%s" is forbidden.', $command));
         }
@@ -92,13 +80,12 @@ class AuthorizingStage implements Stage
     }
 
     /**
-     * @param array $rolesToCheck
      * @return bool
      */
-    private function clientHasAtLeastOneRole(array $rolesToCheck)
+    private function clientHasAtLeastOneRole(array $rolesToCheck): bool
     {
         foreach ($rolesToCheck as $role) {
-            if ($this->authorizationChecker->isGranted([$role])) {
+            if ($this->authorizationChecker->isGranted($role)) {
                 return true;
             }
         }

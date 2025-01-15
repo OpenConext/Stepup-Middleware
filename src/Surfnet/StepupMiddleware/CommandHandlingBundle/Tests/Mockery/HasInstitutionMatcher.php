@@ -23,18 +23,12 @@ use Mockery\Matcher\MatcherAbstract;
 
 final class HasInstitutionMatcher extends MatcherAbstract
 {
-    public function __construct($expected)
+    public function __construct(string $expected)
     {
-        if (!is_string($expected)) {
-            throw new RuntimeException(
-                sprintf('In order to use the %s, a string should be given.', self::class)
-            );
-        }
-
         parent::__construct($expected);
     }
 
-    public function match(&$actual)
+    public function match(mixed &$actual): bool
     {
         if (!is_object($actual)) {
             return false;
@@ -50,8 +44,8 @@ final class HasInstitutionMatcher extends MatcherAbstract
         return false;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf('<HasInstitutionMatcher($s)>', $this->_expected);
+        return sprintf('<HasInstitutionMatcher(%s)>', $this->_expected);
     }
 }

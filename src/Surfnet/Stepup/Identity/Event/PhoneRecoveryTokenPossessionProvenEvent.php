@@ -18,9 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
-use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -28,7 +25,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
@@ -39,7 +39,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -48,60 +51,32 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         'common_name',
     ];
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
-     */
-    public $recoveryTokenId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
-     */
-    public $phoneNumber;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        RecoveryTokenId $recoveryTokenId,
-        PhoneNumber $phoneNumber,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale
+        public RecoveryTokenId $recoveryTokenId,
+        public PhoneNumber $phoneNumber,
+        public CommonName $commonName,
+        public Email $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->recoveryTokenId = $recoveryTokenId;
-        $this->phoneNumber = $phoneNumber;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->recoveryTokenId = (string) $this->phoneNumber;
-        $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SMS;
+        $metadata->recoveryTokenId = new RecoveryTokenId((string) $this->phoneNumber);
+        $metadata->recoveryTokenType = RecoveryTokenType::sms();
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -110,25 +85,27 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             PhoneNumber::unknown(),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'recovery_token_id' => (string) $this->recoveryTokenId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'recovery_token_id' => (string)$this->recoveryTokenId,
             'recovery_token_type' => RecoveryTokenType::TYPE_SMS,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -136,11 +113,13 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             ->withRecoveryTokenSecret($this->phoneNumber, RecoveryTokenType::sms());
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->phoneNumber = $sensitiveData->getRecoveryTokenIdentifier();
+        $phoneNumber = $sensitiveData->getRecoveryTokenIdentifier();
+        assert($phoneNumber instanceof PhoneNumber);
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function obtainUserData(): array
@@ -150,6 +129,9 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

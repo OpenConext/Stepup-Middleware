@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
 /**
  * A stage is used in context of a pipeline and represents a stage in the processing of a command. Stages may block
@@ -26,9 +26,5 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
  */
 interface Stage
 {
-    /**
-     * @param Command $command
-     * @return Command
-     */
-    public function process(Command $command);
+    public function process(AbstractCommand $command): AbstractCommand;
 }

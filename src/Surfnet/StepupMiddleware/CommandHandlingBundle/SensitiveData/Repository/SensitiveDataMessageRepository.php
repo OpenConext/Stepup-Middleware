@@ -29,46 +29,34 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class SensitiveDataMessageRepository
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
      * Finds all sensitive data records for a given Identity, ordered by playhead.
-     *
-     * @param IdentityId $identityId
-     * @return SensitiveDataMessageStream
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): SensitiveDataMessageStream
     {
         $sql = 'SELECT identity_id, playhead, sensitive_data
                 FROM event_stream_sensitive_data
                 WHERE identity_id = :identity_id
                 ORDER BY playhead ASC';
 
-        $rows = $this->connection->fetchAll($sql, ['identity_id' => (string) $identityId]);
-        $messages = array_map(function (array $row) use ($identityId) {
-            return new SensitiveDataMessage(
-                $identityId,
-                (int) $row['playhead'],
-                SensitiveData::deserialize(JsonHelper::decode($row['sensitive_data']))
-            );
-        }, $rows);
+        $rows = $this->connection->fetchAllAssociative($sql, ['identity_id' => (string)$identityId]);
+        $messages = array_map(fn(array $row): SensitiveDataMessage => new SensitiveDataMessage(
+            $identityId,
+            (int)$row['playhead'],
+            SensitiveData::deserialize(JsonHelper::decode($row['sensitive_data'])),
+        ), $rows);
 
         return new SensitiveDataMessageStream($messages);
     }
 
     /**
-     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream): void
     {
         $this->connection->beginTransaction();
 
@@ -76,9 +64,9 @@ class SensitiveDataMessageRepository
             foreach ($sensitiveDataMessageStream as $sensitiveDataMessage) {
                 /** @var SensitiveDataMessage $sensitiveDataMessage */
                 $this->connection->insert('event_stream_sensitive_data', [
-                    'identity_id'    => (string) $sensitiveDataMessage->getIdentityId(),
-                    'playhead'       => $sensitiveDataMessage->getPlayhead(),
-                    'sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize()),
+                    'identity_id' => (string)$sensitiveDataMessage->getIdentityId(),
+                    'playhead' => $sensitiveDataMessage->getPlayhead(),
+                    'sensitive_data' => json_encode((object)$sensitiveDataMessage->getSensitiveData()->serialize()),
                 ]);
             }
             $this->connection->commit();
@@ -89,10 +77,9 @@ class SensitiveDataMessageRepository
     }
 
     /**
-     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream): void
     {
         $this->connection->beginTransaction();
 
@@ -101,11 +88,11 @@ class SensitiveDataMessageRepository
                 /** @var SensitiveDataMessage $sensitiveDataMessage */
                 $this->connection->update(
                     'event_stream_sensitive_data',
-                    ['sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize())],
+                    ['sensitive_data' => json_encode((object)$sensitiveDataMessage->getSensitiveData()->serialize())],
                     [
-                        'identity_id' => (string) $sensitiveDataMessage->getIdentityId(),
-                        'playhead'    => $sensitiveDataMessage->getPlayhead(),
-                    ]
+                        'identity_id' => (string)$sensitiveDataMessage->getIdentityId(),
+                        'playhead' => $sensitiveDataMessage->getPlayhead(),
+                    ],
                 );
             }
             $this->connection->commit();

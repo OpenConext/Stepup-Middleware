@@ -24,10 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class RemoveInstitutionConfigurationByUnnormalizedIdCommand extends AbstractCommand
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 }

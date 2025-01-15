@@ -19,52 +19,26 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 
 class RaListingQuery extends AbstractQuery
 {
-    /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $institution;
+    public string|Institution|null $institution = null;
 
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
+    public ?IdentityId $identityId = null;
 
-    /**
-     * @var string|null
-     */
-    public $name;
+    public ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    public $email;
+    public ?string $email = null;
 
-    /**
-     * @var string|null
-     */
-    public $role;
+    public ?string $role = null;
 
-    /**
-     * @var string|null
-     */
-    public $raInstitution;
+    public ?string $raInstitution = null;
 
-    /**
-     * @var string
-     */
-    public $orderBy;
+    public string $orderBy;
 
-    /**
-     * @var string
-     */
-    public $orderDirection;
+    public string $orderDirection;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

@@ -23,40 +23,22 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final class InstitutionConfigurationOptionsController extends Controller
+final class InstitutionConfigurationOptionsController extends AbstractController
 {
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
-
-    /**
-     * @return InstitutionAuthorizationService
-     */
-    private $institutionAuthorizationService;
-
-    /**
-     * @var AllowedSecondFactorListService
-     */
-    private $allowedSecondFactorListService;
-
     public function __construct(
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        InstitutionAuthorizationService $institutionAuthorizationService,
-        AllowedSecondFactorListService $allowedSecondFactorListService
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private readonly InstitutionAuthorizationService $institutionAuthorizationService,
+        private readonly AllowedSecondFactorListService $allowedSecondFactorListService,
     ) {
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->institutionAuthorizationService = $institutionAuthorizationService;
-        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
-    public function getForInstitutionAction($institutionName)
+    public function getForInstitution(string $institutionName): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 
         $institution = new Institution($institutionName);
 
@@ -68,9 +50,9 @@ final class InstitutionConfigurationOptionsController extends Controller
             ->allowedSecondFactorListService
             ->getAllowedSecondFactorListFor($institution);
 
-        if ($institutionConfigurationOptions === null) {
+        if (!$institutionConfigurationOptions instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
             throw new NotFoundHttpException(
-                sprintf('No institution configuration options found for institution "%s"', $institution)
+                sprintf('No institution configuration options found for institution "%s"', $institution),
             );
         }
 
@@ -83,18 +65,24 @@ final class InstitutionConfigurationOptionsController extends Controller
             ->findAuthorizationsFor($institution);
 
         return new JsonResponse([
-            'institution'                  => $institutionConfigurationOptions->institution,
-            'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
+            'institution' => $institutionConfigurationOptions->institution,
+            'use_ra_locations' => $institutionConfigurationOptions->useRaLocationsOption,
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
-            'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
+            'verify_email' => $institutionConfigurationOptions->verifyEmailOption,
             'sso_on_2fa' => $institutionConfigurationOptions->ssoOn2faOption,
             'self_vet' => $institutionConfigurationOptions->selfVetOption,
             'allow_self_asserted_tokens' => $institutionConfigurationOptions->selfAssertedTokensOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
-            'allowed_second_factors'       => $allowedSecondFactorList,
-            'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
-            'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
-            'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
+            'allowed_second_factors' => $allowedSecondFactorList,
+            'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::useRa(),
+            )->jsonSerialize(),
+            'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::useRaa(),
+            )->jsonSerialize(),
+            'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::selectRaa(),
+            )->jsonSerialize(),
         ]);
     }
 }

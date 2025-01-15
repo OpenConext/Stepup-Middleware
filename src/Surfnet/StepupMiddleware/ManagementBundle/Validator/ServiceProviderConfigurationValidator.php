@@ -23,10 +23,11 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
-    public function validate(array $configuration, $propertyPath)
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    public function validate(array $configuration, string $propertyPath): void
     {
-        Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
-
         $requiredProperties = [
             'entity_id',
             'public_key',
@@ -38,7 +39,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'blacklisted_encryption_algorithms',
             'use_pdp',
             'allow_sso_on_2fa',
-            'set_sso_cookie_on_2fa'
+            'set_sso_cookie_on_2fa',
         ];
 
         if (empty($configuration['use_pdp'])) {
@@ -58,9 +59,9 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                join("', '", $requiredProperties)
+                implode("', '", $requiredProperties),
             ),
-            $propertyPath
+            $propertyPath,
         );
 
         $this->validateStringValue($configuration, 'entity_id', $propertyPath);
@@ -70,100 +71,77 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $this->validateBooleanValue(
             $configuration,
             'assertion_encryption_enabled',
-            $propertyPath
+            $propertyPath,
         );
         $this->validateBooleanValue(
             $configuration,
             'second_factor_only',
-            $propertyPath
+            $propertyPath,
         );
         $this->validateListOfNameIdPatterns(
             $configuration,
             'second_factor_only_nameid_patterns',
-            $propertyPath
+            $propertyPath,
         );
         $this->validateStringValues(
             $configuration,
             'blacklisted_encryption_algorithms',
-            $propertyPath
+            $propertyPath,
         );
         $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
         $this->validateBooleanValue($configuration, 'allow_sso_on_2fa', $propertyPath);
         $this->validateBooleanValue($configuration, 'set_sso_cookie_on_2fa', $propertyPath);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
-    private function validateStringValue($configuration, $name, $propertyPath)
+    private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
-    private function validateStringValues($configuration, $name, $propertyPath)
+    private function validateStringValues(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
         Assertion::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
-    private function validateBooleanValue($configuration, $name, $propertyPath)
+    private function validateBooleanValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $propertyPath
-     */
-    private function validateAssertionConsumerUrls($configuration, $propertyPath)
+    private function validateAssertionConsumerUrls(array $configuration, string $propertyPath): void
     {
         $value = $configuration['acs'];
-        $propertyPath = $propertyPath . '.acs';
+        $propertyPath .= '.acs';
 
         Assertion::isArray($value, 'must contain a non-empty array of strings', $propertyPath);
         Assertion::true(count($value) >= 1, 'array must contain at least one value', $propertyPath);
         Assertion::allString($value, 'must be an array of strings', $propertyPath);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $propertyPath
-     */
-    private function validateLoaDefinition($configuration, $propertyPath)
+    private function validateLoaDefinition(array $configuration, string $propertyPath): void
     {
         $value = $configuration['loa'];
-        $path  = $propertyPath . '.loa';
+        $path = $propertyPath . '.loa';
 
         Assertion::isArray($value, 'must be an object', $path);
-        Assertion::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
+        Assertion::keyExists(
+            $value,
+            '__default__',
+            "must have the default loa set on the '__default__' property",
+            $path,
+        );
         Assertion::allString($value, 'all properties must contain strings as values', $path);
 
         // Test if all SP specific LoA configuration entries are lower case.
         $this->assertValidInstitutionIdentifiers(
             $value,
             'The shacHomeOrganisation names in SP LoA configuration must all be lower case',
-            $path
+            $path,
         );
     }
 
-    /**
-     * @param array $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
-    private function validateListOfNameIdPatterns($configuration, $name, $propertyPath)
+    private function validateListOfNameIdPatterns(array $configuration, string $name, string $propertyPath): void
     {
         $value = $configuration[$name];
         $propertyPath = $propertyPath . '.' . $name;
@@ -182,15 +160,13 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      *     'My.Institution'   => 'loa2', // invalid
      *  ]
      *
-     * @param array $spLoaConfiguration
-     * @param string $message
-     * @param $propertyPath
      */
-    private function assertValidInstitutionIdentifiers(array $spLoaConfiguration, $message, $propertyPath)
-    {
-        $assertLowerCase = function ($sho) {
-            return ($sho === strtolower($sho));
-        };
+    private function assertValidInstitutionIdentifiers(
+        array $spLoaConfiguration,
+        string $message,
+        string $propertyPath,
+    ): void {
+        $assertLowerCase = fn($sho): bool => $sho === strtolower((string)$sho);
 
         // The array keys match the institution name / SHO.
         $lowerCaseTestResults = array_map($assertLowerCase, array_keys($spLoaConfiguration));

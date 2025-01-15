@@ -18,56 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
+use Exception;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
 class TransactionAwarePipeline implements Pipeline
 {
-    /**
-     * @var Pipeline
-     */
-    private $innerPipeline;
-
-    /**
-     * @var Connection
-     */
-    private $middlewareConnection;
-
-    /**
-     * @var Connection
-     */
-    private $gatewayConnection;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     * @param Pipeline        $innerPipeline
-     * @param Connection      $middlewareConnection
-     * @param Connection      $gatewayConnection
-     */
     public function __construct(
-        LoggerInterface $logger,
-        Pipeline $innerPipeline,
-        Connection $middlewareConnection,
-        Connection $gatewayConnection
+        private readonly LoggerInterface $logger,
+        private readonly Pipeline $innerPipeline,
+        private readonly Connection $middlewareConnection,
+        private readonly Connection $gatewayConnection,
     ) {
-        $this->logger               = $logger;
-        $this->innerPipeline        = $innerPipeline;
-        $this->middlewareConnection = $middlewareConnection;
-        $this->gatewayConnection    = $gatewayConnection;
     }
 
-    public function process(Command $command)
+    public function process(AbstractCommand $command): AbstractCommand
     {
-        $this->logger->debug(sprintf(
-            'Starting Transaction in TransactionAwarePipeline for processing command "%s"',
-            $command
-        ));
+        $this->logger->debug(
+            sprintf(
+                'Starting Transaction in TransactionAwarePipeline for processing command "%s"',
+                $command,
+            ),
+        );
 
         $this->middlewareConnection->beginTransaction();
         $this->gatewayConnection->beginTransaction();
@@ -81,35 +54,37 @@ class TransactionAwarePipeline implements Pipeline
 
             $this->middlewareConnection->commit();
             $this->gatewayConnection->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // log at highest level if we may have a split head in the db-cluster...
             if (strpos($e->getMessage(), 'ER_UNKNOWN_COM_ERROR')) {
                 $this->logger->emergency(
                     sprintf(
                         '[!!!] Critical Database Exception while processing command "%s": "%s"',
                         $command,
-                        $e->getMessage()
+                        $e->getMessage(),
                     ),
-                    ['exception' => $e]
+                    ['exception' => $e],
                 );
             } else {
                 $this->logger->error(
                     sprintf(
                         'Exception occurred while processing command "%s": "%s", rolling back transaction',
                         $command,
-                        $e->getMessage()
+                        $e->getMessage(),
                     ),
-                    ['exception' => $e]
+                    ['exception' => $e],
                 );
             }
 
             $this->middlewareConnection->rollBack();
             $this->gatewayConnection->rollBack();
 
-            $this->logger->debug(sprintf(
-                'Transaction for command "%s" rolled back, re-throwing exception',
-                $command
-            ));
+            $this->logger->debug(
+                sprintf(
+                    'Transaction for command "%s" rolled back, re-throwing exception',
+                    $command,
+                ),
+            );
 
             throw $e;
         }

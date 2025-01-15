@@ -18,6 +18,9 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use DateTime as CoreDateTime;
+use Generator;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\UserDataFilter;
@@ -37,17 +40,21 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class UserDataFilterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @dataProvider provideEvents
      */
-    public function test_filtering_is_applied_with_expected_result($event, $expectation)
-    {
+    public function test_filtering_is_applied_with_expected_result(
+        IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event,
+        array $expectation,
+    ): void {
         $helper = new UserDataFilter();
         $data = $helper->filter($event);
         $this->assertSame($expectation, array_keys($data));
     }
 
-    public function provideEvents()
+    public function provideEvents(): Generator
     {
         $event = new IdentityCreatedEvent(
             new IdentityId("id"),
@@ -55,7 +62,7 @@ class UserDataFilterTest extends TestCase
             new NameId("nameId"),
             new CommonName("commonName"),
             new Email("test@institution.nl"),
-            new Locale("nl_NL")
+            new Locale("nl_NL"),
         );
         $expectation = [
             'id',
@@ -76,7 +83,7 @@ class UserDataFilterTest extends TestCase
             new Email("test@example.com"),
             new Locale("nl_NL"),
             new DateTime(),
-            "Y3MWWNDR"
+            "Y3MWWNDR",
         );
         $expectation = [
             'identity_id',
@@ -95,7 +102,7 @@ class UserDataFilterTest extends TestCase
             new IdentityId("id"),
             new Institution("institution"),
             new NameId("nameId"),
-            new Institution("ra")
+            new Institution("ra"),
         );
         $expectation = [
             'identity_id',
@@ -111,11 +118,11 @@ class UserDataFilterTest extends TestCase
             new SecondFactorId("52"),
             new PhoneNumber("+0 (0) 000000000"),
             true,
-            emailVerificationWindow::createWindowFromTill(new DateTime(), new DateTime()),
+            EmailVerificationWindow::createWindowFromTill(new DateTime(), new DateTime(new CoreDateTime('+5 minute'))),
             "30c0fcb136bf324eea652d5b86c1a08c",
             new CommonName("commonname"),
             new Email("test@example.com"),
-            new Locale("nl_NL")
+            new Locale("nl_NL"),
         );
         $expectation = [
             'identity_id',
@@ -129,6 +136,4 @@ class UserDataFilterTest extends TestCase
         ];
         yield [$event, $expectation];
     }
-
-
 }

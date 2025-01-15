@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 /**
  * Copyright 2014 SURFnet bv
@@ -20,56 +21,42 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use DateInterval;
+use Exception;
+use Stringable;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class TimeFrame
+final readonly class TimeFrame implements Stringable
 {
-    /**
-     * @var DateInterval
-     */
-    private $timeFrame;
-
-    /**
-     * @param DateInterval $timeFrame
-     */
-    final private function __construct(DateInterval $timeFrame)
+    final private function __construct(private DateInterval $timeFrame)
     {
-        $this->timeFrame = $timeFrame;
     }
 
     /**
-     * @param int $seconds
      * @return TimeFrame
+     * @throws Exception
+     * @throws Exception
      */
-    public static function ofSeconds($seconds)
+    public static function ofSeconds(int $seconds): TimeFrame
     {
-        if (!is_int($seconds) || $seconds < 1) {
+        if ($seconds < 1) {
             throw InvalidArgumentException::invalidType('positive integer', 'seconds', $seconds);
         }
 
         return new TimeFrame(new DateInterval('PT' . $seconds . 'S'));
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return DateTime
-     */
-    public function getEndWhenStartingAt(DateTime $dateTime)
+    public function getEndWhenStartingAt(DateTime $dateTime): DateTime
     {
         return $dateTime->add($this->timeFrame);
     }
 
-    /**
-     * @param TimeFrame $other
-     * @return bool
-     */
-    public function equals(TimeFrame $other)
+    public function equals(TimeFrame $other): bool
     {
         return $this->timeFrame->s === $other->timeFrame->s;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->timeFrame->format('%S');
     }

@@ -20,26 +20,26 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
 
-class VettingTypeHint implements JsonSerializable
+class VettingTypeHint implements JsonSerializable, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $locale;
-
-    /**
-     * The hint text is nullable
-     * @var string
-     */
-    private $hint;
-
-    public function __construct(string $locale, ?string $hint)
-    {
-        $this->locale = $locale;
-        $this->hint = $hint;
+    public function __construct(
+        private readonly string $locale,
+        /**
+         * The hint text is nullable
+         */
+        private readonly ?string $hint,
+    ) {
     }
 
-    public function jsonSerialize()
+    public function __toString(): string
+    {
+        if ($this->hint === null) {
+            return '';
+        }
+        return $this->hint;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'locale' => $this->locale,

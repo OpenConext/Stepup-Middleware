@@ -21,43 +21,35 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository"
- * )
- */
+#[ORM\Entity(repositoryClass: AllowedSecondFactorRepository::class)]
 class AllowedSecondFactor
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_second_factor_type")
      *
      * @var SecondFactorType
      */
-    public $secondFactorType;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_second_factor_type')]
+    public SecondFactorType $secondFactorType;
 
     private function __construct()
     {
     }
 
-    /**
-     * @param Institution $institution
-     * @param SecondFactorType $secondFactorType
-     * @return AllowedSecondFactor
-     */
-    public static function createFrom(Institution $institution, SecondFactorType $secondFactorType)
+    public static function createFrom(Institution $institution, SecondFactorType $secondFactorType): self
     {
-        $allowedSecondFactor                   = new self;
-        $allowedSecondFactor->institution      = $institution;
+        $allowedSecondFactor = new self;
+        $allowedSecondFactor->institution = $institution;
         $allowedSecondFactor->secondFactorType = $secondFactorType;
 
         return $allowedSecondFactor;

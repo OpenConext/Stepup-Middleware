@@ -20,26 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Dto;
 
 class VettingLocation
 {
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $location;
-
-    /**
-     * @var string
-     */
-    public $contactInformation;
-
-
-    public function __construct($name, $location, $contactInformation)
+    public function __construct(public string $name, public string $location, public string $contactInformation)
     {
-        $this->name               = $name;
-        $this->location           = $location;
-        $this->contactInformation = $contactInformation;
     }
 }

@@ -18,41 +18,44 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 class SecondFactorStatusTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(SecondFactorStatusType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType');
+        Type::addType(SecondFactorStatusType::NAME, SecondFactorStatusType::class);
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
-    public function invalidPhpValues()
+    public function invalidPhpValues(): array
     {
         return [
             'null' => [null],
             'string' => ['string'],
             'int' => [9],
             'float' => [9.1],
-            'array' => [array()],
-            'object of a different type' => [new \stdClass],
+            'array' => [[]],
+            'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
     }
@@ -61,18 +64,16 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidPhpValues
      * @group doctrine
-     *
-     * @param mixed $value
      */
-    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion($value)
+    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion(mixed $value): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $type = Type::getType(SecondFactorStatusType::NAME);
         $type->convertToDatabaseValue($value, $this->platform);
     }
 
-    public function validPhpValues()
+    public function validPhpValues(): array
     {
         return [
             'unverified' => [SecondFactorStatus::unverified(), 0],
@@ -87,25 +88,22 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validPhpValues
      * @group doctrine
-     *
-     * @param mixed $phpValue
-     * @param int $databaseValue
      */
-    public function a_valid_php_value_is_converted_to_a_sql_value($phpValue, $databaseValue)
+    public function a_valid_php_value_is_converted_to_a_sql_value(mixed $phpValue, int $databaseValue): void
     {
         $type = Type::getType(SecondFactorStatusType::NAME);
         $this->assertSame($databaseValue, $type->convertToDatabaseValue($phpValue, $this->platform));
     }
 
-    public function invalidDatabaseValues()
+    public function invalidDatabaseValues(): array
     {
         return [
             'null' => [null],
             'invalid string' => ['string'],
             'int' => [9],
             'float' => [9.1],
-            'array' => [array()],
-            'object of a different type' => [new \stdClass],
+            'array' => [[]],
+            'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
     }
@@ -114,18 +112,16 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidDatabaseValues
      * @group doctrine
-     *
-     * @param mixed $input
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion($input)
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(mixed $input): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $type = Type::getType(SecondFactorStatusType::NAME);
         $type->convertToPHPValue($input, $this->platform);
     }
 
-    public function validDatabaseValues()
+    public function validDatabaseValues(): array
     {
         return [
             'unverified' => ['0', SecondFactorStatus::unverified()],
@@ -140,11 +136,8 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validDatabaseValues
      * @group doctrine
-     *
-     * @param int $databaseValue
-     * @param mixed $phpValue
      */
-    public function a_valid_database_value_is_converted_to_a_sql_value($databaseValue, $phpValue)
+    public function a_valid_database_value_is_converted_to_a_sql_value(string $databaseValue, mixed $phpValue): void
     {
         $type = Type::getType(SecondFactorStatusType::NAME);
         $this->assertTrue($phpValue->equals($type->convertToPHPValue($databaseValue, $this->platform)));

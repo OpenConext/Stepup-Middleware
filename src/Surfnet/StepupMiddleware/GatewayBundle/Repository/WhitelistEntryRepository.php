@@ -18,17 +18,28 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\WhitelistEntry;
 
+/**
+ * @extends EntityRepository<WhitelistEntry>
+ */
 class WhitelistEntryRepository extends EntityRepository
 {
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+    }
+
+
     /**
      * @param Institution[] $institutions
-     * @return array
+     * @return WhitelistEntry[]
      */
-    public function findEntriesByInstitutions(array $institutions)
+    public function findEntriesByInstitutions(array $institutions): array
     {
         $qb = $this->createQueryBuilder('w');
 
@@ -41,7 +52,7 @@ class WhitelistEntryRepository extends EntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function saveEntries(array $whitelistEntries)
+    public function saveEntries(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -55,19 +66,21 @@ class WhitelistEntryRepository extends EntityRepository
     /**
      * Removes all WhitelistEntries
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this->createQueryBuilder('w')
             ->delete()
             ->where('1 = 1')
             ->getQuery()
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function remove(array $whitelistEntries)
+    public function remove(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -75,6 +88,6 @@ class WhitelistEntryRepository extends EntityRepository
             $entityManager->remove($whitelistEntry);
         }
 
-        $entityManager->flush();
+        $entityManager->clear();
     }
 }

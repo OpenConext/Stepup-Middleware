@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\JsonType;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
@@ -27,34 +28,29 @@ use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
 /**
  * Custom Type for the vetting type hints Value Object
  */
-class VettingTypeHintsType extends Type
+class VettingTypeHintsType extends JsonType
 {
-    const NAME = 'stepup_vetting_type_hints';
+    public const NAME = 'stepup_vetting_type_hints';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getJsonTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getJsonTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
-    {
-        return $value;
-    }
-
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?VettingTypeHintCollection
     {
         if (is_null($value)) {
             return null;
         }
 
         try {
-            $data = json_decode($value, true);
+            $data = json_decode((string)$value, true);
             $vettingTypeHints = VettingTypeHintCollection::deserialize($data);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -63,7 +59,7 @@ class VettingTypeHintsType extends Type
         return $vettingTypeHints;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

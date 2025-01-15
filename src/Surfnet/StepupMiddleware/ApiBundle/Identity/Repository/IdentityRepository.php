@@ -20,34 +20,26 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
+/**
+ * @extends ServiceEntityRepository<Identity>
+ */
 class IdentityRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+    ) {
         parent::__construct($registry, Identity::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    /**
-     * @param string $id
-     * @param null $lockMode
-     * @param null $lockVersion
-     * @return Identity|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?Identity
     {
         /** @var Identity|null $identity */
         $identity = parent::find($id);
@@ -55,10 +47,7 @@ class IdentityRepository extends ServiceEntityRepository
         return $identity;
     }
 
-    /**
-     * @param Identity $identity
-     */
-    public function save(Identity $identity)
+    public function save(Identity $identity): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($identity);
@@ -66,12 +55,11 @@ class IdentityRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
     public function createSearchQuery(
-        IdentityQuery $query
-    ) {
+        IdentityQuery $query,
+    ): Query {
         $queryBuilder = $this->createQueryBuilder('i');
 
         if ($query->institution) {
@@ -105,11 +93,11 @@ class IdentityRepository extends ServiceEntityRepository
      * @param string[] $nameIds
      * @return Identity[] Indexed by NameID.
      */
-    public function findByNameIdsIndexed(array $nameIds)
+    public function findByNameIdsIndexed(array $nameIds): array
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('i')
-            ->from('Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity', 'i', 'i.nameId')
+            ->from(Identity::class, 'i', 'i.nameId')
             ->where('i.nameId IN (:nameIds)')
             ->setParameter('nameIds', $nameIds)
             ->getQuery()
@@ -117,12 +105,10 @@ class IdentityRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param NameId      $nameId
-     * @param Institution $institution
      *
      * @return bool
      */
-    public function hasIdentityWithNameIdAndInstitution(NameId $nameId, Institution $institution)
+    public function hasIdentityWithNameIdAndInstitution(NameId $nameId, Institution $institution): bool
     {
         $identityCount = $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
@@ -137,46 +123,21 @@ class IdentityRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param NameId      $nameId
-     * @param Institution $institution
      * @return Identity
      */
-    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution): Identity
     {
         return $this->createQueryBuilder('i')
-                ->where('i.nameId = :nameId')
-                ->setParameter('nameId', $nameId->getNameId())
-                ->andWhere('i.institution = :institution')
-                ->setParameter('institution', $institution->getInstitution())
-                ->getQuery()
-                ->getSingleResult();
-    }
-
-    public function findOneByNameId(string $nameId) :? Identity
-    {
-        return $this->findOneBy(['nameId' => $nameId]);
-    }
-
-    public function removeByIdentityId(IdentityId $identityId)
-    {
-        $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'i')
-            ->where('i.id = :identityId')
-            ->setParameter('identityId', $identityId->getIdentityId())
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @param Institution $institution
-     * @return ArrayCollection|Identity[]
-     */
-    public function findByInstitution(Institution $institution)
-    {
-        return $this->createQueryBuilder('i')
-            ->where('i.institution = :institution')
+            ->where('i.nameId = :nameId')
+            ->setParameter('nameId', $nameId->getNameId())
+            ->andWhere('i.institution = :institution')
             ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
-            ->getResult();
+            ->getSingleResult();
+    }
+
+    public function findOneByNameId(string $nameId): ?Identity
+    {
+        return $this->findOneBy(['nameId' => $nameId]);
     }
 }

@@ -20,44 +20,29 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 
 final class SelectRaaOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    public $selectRaaOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        InstitutionAuthorizationOption $selectRaaOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public InstitutionAuthorizationOption $selectRaaOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->selectRaaOption = $selectRaaOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $institution = new Institution($data['institution']);
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             $institution,
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $data['select_raa_option'])
+            InstitutionAuthorizationOption::fromInstitutionConfig(
+                InstitutionRole::selectRaa(),
+                $data['select_raa_option'],
+            ),
         );
     }
 

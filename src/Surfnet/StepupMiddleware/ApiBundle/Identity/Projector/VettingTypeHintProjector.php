@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettingTypeHint;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
@@ -32,17 +31,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintReposi
  */
 class VettingTypeHintProjector extends Projector
 {
-    /**
-     * @var VettingTypeHintRepository
-     */
-    private $vettingTypeHintRepository;
-
-    public function __construct(VettingTypeHintRepository $vettingTypeHintRepository)
+    public function __construct(private readonly VettingTypeHintRepository $vettingTypeHintRepository)
     {
-        $this->vettingTypeHintRepository = $vettingTypeHintRepository;
     }
 
-    public function applyVettingTypeHintsSavedEvent(VettingTypeHintsSavedEvent $event)
+    public function applyVettingTypeHintsSavedEvent(VettingTypeHintsSavedEvent $event): void
     {
         $entity = $this->vettingTypeHintRepository->find($event->institution);
         if (!$entity) {

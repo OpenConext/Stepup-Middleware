@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,19 +20,23 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 
 class TimeFrameTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
-     * @dataProvider invalidValueProvider
+     * @dataProvider invalidValueProviderInt
      */
-    public function it_cannot_be_given_an_non_positive_amount_of_seconds($invalidValue)
+    public function it_cannot_be_given_an_non_positive_amount_of_seconds(int $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         TimeFrame::ofSeconds($invalidValue);
     }
@@ -39,7 +45,7 @@ class TimeFrameTest extends UnitTest
      * @test
      * @group domain
      */
-    public function to_string_output_matches_amount_of_seconds_as_string()
+    public function to_string_output_matches_amount_of_seconds_as_string(): void
     {
         $seconds = 1000;
 
@@ -47,24 +53,19 @@ class TimeFrameTest extends UnitTest
 
         $this->assertEquals(
             '1000',
-            (string) $timeFrame,
-            'The amount of seconds as string must match timeFrame::__toString'
+            (string)$timeFrame,
+            'The amount of seconds as string must match timeFrame::__toString',
         );
     }
 
     /**
      * dataprovider
      */
-    public function invalidValueProvider()
+    public function invalidValueProviderInt(): array
     {
         return [
-            'empty string' => [''],
-            'string'       => ['abc'],
-            'array'        => [[]],
-            'float'        => [2.718],
-            'zero'         => [0],
+            'zero' => [0],
             'negative int' => [-1],
-            'object'       => [new \StdClass()],
         ];
     }
 }

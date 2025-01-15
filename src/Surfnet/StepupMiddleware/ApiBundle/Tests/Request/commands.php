@@ -16,16 +16,20 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command {
+
+    use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+
+    class FooBarCommand extends AbstractCommand
     {
     }
 }
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
-{
-    class QuuxCommand
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns {
+
+    use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+
+    class QuuxCommand extends AbstractCommand
     {
     }
 }

@@ -29,26 +29,26 @@ use Surfnet\Stepup\Identity\Value\NameId;
  */
 class NameIdType extends Type
 {
-    const NAME = 'stepup_name_id';
+    public const NAME = 'stepup_name_id';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?NameId
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
@@ -57,7 +57,7 @@ class NameIdType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -66,7 +66,7 @@ class NameIdType extends Type
         return $nameId;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

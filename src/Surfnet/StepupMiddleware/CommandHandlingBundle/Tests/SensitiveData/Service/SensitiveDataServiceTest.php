@@ -19,24 +19,31 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
 final class SensitiveDataServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group sensitive-data
      */
-    public function it_can_forget_sensitive_data_in_a_stream()
+    public function it_can_forget_sensitive_data_in_a_stream(): void
     {
         $identityId = new IdentityId('A');
 
-        $sensitiveDataMessageStream = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream');
+        $sensitiveDataMessageStream = m::mock(SensitiveDataMessageStream::class);
         $sensitiveDataMessageStream->shouldReceive('forget')->once();
-        $sensitiveDataMessageRepository = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository');
-        $sensitiveDataMessageRepository->shouldReceive('findByIdentityId')->with($identityId)->once()->andReturn($sensitiveDataMessageStream);
+        $sensitiveDataMessageRepository = m::mock(SensitiveDataMessageRepository::class);
+        $sensitiveDataMessageRepository->shouldReceive('findByIdentityId')->with($identityId)->once()->andReturn(
+            $sensitiveDataMessageStream,
+        );
         $sensitiveDataMessageRepository->shouldReceive('modify')->with($sensitiveDataMessageStream);
 
         $service = new SensitiveDataService($sensitiveDataMessageRepository);

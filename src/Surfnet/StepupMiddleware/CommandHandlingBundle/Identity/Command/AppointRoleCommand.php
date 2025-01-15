@@ -25,33 +25,27 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AppointRoleCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var
-     */
-    public $role;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $raInstitution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $role;
 
     /**
-     * @inheritDoc
+     * @var string
      */
-    public function getRaInstitution()
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $raInstitution;
+
+    public function getRaInstitution(): string
     {
         return $this->raInstitution;
     }

@@ -30,23 +30,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhite
 
 class WhitelistCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository
-     */
-    private $repository;
-
-    /**
-     * @param RepositoryInterface  $repository
-     */
-    public function __construct(RepositoryInterface $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly RepositoryInterface $repository,
+    ) {
     }
 
-    /**
-     * @param ReplaceWhitelistCommand $command
-     */
-    public function handleReplaceWhitelistCommand(ReplaceWhitelistCommand $command)
+    public function handleReplaceWhitelistCommand(ReplaceWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -56,10 +45,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @param AddToWhitelistCommand $command
-     */
-    public function handleAddToWhitelistCommand(AddToWhitelistCommand $command)
+    public function handleAddToWhitelistCommand(AddToWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -69,10 +55,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @param RemoveFromWhitelistCommand $command
-     */
-    public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command)
+    public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -82,26 +65,22 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @return Whitelist
-     */
-    private function getWhitelist()
+    private function getWhitelist(): Whitelist
     {
         try {
-            return $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
-        } catch (AggregateNotFoundException $e) {
+            $whitelist = $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
+            assert($whitelist instanceof Whitelist);
+            return $whitelist;
+        } catch (AggregateNotFoundException) {
             return Whitelist::create(new InstitutionCollection());
         }
     }
 
     /**
-     * @param array $institutions
      * @return Institution[]
      */
-    private function mapArrayToInstitutions(array $institutions)
+    private function mapArrayToInstitutions(array $institutions): array
     {
-        return array_map(function ($institutionName) {
-            return new Institution($institutionName);
-        }, $institutions);
+        return array_map(fn($institutionName): Institution => new Institution($institutionName), $institutions);
     }
 }

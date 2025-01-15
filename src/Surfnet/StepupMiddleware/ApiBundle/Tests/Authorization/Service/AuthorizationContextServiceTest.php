@@ -19,7 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Configuration\Value\Institution as StepupConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -31,6 +34,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
@@ -39,29 +43,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
 class AuthorizationContextServiceTest extends TestCase
 {
-    /**
-     * @var AuthorizationContextService
-     */
-    private $service;
+    use MockeryPHPUnitIntegration;
 
-    /**
-     * @var IdentityService|m\Mock
-     */
-    private $identityService;
+    private AuthorizationContextService $service;
 
-    /**
-     * @var SraaService|m\Mock
-     */
-    private $sraaService;
+    private IdentityService&MockInterface $identityService;
 
-    /**
-     * @var AuthorizationRepository|m\Mock
-     */
-    private $authorizationRepository;
-    /**
-     * @var m\Mock&ConfiguredInstitutionRepository
-     */
-    private $institutionRepo;
+    private SraaService&MockInterface $sraaService;
+
+    private AuthorizationRepository&MockInterface $authorizationRepository;
+
+    private MockInterface&ConfiguredInstitutionRepository $institutionRepo;
 
     public function setUp(): void
     {
@@ -73,7 +65,7 @@ class AuthorizationContextServiceTest extends TestCase
             $sraaService,
             $identityService,
             $this->institutionRepo,
-            $authorizationRepository
+            $authorizationRepository,
         );
 
         $this->identityService = $identityService;
@@ -86,7 +78,7 @@ class AuthorizationContextServiceTest extends TestCase
      * @test
      * @group domain
      */
-    public function it_can_build_a_context()
+    public function it_can_build_a_context(): void
     {
         $actorInstitution = new Institution('institution-a');
         $role = RegistrationAuthorityRole::raa();
@@ -106,7 +98,7 @@ class AuthorizationContextServiceTest extends TestCase
             $arbitraryNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
 
         $identityId = new IdentityId($arbitraryId);
@@ -128,7 +120,7 @@ class AuthorizationContextServiceTest extends TestCase
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
-            $role
+            $role,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -139,7 +131,7 @@ class AuthorizationContextServiceTest extends TestCase
      * @test
      * @group domain
      */
-    public function it_can_build_a_context_with_sraa_actor()
+    public function it_can_build_a_context_with_sraa_actor(): void
     {
         $actorInstitution = new Institution('institution-a');
         $role = RegistrationAuthorityRole::raa();
@@ -159,7 +151,7 @@ class AuthorizationContextServiceTest extends TestCase
             $adminNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
         $sraa = m::mock(Sraa::class);
 
@@ -183,21 +175,21 @@ class AuthorizationContextServiceTest extends TestCase
         $configuredInstitutions = [];
         foreach ($institutions as $institution) {
             $ci = new ConfiguredInstitution();
-            $ci->institution = $institution->getInstitution();
+            $ci->institution = new StepupConfigurationInstitution($institution->getInstitution());
             $configuredInstitutions[] = $ci;
         }
         $this->institutionRepo->shouldReceive('findAll')->andReturn($configuredInstitutions);
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
-            $role
+            $role,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
         $this->assertTrue($context->isActorSraa());
     }
 
-    public function test_it_can_retrieve_select_raa_institutions()
+    public function test_it_can_retrieve_select_raa_institutions(): void
     {
         $actorInstitution = new Institution('institution-a');
 
@@ -216,7 +208,7 @@ class AuthorizationContextServiceTest extends TestCase
             $arbitraryNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
 
         $identityId = new IdentityId($arbitraryId);
@@ -237,7 +229,7 @@ class AuthorizationContextServiceTest extends TestCase
             ->andReturn($institutions);
 
         $context = $this->service->buildSelectRaaInstitutionAuthorizationContext(
-            $identityId
+            $identityId,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -248,10 +240,10 @@ class AuthorizationContextServiceTest extends TestCase
      * @test
      * @group domain
      */
-    public function it_rejects_unknown_actor()
+    public function it_rejects_unknown_actor(): void
     {
         $this->expectExceptionMessage("The provided id is not associated with any known identity");
-        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $role = RegistrationAuthorityRole::raa();
 
@@ -264,7 +256,7 @@ class AuthorizationContextServiceTest extends TestCase
 
         $this->service->buildInstitutionAuthorizationContext(
             new IdentityId($actorId),
-            $role
+            $role,
         );
     }
 }

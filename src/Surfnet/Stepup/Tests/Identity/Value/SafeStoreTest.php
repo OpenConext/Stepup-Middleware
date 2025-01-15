@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -28,10 +29,12 @@ use function password_verify;
 
 class SafeStoreTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @group domain
      */
-    public function test_creation_of_safe_store()
+    public function test_creation_of_safe_store(): void
     {
         $unhashed = new UnhashedSecret('super-secret');
         $instance = new SafeStore($unhashed->hashSecret());
@@ -42,7 +45,7 @@ class SafeStoreTest extends UnitTest
     /**
      * @group domain
      */
-    public function test_equals()
+    public function test_equals(): void
     {
         $safeStore = new SafeStore(new UnhashedSecret('a'));
         $safeStore2 = new SafeStore(new UnhashedSecret('a'));

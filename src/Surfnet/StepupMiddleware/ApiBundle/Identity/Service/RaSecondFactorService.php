@@ -18,51 +18,39 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 
 class RaSecondFactorService extends AbstractSearchService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository
-     */
-    private $repository;
-
-    /**
-     * @param RaSecondFactorRepository $repository
-     */
-    public function __construct(RaSecondFactorRepository $repository)
+    public function __construct(private readonly RaSecondFactorRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
-     * @param RaSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta<RaSecondFactor>
      */
-    public function search(RaSecondFactorQuery $query)
+    public function search(RaSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return array
      */
-    public function getFilterOptions(RaSecondFactorQuery $query)
+    public function getFilterOptions(RaSecondFactorQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->repository->createOptionsQuery($query));
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return array
      */
-    public function searchUnpaginated(RaSecondFactorQuery $query)
+    public function searchUnpaginated(RaSecondFactorQuery $query): array
     {
         return $this->repository->createSearchQuery($query)->getResult();
     }

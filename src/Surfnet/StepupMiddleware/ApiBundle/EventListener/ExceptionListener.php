@@ -34,30 +34,25 @@ use Throwable;
  */
 class ExceptionListener
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $throwable = $event->getThrowable();
 
         $this->logException($throwable);
 
-        if ($throwable instanceof HttpExceptionInterface && $throwable instanceof Throwable) {
+        if ($throwable instanceof HttpExceptionInterface) {
             $statusCode = $throwable->getStatusCode();
             $headers = $throwable->getHeaders();
         } else {
             $statusCode = $throwable instanceof BadApiRequestException
-                    || $throwable instanceof BadCommandRequestException
-                    || $throwable instanceof DomainException
-                    || $throwable instanceof AggregateNotFoundException
+            || $throwable instanceof BadCommandRequestException
+            || $throwable instanceof DomainException
+            || $throwable instanceof AggregateNotFoundException
                 ? 400
                 : 500;
 
@@ -67,7 +62,7 @@ class ExceptionListener
         $event->setResponse($this->createJsonErrorResponse($throwable, $statusCode, $headers));
     }
 
-    private function logException(Throwable $throwable)
+    private function logException(Throwable $throwable): void
     {
         # As per \Symfony\Component\HttpKernel\EventListener\ExceptionListener#logException().
         $isCritical = !$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() >= 500;
@@ -79,13 +74,7 @@ class ExceptionListener
         }
     }
 
-    /**
-     * @param Throwable $exception
-     * @param int $statusCode
-     * @param array $headers OPTIONAL
-     * @return JsonResponse
-     */
-    private function createJsonErrorResponse(Throwable $throwable, $statusCode, $headers = [])
+    private function createJsonErrorResponse(Throwable $throwable, int $statusCode, array $headers = []): JsonResponse
     {
         if ($throwable instanceof BadApiRequestException
             || $throwable instanceof BadCommandRequestException
@@ -93,7 +82,7 @@ class ExceptionListener
         ) {
             $errors = $throwable->getErrors();
         } else {
-            $errors = [sprintf('%s: %s', get_class($throwable), $throwable->getMessage())];
+            $errors = [sprintf('%s: %s', $throwable::class, $throwable->getMessage())];
         }
 
         return new JsonResponse(['errors' => $errors], $statusCode, $headers);

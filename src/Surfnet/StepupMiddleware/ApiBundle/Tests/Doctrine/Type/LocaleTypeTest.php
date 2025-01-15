@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,37 +20,38 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType;
 
 class LocaleTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(LocaleType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType');
+        Type::addType(LocaleType::NAME, LocaleType::class);
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $locale = Type::getType(LocaleType::NAME);
 
@@ -61,12 +64,12 @@ class LocaleTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $locale = Type::getType(LocaleType::NAME);
 
         $expected = 'en_GB';
-        $input  = new Locale('en_GB');
+        $input = new Locale('en_GB');
         $output = $locale->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -77,7 +80,7 @@ class LocaleTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $locale = Type::getType(LocaleType::NAME);
 
@@ -90,7 +93,7 @@ class LocaleTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_locale_value_object()
+    public function a_non_null_value_is_converted_to_a_locale_value_object(): void
     {
         $locale = Type::getType(LocaleType::NAME);
 
@@ -98,7 +101,7 @@ class LocaleTypeTest extends UnitTest
 
         $output = $locale->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Locale', $output);
+        $this->assertInstanceOf(Locale::class, $output);
         $this->assertEquals(new Locale($input), $output);
     }
 
@@ -106,9 +109,9 @@ class LocaleTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $locale = Type::getType(LocaleType::NAME);
 

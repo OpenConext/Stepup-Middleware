@@ -26,50 +26,42 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of the second factor to create.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
 
     /**
      * The SecondFactorType identifier.
      *
      * For example in the case of a Tiqr GSSP it would be 'tiqr'.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $stepupProvider;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $stepupProvider;
 
     /**
      * The identifier of the generic Stepup second factor type
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $gssfId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $gssfId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

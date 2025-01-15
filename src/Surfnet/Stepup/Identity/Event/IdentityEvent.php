@@ -27,19 +27,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
  */
 abstract class IdentityEvent implements AuditableEvent, SerializableInterface
 {
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
-
-    /**
-     * @var Institution
-     */
-    public $identityInstitution;
-
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
+    public function __construct(public IdentityId $identityId, public Institution $identityInstitution)
     {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
     }
 }

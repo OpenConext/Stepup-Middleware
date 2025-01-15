@@ -25,32 +25,35 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
     ];
 
     final public function __construct(
         IdentityId $identityId,
-        Institution $identityInstitution
+        Institution $identityInstitution,
     ) {
         parent::__construct($identityId, $identityInstitution);
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         return new static(
             new IdentityId($data['identity_id']),
-            new Institution($data['identity_institution'])
+            new Institution($data['identity_institution']),
         );
     }
 
@@ -60,8 +63,8 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
     final public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'identity_institution'     => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
         ];
     }
 
@@ -70,6 +73,9 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

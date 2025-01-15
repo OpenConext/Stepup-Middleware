@@ -23,11 +23,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $treeBuilder->root('surfnet_stepup_gateway_gateway');
-
-        return $treeBuilder;
+        return new TreeBuilder('surfnet_stepup_gateway_gateway');
     }
 }

@@ -18,18 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType;
 
 class InstitutionTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -38,20 +39,20 @@ class InstitutionTypeTest extends UnitTest
     {
         Type::addType(
             InstitutionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType'
+            InstitutionType::class,
         );
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 
@@ -64,13 +65,13 @@ class InstitutionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 
         $expected = 'an institution';
-        $input    = new Institution($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new Institution($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -80,7 +81,7 @@ class InstitutionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 
@@ -93,7 +94,7 @@ class InstitutionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_configuration_institution_value_object()
+    public function a_non_null_value_is_converted_to_a_configuration_institution_value_object(): void
     {
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 
@@ -101,7 +102,7 @@ class InstitutionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Institution', $output);
+        $this->assertInstanceOf(Institution::class, $output);
         $this->assertEquals(new Institution($input), $output);
     }
 
@@ -109,9 +110,9 @@ class InstitutionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 

@@ -19,11 +19,14 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
+/**
+ * @extends ServiceEntityRepository<Sraa>
+ */
 class SraaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -34,22 +37,22 @@ class SraaRepository extends ServiceEntityRepository
     /**
      * Removes all SRAA's from the database
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa'
+                'DELETE FROM '.Sraa::class,
             )
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**
      * Saves all SRAAs to the database, using inserts only
-     *
-     * @param array $sraaList
      */
-    public function saveAll(array $sraaList)
+    public function saveAll(array $sraaList): void
     {
         $invalid = [];
         foreach ($sraaList as $index => $sraa) {
@@ -58,20 +61,21 @@ class SraaRepository extends ServiceEntityRepository
             }
         }
 
-        if (count($invalid)) {
+        if ($invalid !== []) {
             $invalidIndications = [];
             foreach ($invalid as $index => $value) {
                 $invalidIndications[] = sprintf(
                     '"%s" at index "%d"',
-                    is_object($value) ? get_class($value) : gettype($value)
+                    get_debug_type($value),
+                    $index
                 );
             }
 
             throw new InvalidArgumentException(
                 sprintf(
                     'Expected array of Raa Objects, got %s',
-                    implode(', ', $invalidIndications)
-                )
+                    implode(', ', $invalidIndications),
+                ),
             );
         }
 
@@ -84,20 +88,15 @@ class SraaRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param NameId $nameId
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa
-     */
-    public function findByNameId(NameId $nameId)
+    public function findByNameId(NameId $nameId): ?Sraa
     {
-        return $this->findOneBy(['nameId' => (string) $nameId]);
+        return $this->findOneBy(['nameId' => (string)$nameId]);
     }
 
     /**
-     * @param NameId $nameId
      * @return boolean
      */
-    public function contains(NameId $nameId)
+    public function contains(NameId $nameId): bool
     {
         return $this->findByNameId($nameId) !== null;
     }

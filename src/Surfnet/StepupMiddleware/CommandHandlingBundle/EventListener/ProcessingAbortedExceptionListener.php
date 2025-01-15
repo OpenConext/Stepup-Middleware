@@ -21,17 +21,18 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\ProcessingAbortedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ProcessingAbortedExceptionListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [KernelEvents::EXCEPTION => 'onKernelException'];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $throwable = $event->getThrowable();
 
@@ -39,12 +40,14 @@ class ProcessingAbortedExceptionListener implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new JsonResponse(
-            [
-                'exception' => get_class($throwable),
-                'errors' => $throwable->getErrors(),
-            ],
-            400
-        ));
+        $event->setResponse(
+            new JsonResponse(
+                [
+                    'exception' => $throwable::class,
+                    'errors' => $throwable->getErrors(),
+                ],
+                Response::HTTP_BAD_REQUEST,
+            ),
+        );
     }
 }

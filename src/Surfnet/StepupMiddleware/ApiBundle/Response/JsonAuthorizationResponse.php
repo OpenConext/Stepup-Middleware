@@ -30,16 +30,16 @@ class JsonAuthorizationResponse extends JsonResponse
         Assertion::allString($errors, 'The error messages should all be strings');
 
         $data = [
-            'code' => $code
+            'code' => $code,
         ];
-        if ($errors) {
+        if ($errors !== []) {
             $data['errors'] = $errors;
         }
         // Don't confuse the HTTP status code with the authorization status code
         parent::__construct($data, 200);
     }
 
-    public static function from(AuthorizationDecision $decision)
+    public static function from(AuthorizationDecision $decision): self
     {
         return new self($decision->getCode(), $decision->getErrorMessages());
     }

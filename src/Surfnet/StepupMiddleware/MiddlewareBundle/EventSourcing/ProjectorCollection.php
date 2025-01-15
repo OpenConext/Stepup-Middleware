@@ -20,42 +20,40 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
 use ArrayIterator;
 use Broadway\EventHandling\EventListener as ProjectorInterface;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
+/**
+ * @implements IteratorAggregate<ProjectorInterface>
+ */
 final class ProjectorCollection implements IteratorAggregate
 {
     /**
      * @var ProjectorInterface[]
      */
-    private $projectors = [];
+    private array $projectors = [];
 
-    /**
-     * @param ProjectorInterface $projector
-     */
-    public function add(ProjectorInterface $projector)
+    public function add(ProjectorInterface $projector): void
     {
-        $this->projectors[get_class($projector)] = $projector;
+        $this->projectors[$projector::class] = $projector;
     }
 
     /**
      * @return string[]
      */
-    public function getProjectorNames()
+    public function getProjectorNames(): array
     {
         return array_map(
-            function (ProjectorInterface $projector) {
-                return get_class($projector);
-            },
-            array_values($this->projectors)
+            fn(ProjectorInterface $projector): string => $projector::class,
+            array_values($this->projectors),
         );
     }
 
     /**
-     * @param array $projectorNames
      * @return ProjectorCollection
      */
-    public function selectByNames(array $projectorNames)
+    public function selectByNames(array $projectorNames): ProjectorCollection
     {
         $subsetCollection = new ProjectorCollection;
 
@@ -64,8 +62,8 @@ final class ProjectorCollection implements IteratorAggregate
                 throw new InvalidArgumentException(
                     sprintf(
                         'Cannot select a subset of projectors, because projector "%s" is not present in the collection',
-                        $projectorName
-                    )
+                        $projectorName,
+                    ),
                 );
             }
 
@@ -76,15 +74,14 @@ final class ProjectorCollection implements IteratorAggregate
     }
 
     /**
-     * @param ProjectorInterface $projector
      * @return bool
      */
-    public function contains(ProjectorInterface $projector)
+    public function contains(ProjectorInterface $projector): bool
     {
-        return array_key_exists(get_class($projector), $this->projectors);
+        return array_key_exists($projector::class, $this->projectors);
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->projectors);
     }

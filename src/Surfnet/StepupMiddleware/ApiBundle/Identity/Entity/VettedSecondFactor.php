@@ -19,80 +19,49 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\VettingType;
-use function is_null;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_vetted_second_factor_type", columns={"type"}),
- *          @ORM\Index(name="idx_vetted_second_factor_vetting_type", columns={"vetting_type"}),
- *     }
- * )
- */
-class VettedSecondFactor implements \JsonSerializable
+#[ORM\Table]
+#[ORM\Index(name: 'idx_vetted_second_factor_type', columns: ['type'])]
+#[ORM\Index(name: 'idx_vetted_second_factor_vetting_type', columns: ['vetting_type'])]
+#[ORM\Entity(repositoryClass: VettedSecondFactorRepository::class)]
+class VettedSecondFactor implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
-    /**
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
-    /**
-     * @ORM\Column(length=16)
-     *
-     * @var string
-     */
-    public $type;
+    #[ORM\Column(length: 16)]
+    public string $type;
 
-    /**
-     * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     *
-     * @ORM\Column(length=255)
-     *
-     * @var string
-     */
-    public $secondFactorIdentifier;
+    #[ORM\Column(length: 255)]
+    public string $secondFactorIdentifier;
 
-    /**
-     * @ORM\Column(length=255, nullable=true)
-     * @var string
-     */
-    public $vettingType;
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $vettingType = null;
 
-    /**
-     * @param VettedSecondFactor $vettedSecondFactor
-     * @return bool
-     */
     public function isEqual(VettedSecondFactor $vettedSecondFactor): bool
     {
-        return $vettedSecondFactor->type == $this->type && $vettedSecondFactor->secondFactorIdentifier == $this->secondFactorIdentifier;
+        return $vettedSecondFactor->type === $this->type && $vettedSecondFactor->secondFactorIdentifier === $this->secondFactorIdentifier;
     }
 
     public function vettingType(): string
     {
-        if (is_null($this->vettingType)) {
+        if (!$this->vettingType) {
             return VettingType::TYPE_ON_PREMISE;
         }
         return $this->vettingType;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'vetting_type' => $this->vettingType,

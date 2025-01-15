@@ -31,28 +31,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\Sens
 /**
  * Event store decorator that loads and appends the sensitive data of events into a separate data store.
  */
-final class SensitiveDataEventStoreDecorator implements EventStoreInterface
+final readonly class SensitiveDataEventStoreDecorator implements EventStoreInterface
 {
-    /**
-     * @var EventStoreInterface
-     */
-    private $decoratedEventStore;
-
-    /**
-     * @var SensitiveDataMessageRepository
-     */
-    private $sensitiveDataMessageRepository;
-
-    /**
-     * @param EventStoreInterface $decoratedEventStore
-     * @param SensitiveDataMessageRepository $sensitiveDataMessageRepository
-     */
     public function __construct(
-        EventStoreInterface $decoratedEventStore,
-        SensitiveDataMessageRepository $sensitiveDataMessageRepository
+        private EventStoreInterface $decoratedEventStore,
+        private SensitiveDataMessageRepository $sensitiveDataMessageRepository,
     ) {
-        $this->decoratedEventStore = $decoratedEventStore;
-        $this->sensitiveDataMessageRepository = $sensitiveDataMessageRepository;
     }
 
     public function load($id): DomainEventStreamInterface
@@ -85,7 +69,7 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
             $sensitiveDataMessages[] = new SensitiveDataMessage(
                 $id,
                 $message->getPlayhead(),
-                $event->getSensitiveData()
+                $event->getSensitiveData(),
             );
         }
 
@@ -109,15 +93,12 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
         return $domainEventStream;
     }
 
-    /**
-     * @param DomainEventStreamInterface $stream
-     */
-    public function assertIdentityAggregate(DomainEventStreamInterface $stream)
+    public function assertIdentityAggregate(DomainEventStreamInterface $stream): void
     {
         foreach ($stream as $message) {
             if (!$message->getPayload() instanceof IdentityEvent) {
                 throw new InvalidArgumentException(
-                    'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
+                    'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id',
                 );
             }
         }

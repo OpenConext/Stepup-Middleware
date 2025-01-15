@@ -18,109 +18,75 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 
 class VerifiedTokenInformation
 {
-    private $email;
-
-    private $tokenId;
-
-    private $tokenType;
-
-    private $commonName;
-
-    private $requestedAt;
-
-    private $preferredLocale;
-
-    private $institution;
-
-    private $registrationCode;
-
-    /**
-     * @param $email
-     * @param $tokenId
-     * @param $tokenType
-     * @param $commonName
-     * @param $requestedAt
-     * @param $preferredLocale
-     * @param $institution
-     * @param $registrationCode
-     */
     public function __construct(
-        $email,
-        $tokenId,
-        $tokenType,
-        $commonName,
-        $requestedAt,
-        $preferredLocale,
-        $institution,
-        $registrationCode
+        private readonly string $email,
+        private readonly string $tokenId,
+        private readonly string $tokenType,
+        private readonly string $commonName,
+        private readonly DateTime $requestedAt,
+        private readonly string $preferredLocale,
+        private readonly Institution $institution,
+        private readonly string $registrationCode,
     ) {
-        $this->email = $email;
-        $this->tokenId = $tokenId;
-        $this->tokenType = $tokenType;
-        $this->commonName = $commonName;
-        $this->requestedAt = $requestedAt;
-        $this->preferredLocale = $preferredLocale;
-        $this->institution = $institution;
-        $this->registrationCode = $registrationCode;
     }
 
-    public static function fromEntity(VerifiedSecondFactor $token, Identity $identity)
+    public static function fromEntity(VerifiedSecondFactor $token, Identity $identity): self
     {
-        $tokenInformation = new self(
-            (string) $identity->email,
+        return new self(
+            (string)$identity->email,
             $token->id,
             $token->type,
-            (string) $identity->commonName,
+            (string)$identity->commonName,
             $token->registrationRequestedAt,
-            (string) $identity->preferredLocale,
+            (string)$identity->preferredLocale,
             $identity->institution,
-            $token->registrationCode
+            $token->registrationCode,
         );
-
-        return $tokenInformation;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getTokenId()
+    public function getTokenId(): string
     {
         return $this->tokenId;
     }
 
-    public function getTokenType()
+    public function getTokenType(): string
     {
         return $this->tokenType;
     }
 
-    public function getCommonName()
+    public function getCommonName(): string
     {
         return $this->commonName;
     }
 
-    public function getRequestedAt()
+    public function getRequestedAt(): DateTime
     {
         return $this->requestedAt;
     }
 
-    public function getPreferredLocale()
+    public function getPreferredLocale(): string
     {
         return $this->preferredLocale;
     }
 
-    public function getInstitution()
+    public function getInstitution(): Institution
     {
         return $this->institution;
     }
 
-    public function getRegistrationCode()
+    public function getRegistrationCode(): string
     {
         return $this->registrationCode;
     }

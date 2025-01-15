@@ -22,33 +22,20 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
 class AllowedSecondFactorListService
 {
-    /**
-     * @var AllowedSecondFactorRepository
-     */
-    private $allowedSecondFactorRepository;
-
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $configuredInstitutionRepository;
-
     public function __construct(
-        AllowedSecondFactorRepository $allowedSecondFactoryRepository,
-        ConfiguredInstitutionRepository $configuredInstitutionRepository
+        private readonly AllowedSecondFactorRepository $allowedSecondFactorRepository,
     ) {
-        $this->allowedSecondFactorRepository   = $allowedSecondFactoryRepository;
-        $this->configuredInstitutionRepository = $configuredInstitutionRepository;
     }
 
-    public function getAllowedSecondFactorListFor(Institution $institution)
+    public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
-        $allowedSecondFactors = array_map(function (AllowedSecondFactor $allowedSecondFactor) {
-            return $allowedSecondFactor->secondFactorType;
-        }, $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution));
+        $allowedSecondFactors = array_map(
+            fn(AllowedSecondFactor $allowedSecondFactor): \Surfnet\StepupBundle\Value\SecondFactorType => $allowedSecondFactor->secondFactorType,
+            $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution),
+        );
 
         return AllowedSecondFactorList::ofTypes($allowedSecondFactors);
     }
@@ -56,7 +43,7 @@ class AllowedSecondFactorListService
     /**
      * @return AllowedSecondFactorMap
      */
-    public function getAllowedSecondFactorMap()
+    public function getAllowedSecondFactorMap(): AllowedSecondFactorMap
     {
         return AllowedSecondFactorMap::from($this->allowedSecondFactorRepository->findAll());
     }

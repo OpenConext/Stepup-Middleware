@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\JsonHelper;
@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
@@ -46,62 +46,20 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 final class InstitutionConfigurationController extends AbstractController
 {
-    /**
-     * @return InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
-
-    /**
-     * @return InstitutionAuthorizationService
-     */
-    private $institutionAuthorizationService;
-
-    /**
-     * @return ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @return AllowedSecondFactorListService
-     */
-    private $allowedSecondFactorListService;
-
-    /**
-     * @return LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
-
     public function __construct(
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        InstitutionAuthorizationService $institutionAuthorizationService,
-        ValidatorInterface $dataCollectingValidator,
-        AllowedSecondFactorListService $allowedSecondFactorListService,
-        LoggerInterface $logger,
-        TransactionAwarePipeline $pipeline,
-        DBALConnectionHelper $dbalConnectionHelper
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private readonly InstitutionAuthorizationService $institutionAuthorizationService,
+        private readonly ValidatorInterface $validator,
+        private readonly AllowedSecondFactorListService $allowedSecondFactorListService,
+        private readonly LoggerInterface $logger,
+        private readonly TransactionAwarePipeline $pipeline,
+        private DBALConnectionHelper $connectionHelper,
     ) {
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->institutionAuthorizationService = $institutionAuthorizationService;
-        $this->validator = $dataCollectingValidator;
-        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
-        $this->logger = $logger;
-        $this->pipeline = $pipeline;
-        $this->connectionHelper = $dbalConnectionHelper;
     }
 
-    public function showAction()
+    public function show(): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findAllInstitutionConfigurationOptions();
@@ -127,20 +85,26 @@ final class InstitutionConfigurationController extends AbstractController
                 'allow_self_asserted_tokens' => $options->selfAssertedTokensOption,
                 'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
-                    $options->institution
+                    $options->institution,
                 ),
-                'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
-                'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
-                'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
+                'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                    InstitutionRole::useRa(),
+                )->jsonSerialize(),
+                'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                    InstitutionRole::useRaa(),
+                )->jsonSerialize(),
+                'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                    InstitutionRole::selectRaa(),
+                )->jsonSerialize(),
             ];
         }
 
         return new JsonResponse($overview);
     }
 
-    public function reconfigureAction(Request $request)
+    public function reconfigure(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $configuration = JsonHelper::decode($request->getContent());
 
@@ -150,29 +114,29 @@ final class InstitutionConfigurationController extends AbstractController
         }
 
         if (empty($configuration)) {
-            $this->logger->notice(sprintf('No institutions to reconfigure: empty configuration received'));
+            $this->logger->notice('No institutions to reconfigure: empty configuration received');
 
             return new JsonResponse([
-                'status'       => 'OK',
-                'processed_by' =>  $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
-                'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
+                'status' => 'OK',
+                'processed_by' => $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
+                'applied_at' => (new DateTime())->format(DateTime::ISO8601),
             ]);
         }
 
         $commands = [];
         foreach ($configuration as $institution => $options) {
-            $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
-            $command->UUID                            = (string) Uuid::uuid4();
-            $command->institution                     = $institution;
-            $command->useRaLocationsOption            = $options['use_ra_locations'];
+            $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+            $command->UUID = (string)Uuid::uuid4();
+            $command->institution = $institution;
+            $command->useRaLocationsOption = $options['use_ra_locations'];
             $command->showRaaContactInformationOption = $options['show_raa_contact_information'];
-            $command->verifyEmailOption               = $options['verify_email'];
+            $command->verifyEmailOption = $options['verify_email'];
             $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
-            $command->allowedSecondFactors            = $options['allowed_second_factors'];
+            $command->allowedSecondFactors = $options['allowed_second_factors'];
             // The useRa, useRaa and selectRaa options are optional
-            $command->useRaOption = isset($options['use_ra']) ? $options['use_ra'] : null;
-            $command->useRaaOption = isset($options['use_raa']) ? $options['use_raa'] : null;
-            $command->selectRaaOption = isset($options['select_raa']) ? $options['select_raa'] : null;
+            $command->useRaOption = $options['use_ra'] ?? null;
+            $command->useRaaOption = $options['use_raa'] ?? null;
+            $command->selectRaaOption = $options['select_raa'] ?? null;
             // So are sso_on_2fa and the allow_self_asserted_tokens options
             $command->selfVetOption = $options['self_vet'] ?? null;
             $command->ssoOn2faOption = $options['sso_on_2fa'] ?? null;
@@ -182,23 +146,23 @@ final class InstitutionConfigurationController extends AbstractController
         }
 
         $this->logger->notice(
-            sprintf('Executing %s reconfigure institution configuration options commands', count($commands))
+            sprintf('Executing %s reconfigure institution configuration options commands', count($commands)),
         );
 
         $this->handleCommands($commands);
 
         return new JsonResponse([
-            'status'       => 'OK',
-            'processed_by' =>  $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
+            'status' => 'OK',
+            'processed_by' => $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
         ]);
     }
 
     /**
-     * @param Command[] $commands
+     * @param AbstractCommand[] $commands
      * @throws Exception
      */
-    private function handleCommands(array $commands)
+    private function handleCommands(array $commands): void
     {
         $connectionHelper = $this->connectionHelper;
 
@@ -212,7 +176,7 @@ final class InstitutionConfigurationController extends AbstractController
 
                 throw new AccessDeniedHttpException(
                     sprintf('Processing of command "%s" is forbidden for this client', $command),
-                    $e
+                    $e,
                 );
             } catch (Exception $exception) {
                 $connectionHelper->rollBack();

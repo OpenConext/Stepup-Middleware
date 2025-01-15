@@ -29,33 +29,30 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
  */
 class SecondFactorStatusType extends Type
 {
-    const NAME = 'stepup_second_factor_status';
+    public const NAME = 'stepup_second_factor_status';
 
     /**
-     * @param array            $fieldDeclaration
+     * @param array $column
      * @param AbstractPlatform $platform
      * @return string
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     /**
-     * @param mixed            $value
-     * @param AbstractPlatform $platform
-     * @return int
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): int
     {
         if (!$value instanceof SecondFactorStatus) {
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal second factor status of type %s '%s', expected a SecondFactorStatus instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -71,17 +68,17 @@ class SecondFactorStatusType extends Type
             return 40;
         }
 
-        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
+        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string)$value));
     }
 
     /**
-     * @param mixed            $value
-     * @param AbstractPlatform $platform
-     * @return SecondFactorStatus
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): SecondFactorStatus
     {
+        if (is_scalar($value)) {
+            $value = (string)$value;
+        }
         if ($value === '0') {
             return SecondFactorStatus::unverified();
         } elseif ($value === '10') {
@@ -97,13 +94,13 @@ class SecondFactorStatusType extends Type
         throw new ConversionException(
             sprintf(
                 "Encountered illegal second factor status of type %s '%s', expected it to be one of [0,10,20,30,40]",
-                is_object($value) ? get_class($value) : gettype($value),
-                is_scalar($value) ? (string) $value : ''
-            )
+                get_debug_type($value),
+                is_scalar($value) ? (string)$value : '',
+            ),
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

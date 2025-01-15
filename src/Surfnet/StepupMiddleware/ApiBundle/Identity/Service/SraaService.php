@@ -24,21 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
 class SraaService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
-     */
-    private $sraaRepository;
-
-    public function __construct(SraaRepository $sraaRepository)
+    public function __construct(private readonly SraaRepository $sraaRepository)
     {
-        $this->sraaRepository = $sraaRepository;
     }
 
-    /**
-     * @param NameId $nameId
-     * @return Sraa|null
-     */
-    public function findByNameId(NameId $nameId)
+    public function findByNameId(NameId $nameId): ?Sraa
     {
         return $this->sraaRepository->findByNameId($nameId);
     }
@@ -46,16 +36,12 @@ class SraaService
     /**
      * @return Sraa[]
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->sraaRepository->findAll();
     }
 
-    /**
-     * @param NameId $nameId
-     * @return bool
-     */
-    public function contains(NameId $nameId)
+    public function contains(NameId $nameId): bool
     {
         return $this->sraaRepository->contains($nameId);
     }

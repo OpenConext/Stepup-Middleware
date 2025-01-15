@@ -19,30 +19,28 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
+/**
+ * @extends ServiceEntityRepository<RecoveryToken>
+ */
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
-
     public function __construct(
         ManagerRegistry $registry,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
     ) {
         parent::__construct($registry, RecoveryToken::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     public function save(RecoveryToken $entry): void
@@ -62,21 +60,21 @@ class RecoveryTokenRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function createSearchQuery(RecoveryTokenQuery $query)
+    public function createSearchQuery(RecoveryTokenQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('rt');
 
-        if ($query->authorizationContext) {
+        if ($query->authorizationContext instanceof InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all recovery tokens of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(
                 $queryBuilder,
                 $query->authorizationContext,
                 'rt.institution',
-                'iac'
+                'iac',
             );
         }
-        if ($query->identityId) {
+        if ($query->identityId instanceof IdentityId) {
             $queryBuilder
                 ->andWhere('rt.identityId = :identityId')
                 ->setParameter('identityId', $query->identityId);
@@ -89,10 +87,12 @@ class RecoveryTokenRepository extends ServiceEntityRepository
         if ($query->status) {
             $stringStatus = $query->status;
             if (!RecoveryTokenStatus::isValidStatus($stringStatus)) {
-                throw new RuntimeException(sprintf(
-                    'Received invalid status "%s" in RecoveryTokenRepository::createSearchQuery',
-                    is_object($stringStatus) ? get_class($stringStatus) : (string) $stringStatus
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Received invalid status "%s" in RecoveryTokenRepository::createSearchQuery',
+                        $stringStatus,
+                    ),
+                );
             }
 
             // we need to resolve the string value to database value using the correct doctrine type. Normally this is
@@ -103,7 +103,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
 
             $databaseValue = $doctrineType->convertToDatabaseValue(
                 $secondFactorStatus,
-                $this->getEntityManager()->getConnection()->getDatabasePlatform()
+                $this->getEntityManager()->getConnection()->getDatabasePlatform(),
             );
 
             $queryBuilder->andWhere('rt.status = :status')->setParameter('status', $databaseValue);
@@ -123,18 +123,13 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 ->andWhere('rt.institution = :institution')
                 ->setParameter('institution', $query->institution);
         }
-        switch ($query->orderBy) {
-            case 'name':
-            case 'type':
-            case 'email':
-            case 'institution':
-            case 'status':
-                $queryBuilder->orderBy(
-                    sprintf('rt.%s', $query->orderBy),
-                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
-                );
-                break;
-        }
+        match ($query->orderBy) {
+            'name', 'type', 'email', 'institution', 'status' => $queryBuilder->orderBy(
+                sprintf('rt.%s', $query->orderBy),
+                $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
+            ),
+            default => $queryBuilder->getQuery(),
+        };
 
         return $queryBuilder->getQuery();
     }
@@ -145,14 +140,14 @@ class RecoveryTokenRepository extends ServiceEntityRepository
             ->select('sf.institution')
             ->groupBy('sf.institution');
 
-        if ($query->authorizationContext) {
+        if ($query->authorizationContext instanceof InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all second factors of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(
                 $queryBuilder,
                 $query->authorizationContext,
                 'sf.institution',
-                'iac'
+                'iac',
             );
         }
         return $queryBuilder->getQuery();
@@ -161,7 +156,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     public function removeByIdentity(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'rt')
+            ->delete($this->getEntityName(), 'rt')
             ->where('rt.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()

@@ -1,71 +1,72 @@
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
 
-    Surfnet\StepupMiddleware\ManagementBundle\Controller\:
-        resource: '../../Controller'
-        autowire: true
-        tags: ['controller.service_arguments']
+  Surfnet\StepupMiddleware\ManagementBundle\Controller\:
+    resource: '../../Controller'
+    autowire: true
+    tags: [ 'controller.service_arguments' ]
 
-    Surfnet\StepupMiddleware\ManagementBundle\:
-        resource: '../../*'
-        autowire: true
-        exclude: '../../{DependencyInjection,Entity,Repository,Migrations,Tests,Exception,Controller}'
+  Surfnet\StepupMiddleware\ManagementBundle\:
+    resource: '../../*'
+    autowire: true
+    exclude: '../../{DependencyInjection,Entity,Repository,Migrations,Tests,Exception,Controller}'
 
-    # BC aliases
-    Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper: "@surfnet_stepup_middleware_management.dbal_connection_helper"
-    Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator: "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
+  # BC aliases
+  Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper: "@surfnet_stepup_middleware_management.dbal_connection_helper"
+  Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator: "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
 
+  surfnet_stepup_middleware_management.validator.configuration:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
+    arguments:
+      - "@surfnet_stepup_middleware_management.validator.gateway_configuration"
+      - "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
+    tags:
+      - { name: validator.constraint_validator, alias: configuration_structure_validator }
 
-    Liip\FunctionalTestBundle\Validator\DataCollectingValidator: '@validator'
+  surfnet_stepup_middleware_management.validator.gateway_configuration:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
+    arguments:
+      - "@surfnet_stepup_middleware_management.validator.identity_provider_configuration"
+      - "@surfnet_stepup_middleware_management.validator.service_provider_configuration"
 
-    surfnet_stepup_middleware_management.validator.configuration:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
-        arguments:
-            - "@surfnet_stepup_middleware_management.validator.gateway_configuration"
-            - "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
-        tags:
-            - { name: validator.constraint_validator, alias: configuration_structure_validator }
+  surfnet_stepup_middleware_management.validator.service_provider_configuration:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
 
-    surfnet_stepup_middleware_management.validator.gateway_configuration:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
-        arguments:
-            - "@surfnet_stepup_middleware_management.validator.identity_provider_configuration"
-            - "@surfnet_stepup_middleware_management.validator.service_provider_configuration"
+  surfnet_stepup_middleware_management.validator.identity_provider_configuration:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
 
-    surfnet_stepup_middleware_management.validator.service_provider_configuration:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
+  surfnet_stepup_middleware_management.validator.email_templates_configuration:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator
+    arguments:
+      - '' # Default locale
 
-    surfnet_stepup_middleware_management.validator.identity_provider_configuration:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
+  surfnet_stepup_middleware_management.validator.reconfigure_institution_request:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator
+    arguments:
+      - "@surfnet_stepup_middleware_api.service.configured_institutions"
+      - "@surfnet_stepup.service.second_factor_type"
+      - "@surfnet_stepup_middleware_api.service.whitelist_entry"
+    tags:
+      - { name: validator.constraint_validator, alias: reconfigure_institution_configuration_structure_validator }
 
-    surfnet_stepup_middleware_management.validator.email_templates_configuration:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator
-        arguments:
-            - '' # Default locale
+  surfnet_stepup_middleware_management.projector.email_templates:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
+    arguments:
+      - "@surfnet_stepup_middleware_management.repository.email_template"
+    tags: [ { name: event_bus.event_listener, disable_for_replay: false } ]
 
-    surfnet_stepup_middleware_management.validator.reconfigure_institution_request:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator
-        arguments:
-            - "@surfnet_stepup_middleware_api.service.configured_institutions"
-            - "@surfnet_stepup.service.second_factor_type"
-            - "@surfnet_stepup_middleware_api.service.whitelist_entry"
-        tags:
-            - { name: validator.constraint_validator, alias: reconfigure_institution_configuration_structure_validator }
+  surfnet_stepup_middleware_management.repository.email_template: '@Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository'
 
-    surfnet_stepup_middleware_management.projector.email_templates:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
-        arguments:
-            - "@surfnet_stepup_middleware_management.repository.email_template"
-        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+  surfnet_stepup_middleware_management.service.email_template:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
+    arguments: [ "@surfnet_stepup_middleware_management.repository.email_template" ]
 
-    surfnet_stepup_middleware_management.repository.email_template: '@Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository'
-
-    surfnet_stepup_middleware_management.service.email_template:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
-        arguments: [ "@surfnet_stepup_middleware_management.repository.email_template" ]
-
-    surfnet_stepup_middleware_management.dbal_connection_helper:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper
-        arguments:
-            -
-                middleware: "@doctrine.dbal.middleware_connection"
-                gateway: "@doctrine.dbal.gateway_connection"
+  surfnet_stepup_middleware_management.dbal_connection_helper:
+    class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper
+    arguments:
+      - middleware: "@doctrine.dbal.middleware_connection"
+        gateway: "@doctrine.dbal.gateway_connection"
+        deploy: "@doctrine.dbal.deploy_connection"

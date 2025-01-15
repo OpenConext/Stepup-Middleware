@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
@@ -37,36 +38,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
  */
 class AuthorizationContextService
 {
-    /**
-     * @var SraaService
-     */
-    private $sraaService;
-
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $institutionRepository;
-
-    /**
-     * @var AuthorizationRepository
-     */
-    private $authorizationRepository;
-
     public function __construct(
-        SraaService $sraaService,
-        IdentityService $identityService,
-        ConfiguredInstitutionRepository $institutionRepository,
-        AuthorizationRepository $authorizationRepository
+        private readonly SraaService $sraaService,
+        private readonly IdentityService $identityService,
+        private readonly ConfiguredInstitutionRepository $institutionRepository,
+        private readonly AuthorizationRepository $authorizationRepository,
     ) {
-        $this->sraaService = $sraaService;
-        $this->identityService = $identityService;
-        $this->institutionRepository = $institutionRepository;
-        $this->authorizationRepository = $authorizationRepository;
     }
 
     public function buildSelectRaaInstitutionAuthorizationContext(IdentityId $actorId): InstitutionAuthorizationContext
@@ -86,7 +63,7 @@ class AuthorizationContextService
      */
     public function buildInstitutionAuthorizationContext(
         IdentityId $actorId,
-        RegistrationAuthorityRole $role
+        RegistrationAuthorityRole $role,
     ): InstitutionAuthorizationContext {
         $isSraa = $this->isSraa($actorId);
         if ($isSraa) {
@@ -102,10 +79,10 @@ class AuthorizationContextService
         return new InstitutionAuthorizationContext($institutions, $isSraa);
     }
 
-    private function isSraa(IdentityId $actorId)
+    private function isSraa(IdentityId $actorId): bool
     {
         $identity = $this->identityService->find((string)$actorId);
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             throw new InvalidArgumentException('The provided id is not associated with any known identity');
         }
         $sraa = $this->sraaService->findByNameId($identity->nameId);

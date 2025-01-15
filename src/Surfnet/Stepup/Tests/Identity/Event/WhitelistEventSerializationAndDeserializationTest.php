@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -29,33 +30,34 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 class WhitelistEventSerializationAndDeserializationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
      * @group        whitelist
      * @dataProvider eventProvider
-     * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event,): void
     {
-        $class = get_class($event);
+        $class = $event::class;
         $this->assertTrue($event == call_user_func([$class, 'deserialize'], $event->serialize()));
     }
 
-    public function eventProvider()
+    public function eventProvider(): array
     {
         return [
             'WhitelistCreatedEvent' => [
-                new WhitelistCreatedEvent($this->getInstitutionCollection())
+                new WhitelistCreatedEvent($this->getInstitutionCollection()),
             ],
             'WhitelistReplacedEvent' => [
-                new WhitelistReplacedEvent($this->getInstitutionCollection())
+                new WhitelistReplacedEvent($this->getInstitutionCollection()),
             ],
             'InstitutionsAddedToWhitelistEvent' => [
-                new InstitutionsAddedToWhitelistEvent($this->getInstitutionCollection())
+                new InstitutionsAddedToWhitelistEvent($this->getInstitutionCollection()),
             ],
             'InstitutionsRemovedFromWhitelistEvent' => [
-                new InstitutionsRemovedFromWhitelistEvent($this->getInstitutionCollection())
+                new InstitutionsRemovedFromWhitelistEvent($this->getInstitutionCollection()),
             ],
         ];
     }
@@ -63,7 +65,7 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
     /**
      * @return InstitutionCollection
      */
-    private function getInstitutionCollection()
+    private function getInstitutionCollection(): InstitutionCollection
     {
         static $institutionCollection;
 

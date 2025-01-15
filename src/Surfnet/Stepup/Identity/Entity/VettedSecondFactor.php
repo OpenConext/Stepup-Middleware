@@ -35,41 +35,26 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  */
 class VettedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
+
+    private ?SecondFactorId $id = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorIdentifier
      */
-    private $id;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
+    private ?VettingType $vettingType = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
-     */
-    private $secondFactorIdentifier;
-
-    /**
-     * @var VettingType
-     */
-    private $vettingType;
-
-    /**
-     * @return VettedSecondFactor
-     */
     public static function create(
         SecondFactorId $id,
         Identity $identity,
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
-        VettingType $vettingType
-    ) {
+        VettingType $vettingType,
+    ): self {
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
@@ -84,15 +69,12 @@ class VettedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new VettedSecondFactorRevokedEvent(
@@ -100,12 +82,12 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithVettedSecondFactorRevocationEvent(
@@ -114,8 +96,8 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
@@ -124,9 +106,9 @@ class VettedSecondFactor extends AbstractSecondFactor
         return $this->vettingType;
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }

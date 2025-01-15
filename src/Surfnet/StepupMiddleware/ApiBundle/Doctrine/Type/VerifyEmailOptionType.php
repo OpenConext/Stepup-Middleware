@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -27,38 +28,38 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 /**
  * Custom Type for the VerifyEmailOption Value Object
  */
-class VerifyEmailOptionType extends Type
+class VerifyEmailOptionType extends BooleanType
 {
-    const NAME = 'stepup_verify_email_option';
+    public const NAME = 'stepup_verify_email_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getBooleanTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof VerifyEmailOption) {
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal location of type %s '%s', expected a VerifyEmailOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?VerifyEmailOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
@@ -67,7 +68,7 @@ class VerifyEmailOptionType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -76,7 +77,7 @@ class VerifyEmailOptionType extends Type
         return $verifyEmailOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

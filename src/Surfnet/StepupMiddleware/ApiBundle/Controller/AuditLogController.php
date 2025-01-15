@@ -24,36 +24,31 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-final class AuditLogController extends Controller
+final class AuditLogController extends AbstractController
 {
-    /**
-     * @var AuditLogService
-     */
-    private $auditLogService;
-
-    public function __construct(AuditLogService $service)
-    {
-        $this->auditLogService = $service;
+    public function __construct(
+        private readonly AuditLogService $auditLogService,
+    ) {
     }
 
-    public function secondFactorAuditLogAction(Request $request, Institution $institution)
+    public function secondFactorAuditLog(Request $request, Institution $institution): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $identityId = $request->get('identityId');
         if (empty($identityId)) {
             throw new BadApiRequestException(['This API-call MUST include the identityId as get parameter']);
         }
 
-        $query                      = new SecondFactorAuditLogQuery();
+        $query = new SecondFactorAuditLogQuery();
         $query->identityInstitution = $institution;
-        $query->identityId          = new IdentityId($identityId);
-        $query->orderBy             = $request->get('orderBy', $query->orderBy);
-        $query->orderDirection      = $request->get('orderDirection', $query->orderDirection);
-        $query->pageNumber          = $request->get('p', 1);
+        $query->identityId = new IdentityId($identityId);
+        $query->orderBy = $request->get('orderBy', $query->orderBy);
+        $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
+        $query->pageNumber = $request->get('p', 1);
 
         $paginator = $this->auditLogService->searchSecondFactorAuditLog($query);
 

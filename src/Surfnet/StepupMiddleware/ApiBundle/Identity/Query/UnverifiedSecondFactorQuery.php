@@ -22,13 +22,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 
 class UnverifiedSecondFactorQuery extends AbstractQuery
 {
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
+    public ?IdentityId $identityId = null;
 
     /**
      * @var string|null
      */
-    public $verificationNonce;
+    public ?string $verificationNonce = null;
 }

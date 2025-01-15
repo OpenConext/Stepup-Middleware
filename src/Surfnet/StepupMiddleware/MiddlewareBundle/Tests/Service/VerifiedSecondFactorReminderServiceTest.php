@@ -19,42 +19,36 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
 use DateTime;
 use Mockery as m;
-use Mockery\Mock;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\DateTime\DateTime as MiddlewareDateTime;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderMailService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderService;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 class VerifiedSecondFactorReminderServiceTest extends TestCase
 {
-    /**
-     * @var VerifiedSecondFactorReminderService
-     */
-    private $service;
+    use MockeryPHPUnitIntegration;
 
-    /**
-     * @var VerifiedSecondFactorReminderMailService|Mock
-     */
-    private $mailService;
+    private VerifiedSecondFactorReminderService $service;
 
-    /**
-     * @var LoggerInterface|Mock
-     */
-    private $logger;
+    private VerifiedSecondFactorReminderMailService&MockInterface $mailService;
 
-    /**
-     * @var VerifiedSecondFactorRepository|Mock
-     */
-    private $verifiedSecondFactorRepository;
-    /**
-     * @var IdentityRepository|Mock
-     */
-    private $identityRepository;
+    private LoggerInterface&MockInterface $logger;
 
+    private VerifiedSecondFactorRepository&MockInterface $verifiedSecondFactorRepository;
+
+    private IdentityRepository&MockInterface $identityRepository;
 
     public function setUp(): void
     {
@@ -67,11 +61,11 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             $this->verifiedSecondFactorRepository,
             $this->identityRepository,
             $this->mailService,
-            $this->logger
+            $this->logger,
         );
     }
 
-    public function test_no_token_reminders_sent()
+    public function test_no_token_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -95,13 +89,13 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent()
+    public function test_one_token_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
         $this->logger
             ->shouldReceive('info')
-            ->once()
+            ->times()
             ->with('Sending reminders for date: 2018-01-01. dry run mode is disabled');
 
         $tokens = $this->buildVerifiedSecondFactors(1, $date);
@@ -138,7 +132,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message successfully sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message successfully sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -150,7 +146,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent_failing_mailer()
+    public function test_one_token_reminders_sent_failing_mailer(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -183,12 +179,14 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->mailService
             ->shouldReceive('sendReminder')
             ->once()
-            ->andReturn(0);
+            ->andThrow(TransportException::class);
 
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message was not sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message was not sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -200,7 +198,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_multiple_tokens_reminders_sent()
+    public function test_multiple_tokens_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -239,7 +237,11 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Mockery::pattern('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(
+                m::pattern(
+                    '/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/',
+                ),
+            )
             ->times(9);
 
         $this->logger
@@ -252,7 +254,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_missing_identity()
+    public function test_missing_identity(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -290,7 +292,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent_dry_run()
+    public function test_one_token_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -322,7 +324,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message successfully sent in dry run mode to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message successfully sent in dry run mode to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -334,7 +338,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_multiple_tokens_reminders_sent_dry_run()
+    public function test_multiple_tokens_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -367,7 +371,11 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Mockery::pattern('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(
+                m::pattern(
+                    '/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/',
+                ),
+            )
             ->times(9);
 
         $this->logger
@@ -380,7 +388,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_no_token_reminders_sent_dry_run()
+    public function test_no_token_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -405,19 +413,17 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     }
 
     /**
-     * @param int $numberOfResults
-     * @param DateTime $requestedAt
      * @return VerifiedSecondFactor[]
      */
-    private function buildVerifiedSecondFactors($numberOfResults, DateTime $requestedAt)
+    private function buildVerifiedSecondFactors(int $numberOfResults, DateTime $requestedAt): array
     {
         $collection = [];
-        for ($i=1; $i<=$numberOfResults; $i++) {
+        for ($i = 1; $i <= $numberOfResults; $i++) {
             $token = new VerifiedSecondFactor();
             $token->id = "fa125c7c-c9ee-11e7-800{$i}-00000000000{$i}";
-            $token->identityId = $i;
+            $token->identityId = (string) $i;
             $token->registrationCode = "CODE_{$i}";
-            $token->registrationRequestedAt = $requestedAt;
+            $token->registrationRequestedAt = new MiddlewareDateTime($requestedAt);
             $token->type = 'yubikey';
             $token->commonName = "John Doe {$i}";
             $collection[] = $token;
@@ -427,19 +433,17 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     }
 
     /**
-     * @param VerifiedSecondFactor $token
      * @return Identity
      */
-    private function buildIdentity(VerifiedSecondFactor $token)
+    private function buildIdentity(VerifiedSecondFactor $token): Identity
     {
         $identity = new Identity();
         $identity->id = $token->identityId;
-        $identity->commonName = "John Doe {$token->identityId}";
-        $identity->institution = "Institution {$token->identityId}";
-        $identity->preferredLocale = 'nl_NL';
-        $identity->email = "mail@example{$token->identityId}.org";
+        $identity->commonName = new CommonName("John Doe {$token->identityId}");
+        $identity->institution = new Institution("Institution {$token->identityId}");
+        $identity->preferredLocale = new Locale('nl_NL');
+        $identity->email = new Email("mail@example{$token->identityId}.org");
 
         return $identity;
-
     }
 }

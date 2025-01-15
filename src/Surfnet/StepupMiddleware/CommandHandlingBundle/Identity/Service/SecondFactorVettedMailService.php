@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -27,71 +28,37 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SecondFactorVettedMailService
 {
-    /**
-     * @var Mailer
-     */
-    private $mailer;
+    private readonly string $fallbackLocale;
 
     /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
-     */
-    private $emailTemplateService;
-
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
-        TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
+        private readonly TranslatorInterface $translator,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
-        string $selfServiceUrl
+        private readonly string $selfServiceUrl,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
-        $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     public function sendVettedEmail(
         Locale $locale,
         CommonName $commonName,
-        Email $email
-    ) {
+        Email $email,
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.vetted_email.subject',
             ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
@@ -102,7 +69,7 @@ final class SecondFactorVettedMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,

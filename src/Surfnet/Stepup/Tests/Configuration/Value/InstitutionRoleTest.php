@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Copyright 2018 SURFnet B.V.
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not select this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -18,23 +18,23 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
-use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Configuration\Value\InstitutionSet;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionRoleTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      * @dataProvider invalidConstructorArgumentsProvider
      */
-    public function invalid_types_are_rejected_during_construction($arguments)
+    public function invalid_types_are_rejected_during_construction(bool|string|int $arguments): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new InstitutionRole($arguments);
     }
 
@@ -43,7 +43,7 @@ class InstitutionRoleTest extends TestCase
      * @group domain
      * @dataProvider institutionTypeProvider
      */
-    public function institution_roles_can_be_created_by_type($type)
+    public function institution_roles_can_be_created_by_type(string $type): void
     {
         $role1 = new InstitutionRole($type);
         $role2 = new InstitutionRole($type);
@@ -52,7 +52,7 @@ class InstitutionRoleTest extends TestCase
         $this->assertTrue($role1->equals($role2));
     }
 
-    public function institutionTypeProvider()
+    public function institutionTypeProvider(): array
     {
         return [
             'use_ra' => ['use_ra'],
@@ -61,7 +61,7 @@ class InstitutionRoleTest extends TestCase
         ];
     }
 
-    public function invalidConstructorArgumentsProvider()
+    public function invalidConstructorArgumentsProvider(): array
     {
         return [
             'cant-be-boolean' => [false],

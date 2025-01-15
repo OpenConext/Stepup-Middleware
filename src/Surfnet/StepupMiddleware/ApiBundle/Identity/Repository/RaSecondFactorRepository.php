@@ -19,9 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -30,25 +30,19 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
+/**
+ * @extends ServiceEntityRepository<RaSecondFactor>
+ */
 class RaSecondFactorRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, RaSecondFactor::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-
-    /**
-     * @param string $id
-     * @return RaSecondFactor|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?RaSecondFactor
     {
         /** @var RaSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -57,20 +51,18 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $identityId
      * @return RaSecondFactor[]
      */
-    public function findByIdentityId($identityId)
+    public function findByIdentityId(string $identityId): array
     {
         return parent::findBy(['identityId' => $identityId]);
     }
 
 
     /**
-     * @param string $institution
      * @return RaSecondFactor[]
      */
-    public function findByInstitution($institution)
+    public function findByInstitution(string $institution): array
     {
         return parent::findBy(['institution' => $institution]);
     }
@@ -79,12 +71,8 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
      *                                               below complex or hard to maintain.
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
-     * @param RaSecondFactorQuery $query
-     * @return Query
-     * @throws \Doctrine\DBAL\DBALException
      */
-    public function createSearchQuery(RaSecondFactorQuery $query)
+    public function createSearchQuery(RaSecondFactorQuery $query): Query
     {
         $queryBuilder = $this
             ->createQueryBuilder('sf');
@@ -95,7 +83,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'sf.institution',
-            'iac'
+            'iac',
         );
 
         if ($query->name) {
@@ -123,10 +111,12 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         if ($query->status) {
             $stringStatus = $query->status;
             if (!SecondFactorStatus::isValidStatus($stringStatus)) {
-                throw new RuntimeException(sprintf(
-                    'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
-                    is_object($stringStatus) ? get_class($stringStatus) : (string) $stringStatus
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
+                        $stringStatus,
+                    ),
+                );
             }
 
             // we need to resolve the string value to database value using the correct doctrine type. Normally this is
@@ -137,34 +127,27 @@ class RaSecondFactorRepository extends ServiceEntityRepository
 
             $databaseValue = $doctrineType->convertToDatabaseValue(
                 $secondFactorStatus,
-                $this->getEntityManager()->getConnection()->getDatabasePlatform()
+                $this->getEntityManager()->getConnection()->getDatabasePlatform(),
             );
 
             $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $databaseValue);
         }
 
-        switch ($query->orderBy) {
-            case 'name':
-            case 'type':
-            case 'secondFactorId':
-            case 'email':
-            case 'institution':
-            case 'status':
-                $queryBuilder->orderBy(
-                    sprintf('sf.%s', $query->orderBy),
-                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
-                );
-                break;
-        }
+        match ($query->orderBy) {
+            'name', 'type', 'secondFactorId', 'email', 'institution', 'status' => $queryBuilder->orderBy(
+                sprintf('sf.%s', $query->orderBy),
+                $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
+            ),
+            default => $queryBuilder->getQuery(),
+        };
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param RaSecondFactorQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaSecondFactorQuery $query)
+    public function createOptionsQuery(RaSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf')
             ->select('sf.institution')
@@ -176,27 +159,26 @@ class RaSecondFactorRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'sf.institution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param IdentityId $identityId
      * @return void
      */
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'rasf')
+            ->delete($this->getEntityName(), 'rasf')
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
     }
 
-    public function save(RaSecondFactor $secondFactor)
+    public function save(RaSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
@@ -205,7 +187,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     /**
      * @param RaSecondFactor[] $secondFactors
      */
-    public function saveAll(array $secondFactors)
+    public function saveAll(array $secondFactors): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -216,10 +198,10 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId)
+    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->update($this->_entityName, 'rasf')
+            ->update($this->getEntityName(), 'rasf')
             ->set('rasf.status', ":forgotten")
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())

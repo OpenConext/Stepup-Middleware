@@ -19,19 +19,25 @@
 namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
+use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
+use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SecondFactorCollectionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      */
-    public function collection_can_return_second_factor_with_highest_loa()
+    public function collection_can_return_second_factor_with_highest_loa(): void
     {
         $collection = new SecondFactorCollection([
             $this->mockVettedSecondFactor('sms'),
@@ -39,22 +45,20 @@ class SecondFactorCollectionTest extends UnitTest
         ]);
 
         $secondFactor = $collection->getSecondFactorWithHighestLoa(
-            new SecondFactorTypeService([])
+            new SecondFactorTypeService([]),
         );
 
         $this->assertNotNull($secondFactor, 'Collection should have returned a second factor object');
         $this->assertTrue($secondFactor->getType()->isYubikey(), 'Expected yubikey since it has a higher LoA than sms');
     }
 
-    /**
-     * @param string $type
-     * @return SecondFactor
-     */
-    private function mockVettedSecondFactor($type)
+    private function mockVettedSecondFactor(string $type): SecondFactor
     {
-        $mock = m::mock('\Surfnet\Stepup\Identity\Entity\SecondFactor');
+        $mock = m::mock(VettedSecondFactor::class);
         $mock->shouldReceive('getType')
             ->andReturn(new SecondFactorType($type));
+        $mock->shouldReceive('vettingType')
+            ->andReturn(new OnPremiseVettingType(new DocumentNumber('123123')));
 
         return $mock;
     }

@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution as InstitutionValue;
@@ -29,51 +30,56 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class InstitutionAuthorizationRepositoryFilterTest extends TestCase
 {
-    /**
-     * @var QueryBuilder
-     */
-    private $queryBuilder;
+    use MockeryPHPUnitIntegration;
 
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private QueryBuilder $queryBuilder;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mockedAuthorizationContext;
+    private EntityManager&MockObject $entityManager;
+
+    private InstitutionAuthorizationContextInterface&MockObject $mockedAuthorizationContext;
 
     public function setUp(): void
     {
         $this->mockedAuthorizationContext = $this->createMock(InstitutionAuthorizationContextInterface::class);
 
-        $this->entityManager  = $this->getMockBuilder(EntityManager::class)
+        $this->entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->queryBuilder = new QueryBuilder($this->entityManager);
-        $this->queryBuilder->from('institution', 'i');
+        $this->queryBuilder->from(InstitutionValue::class, 'i');
     }
 
     /**
      * @test
      * @group domain
      */
-    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context()
+    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context(): void
     {
         $this->mockedAuthorizationContext->method('getInstitutions')
-            ->willReturn(new InstitutionCollection([
-                new InstitutionValue('institution-a'),
-                new InstitutionValue('institution-c'),
-            ]));
+            ->willReturn(
+                new InstitutionCollection([
+                    new InstitutionValue('institution-a'),
+                    new InstitutionValue('institution-c'),
+                ]),
+            );
 
         $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
-        $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.institution', 'iacalias');
+        $authorizationRepositoryFilter->filter(
+            $this->queryBuilder,
+            $this->mockedAuthorizationContext,
+            'i.institution',
+            'iacalias',
+        );
 
-        $this->assertEquals('SELECT FROM institution i WHERE i.institution IN (:iacalias_institutions)', $this->queryBuilder->getDQL());
+        $this->assertEquals(
+            sprintf('SELECT FROM %s i WHERE i.institution IN (:iacalias_institutions)', InstitutionValue::class),
+            $this->queryBuilder->getDQL(),
+        );
         $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
-        $this->assertEquals(['institution-a','institution-c'], $this->queryBuilder->getParameter('iacalias_institutions')->getValue());
+        $this->assertEquals(
+            ['institution-a', 'institution-c'],
+            $this->queryBuilder->getParameter('iacalias_institutions')->getValue()
+        );
     }
-
 }

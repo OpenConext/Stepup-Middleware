@@ -21,38 +21,23 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListener as EventListenerInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
 class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
 {
-    /**
-     * @var bool
-     */
-    private $firstEventHandled = false;
-
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
-
-    /**
-     * @var DomainEventStream
-     */
-    private $toPublish;
+    use MockeryPHPUnitIntegration;
+    private bool $firstEventHandled = false;
 
     /**
      * @var DomainMessage[]
      */
-    private $recordedEvents = [];
+    private array $recordedEvents = [];
 
-    /**
-     * @param BufferedEventBus $eventBus
-     * @param DomainEventStream $toPublish
-     */
-    public function __construct(BufferedEventBus $eventBus, DomainEventStream $toPublish)
-    {
-        $this->eventBus  = $eventBus;
-        $this->toPublish = $toPublish;
+    public function __construct(
+        private readonly BufferedEventBus $eventBus,
+        private readonly DomainEventStream $toPublish,
+    ) {
     }
 
     /**
@@ -71,7 +56,7 @@ class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListen
     /**
      * @return DomainMessage[]
      */
-    public function getRecordedEvents()
+    public function getRecordedEvents(): array
     {
         return $this->recordedEvents;
     }

@@ -29,30 +29,30 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
  */
 class AuthorityRoleType extends Type
 {
-    const NAME = 'authority_role';
+    public const NAME = 'authority_role';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        if (!isset($fieldDeclaration['length'])) {
-            $fieldDeclaration['length'] = 20;
+        if (!isset($column['length'])) {
+            $column['length'] = 20;
         }
 
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?AuthorityRole
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
@@ -61,7 +61,7 @@ class AuthorityRoleType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -70,7 +70,7 @@ class AuthorityRoleType extends Type
         return $authorityRole;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

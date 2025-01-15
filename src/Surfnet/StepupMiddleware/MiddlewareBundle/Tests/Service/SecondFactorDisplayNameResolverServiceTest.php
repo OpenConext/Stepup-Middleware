@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2020 SURF bv.
+ * Copyright 2020 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
-
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
 
 class SecondFactorDisplayNameResolverServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
 
     /**
      * @test

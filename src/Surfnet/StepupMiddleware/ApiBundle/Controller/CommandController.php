@@ -22,76 +22,39 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\CommandAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CommandController extends Controller
+class CommandController extends AbstractController
 {
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
-
-    /**
-     * @var TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var MetadataEnricher
-     */
-    private $metadataEnricher;
-
-    /**
-     * @var AuthorizationChecker
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var CommandAuthorizationService
-     */
-    private $commandAuthorizationService;
-
-
     public function __construct(
-        TransactionAwarePipeline $pipeline,
-        WhitelistService $whitelistService,
-        MetadataEnricher $enricher,
-        AuthorizationCheckerInterface $authorizationChecker,
-        LoggerInterface $logger,
-        CommandAuthorizationService $commandAuthorizationService
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly MetadataEnricher $metadataEnricher,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly LoggerInterface $logger,
+        private readonly CommandAuthorizationService $commandAuthorizationService,
     ) {
-        $this->pipeline = $pipeline;
-        $this->whitelistService = $whitelistService;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->metadataEnricher = $enricher;
-        $this->logger = $logger;
-        $this->commandAuthorizationService = $commandAuthorizationService;
     }
 
-    public function handleAction(Command $command, Metadata $metadata, Request $request)
+    public function handle(AbstractCommand $command, Metadata $metadata, Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS']);
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));
 
         $this->metadataEnricher->setMetadata($metadata);
@@ -109,7 +72,7 @@ class CommandController extends Controller
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),
-                $e
+                $e,
             );
         }
 
@@ -121,12 +84,7 @@ class CommandController extends Controller
         return $response;
     }
 
-    /**
-     * @param Command $command
-     * @param Metadata $metadata
-     * @return Institution
-     */
-    private function resolveInstitution(Command $command, Metadata $metadata)
+    private function resolveInstitution(Command $command, Metadata $metadata): Institution
     {
         if ($metadata->actorInstitution) {
             return new Institution($metadata->actorInstitution);
@@ -142,49 +100,53 @@ class CommandController extends Controller
 
         // conservative, if we cannot determine an institution, deny processing.
         throw new AccessDeniedHttpException(
-            'Cannot reliably determine the institution of the actor, denying processing of command'
+            'Cannot reliably determine the institution of the actor, denying processing of command',
         );
     }
 
-    /**
-     * @param Command $command
-     * @param Metadata $metadata
-     */
-    private function handleAuthorization(Command $command, Metadata $metadata)
+    private function handleAuthorization(Command $command, Metadata $metadata): void
     {
         // Get the actorId and actorInstitution from the metadata
         // Be aware that these values could be null when executing commands where we shouldn't log in for
         // - CreateIdentityCommand
         // - UpdateIdentityCommand
-        $actorId = !is_null($metadata->actorId) ? new IdentityId($metadata->actorId) : null;
-        $actorInstitution = !is_null($metadata->actorInstitution) ? new Institution($metadata->actorInstitution) : null;
+        $actorId = is_null($metadata->actorId) ? null : new IdentityId($metadata->actorId);
+        $actorInstitution = is_null($metadata->actorInstitution) ? null : new Institution($metadata->actorInstitution);
 
         // The institution of an actor should be whitelisted or the actor should be SRAA
         // Be aware that the actor metadata is not always present, see self::resolveInstitution
         $this->logger->notice('Ensuring that the actor institution is on the whitelist, or the actor is SRAA');
         $institution = $this->resolveInstitution($command, $metadata);
         if (!$this->commandAuthorizationService->isInstitutionWhitelisted($institution, $actorId)) {
-            throw new AccessDeniedHttpException(sprintf(
-                'Institution "%s" is not on the whitelist and actor "%s" is not an SRAA, processing of command denied',
-                $institution,
-                $metadata->actorId
-            ));
+            throw new AccessDeniedHttpException(
+                sprintf(
+                    'Institution "%s" is not on the whitelist and actor "%s" is not an SRAA, processing of command denied',
+                    $institution,
+                    $metadata->actorId,
+                ),
+            );
         }
 
-        $this->logger->notice('Ensuring that the actor is allowed to execute a command based on the fine grained authorization configuration');
+        $this->logger->notice(
+            'Ensuring that the actor is allowed to execute a command based on the fine grained authorization configuration',
+        );
 
         // Validate that if a command is an SelfServiceExecutable we may execute the command
         // This should be an SRAA or the actor itself
         // Be aware that for the CreateIdentityCommand and UpdateIdentityCommand the actorId is unknown because we aren't logged in yet
         if (!$this->commandAuthorizationService->maySelfserviceCommandBeExecutedOnBehalfOf(
             $command,
-            $actorId
+            $actorId,
         )) {
-            throw new AccessDeniedHttpException(sprintf(
-                'The actor "%s" is not allowed to act on behalf of identity "%s" processing of SelfService command denied',
-                new IdentityId($metadata->actorId),
-                $command->getIdentityId()
-            ));
+            $message = 'Processing of SelfService command denied, see log entries for details';
+            if ($command instanceof SelfServiceExecutable) {
+                $message = sprintf(
+                    'The actor "%s" is not allowed to act on behalf of identity "%s" processing of SelfService command denied',
+                    new IdentityId($metadata->actorId),
+                    $command->getIdentityId(),
+                );
+            }
+            throw new AccessDeniedHttpException($message);
         }
 
         // Validate that if a command is an RAExecutable we may execute the command
@@ -192,13 +154,15 @@ class CommandController extends Controller
         if (!$this->commandAuthorizationService->mayRaCommandBeExecutedOnBehalfOf(
             $command,
             $actorId,
-            $actorInstitution
+            $actorInstitution,
         )) {
-            throw new AccessDeniedHttpException(sprintf(
-                'The actor "%s" is not allowed to act on behalf of institution  "%s" processing of RA command denied',
-                new IdentityId($metadata->actorId),
-                $institution
-            ));
+            throw new AccessDeniedHttpException(
+                sprintf(
+                    'The actor "%s" is not allowed to act on behalf of institution  "%s" processing of RA command denied',
+                    new IdentityId($metadata->actorId),
+                    $institution,
+                ),
+            );
         }
     }
 }

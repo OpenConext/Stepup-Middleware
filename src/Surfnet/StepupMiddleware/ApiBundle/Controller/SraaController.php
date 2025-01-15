@@ -21,42 +21,35 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class SraaController extends Controller
+class SraaController extends AbstractController
 {
 
-    /**
-     * @var SraaService
-     */
-    private $sraaService;
-
-    public function __construct(SraaService $sraaService)
+    public function __construct(private readonly SraaService $sraaService)
     {
-        $this->sraaService = $sraaService;
     }
 
     /**
      * @param string $nameId injected by symfony from the request
-     * @return JsonNotFoundResponse|JsonResponse
      */
-    public function getAction($nameId)
+    public function get(string $nameId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $sraa = $this->sraaService->findByNameId(new NameId($nameId));
 
-        if (!$sraa) {
+        if (!$sraa instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa) {
             return new JsonNotFoundResponse();
         }
 
         return new JsonResponse($sraa);
     }
 
-    public function listAction() : JsonResponse
+    public function list(): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         return new JsonResponse($this->sraaService->findAll());
     }

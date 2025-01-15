@@ -18,25 +18,17 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Migrations\AbstractMigration;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20141125173004 extends AbstractMigration implements ContainerAwareInterface
+class Version20141125173004 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    use ConfigurationAwareMigrationTrait;
 
     public function up(Schema $schema): void
     {
@@ -44,31 +36,36 @@ class Version20141125173004 extends AbstractMigration implements ContainerAwareI
         $middlewareUser = $this->getMiddlewareUser();
 
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
-        $this->addSql(sprintf('CREATE TABLE %s.saml_entity (entity_id VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, configuration LONGTEXT NOT NULL, PRIMARY KEY(entity_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB', $gatewaySchema));
-        $this->addSql(sprintf("GRANT DELETE,INSERT,SELECT,UPDATE ON %s.saml_entity TO %s", $gatewaySchema, $middlewareUser));
+        $this->addSql(
+            sprintf(
+                'CREATE TABLE %s.saml_entity (entity_id VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, configuration LONGTEXT NOT NULL, PRIMARY KEY(entity_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB',
+                $gatewaySchema,
+            ),
+        );
+        $this->addSql(
+            sprintf("GRANT DELETE,INSERT,SELECT,UPDATE ON %s.saml_entity TO %s", $gatewaySchema, $middlewareUser),
+        );
     }
 
     public function down(Schema $schema): void
     {
-        $gatewaySchema  = $this->getGatewaySchema();
+        $gatewaySchema = $this->getGatewaySchema();
         $middlewareUser = $this->getMiddlewareUser();
 
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
-        $this->addSql(sprintf("REVOKE DELETE,INSERT,SELECT,UPDATE ON %s.saml_entity FROM %s", $gatewaySchema, $middlewareUser));
+        $this->addSql(
+            sprintf("REVOKE DELETE,INSERT,SELECT,UPDATE ON %s.saml_entity FROM %s", $gatewaySchema, $middlewareUser),
+        );
         $this->addSql(sprintf('DROP TABLE %s.saml_entity', $gatewaySchema));
-    }
-
-    private function getGatewaySchema()
-    {
-        return $this->container->getParameter('database_gateway_name');
-    }
-
-    private function getMiddlewareUser()
-    {
-        return $this->container->getParameter('database_middleware_user');
     }
 }

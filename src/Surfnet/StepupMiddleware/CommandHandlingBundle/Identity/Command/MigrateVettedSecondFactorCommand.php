@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 SURF bv
+ * Copyright 2021 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,42 +26,34 @@ class MigrateVettedSecondFactorCommand extends AbstractCommand
 
     /**
      * The UUID of the source identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $sourceIdentityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $sourceIdentityId;
 
     /**
      * The UUID of the target identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $targetIdentityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $targetIdentityId;
 
     /**
      * The source second factor UUID that is to be moved
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $sourceSecondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $sourceSecondFactorId;
 
 
     /**
      * The new destination second factor UUID
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $targetSecondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $targetSecondFactorId;
 }

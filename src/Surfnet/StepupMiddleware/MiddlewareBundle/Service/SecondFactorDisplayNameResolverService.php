@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2020 SURF B.V.
+ * Copyright 2020 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,26 +22,15 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorDisplayNameResolverService
 {
-    /**
-     * @var array
-     */
-    private $secondFactors;
-
-    /**
-     * @param array $secondFactors
-     */
-    public function __construct(array $secondFactors)
+    public function __construct(private array $secondFactors)
     {
-        $this->secondFactors = $secondFactors;
     }
 
     /**
-     * @param SecondFactorType $secondFactorType
-     *
      * @return string
      */
     public function resolveByType(SecondFactorType $secondFactorType): string
     {
-        return $this->secondFactors[(string) $secondFactorType] ?? ucfirst((string) $secondFactorType);
+        return $this->secondFactors[(string)$secondFactorType] ?? ucfirst((string)$secondFactorType);
     }
 }

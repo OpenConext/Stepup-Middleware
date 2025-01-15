@@ -18,24 +18,17 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\EventHandling\EventBus as EventBusInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
-final class TransactionHelper
+final readonly class TransactionHelper
 {
-    /** @var Pipeline  */
-    private $pipeline;
-    /** @var EventBusInterface  */
-    private $eventBus;
-    /** @var DBALConnectionHelper  */
-    private $connection;
-
-    public function __construct(Pipeline $pipeline, EventBusInterface $eventBus, DBALConnectionHelper $connection)
-    {
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
+    public function __construct(
+        private Pipeline $pipeline,
+        private BufferedEventBus $eventBus,
+        private DBALConnectionHelper $connection,
+    ) {
     }
 
     public function beginTransaction(): void
@@ -54,7 +47,7 @@ final class TransactionHelper
         $this->connection->rollBack();
     }
 
-    public function process(MiddlewareCommand $command): MiddlewareCommand
+    public function process(AbstractCommand $command): AbstractCommand
     {
         return $this->pipeline->process($command);
     }

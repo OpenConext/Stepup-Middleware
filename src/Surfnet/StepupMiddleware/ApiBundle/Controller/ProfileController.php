@@ -19,38 +19,37 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\ProfileService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
-    /**
-     * @var ProfileService
-     */
-    private $profileService;
-
     public function __construct(
-        ProfileService $profileService
+        private readonly ProfileService $profileService,
     ) {
-        $this->profileService = $profileService;
     }
 
-    public function getAction(Request $request, $identityId)
+    public function get(Request $request, string $identityId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         // Is the actor allowed to view the profile page?
         $actorId = $request->get('actorId');
         if ($identityId !== $actorId) {
-            throw new AccessDeniedHttpException("Identity and actor id should match. It is not yet allowed to view the profile of somebody else.");
+            throw new AccessDeniedHttpException(
+                "Identity and actor id should match. It is not yet allowed to view the profile of somebody else.",
+            );
         }
 
         $profile = $this->profileService->createProfile($identityId);
-        if (!$profile) {
-            throw new NotFoundHttpException("The profile cannot be created, the identity id did not match an identity.");
+        if (!$profile instanceof Profile) {
+            throw new NotFoundHttpException(
+                "The profile cannot be created, the identity id did not match an identity.",
+            );
         }
         return new JsonResponse($profile);
     }

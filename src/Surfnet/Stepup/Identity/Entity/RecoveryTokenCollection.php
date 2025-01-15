@@ -27,7 +27,7 @@ final class RecoveryTokenCollection
     /**
      * @var RecoveryToken[]
      */
-    private $recoveryTokens = [];
+    private array $recoveryTokens = [];
 
     public function set(RecoveryToken $recoveryToken): void
     {
@@ -42,7 +42,7 @@ final class RecoveryTokenCollection
         return $this->recoveryTokens[(string)$id];
     }
 
-    public function hasType(RecoveryTokenType $type)
+    public function hasType(RecoveryTokenType $type): bool
     {
         foreach ($this->recoveryTokens as $token) {
             if ($type->equals($token->getType())) {
@@ -57,7 +57,7 @@ final class RecoveryTokenCollection
         return count($this->recoveryTokens);
     }
 
-    public function remove(RecoveryTokenId $recoveryTokenId)
+    public function remove(RecoveryTokenId $recoveryTokenId): void
     {
         unset($this->recoveryTokens[(string)$recoveryTokenId]);
     }

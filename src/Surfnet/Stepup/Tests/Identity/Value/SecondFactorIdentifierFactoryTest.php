@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -27,36 +28,38 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorIdentifierFactoryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      */
-    public function generates_identifiers_of_all_types()
+    public function generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 12345678')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 12345678'),
         );
         $this->assertEquals(
             new YubikeyPublicId('08189273'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), '08189273')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), '08189273'),
         );
         $this->assertEquals(
             new GssfId('urn:abcd-efgh-ijkl'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('tiqr'), 'urn:abcd-efgh-ijkl')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('tiqr'), 'urn:abcd-efgh-ijkl'),
         );
 
         $this->assertEquals(
             PhoneNumber::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('sms'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('sms')),
         );
         $this->assertEquals(
             YubikeyPublicId::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('yubikey'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('yubikey')),
         );
         $this->assertEquals(
             GssfId::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('tiqr'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('tiqr')),
         );
     }
 }

@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
@@ -39,5 +40,10 @@ final class EmailTemplatesProjector extends Projector
                 $this->repository->save(EmailTemplate::create($name, $locale, $htmlContent));
             }
         }
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

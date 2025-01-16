@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
@@ -71,5 +72,10 @@ final class InstitutionAuthorizationProjector extends Projector
         $this->institutionAuthorizationRepository->clearInstitutionOption(
             $event->institution,
         );
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

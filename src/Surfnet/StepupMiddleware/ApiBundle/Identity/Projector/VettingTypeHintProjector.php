@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettingTypeHint;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
@@ -44,5 +45,10 @@ class VettingTypeHintProjector extends Projector
         }
         $entity->hints = $event->hints;
         $this->vettingTypeHintRepository->save($entity);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NumberOfTokensPerIdentityOptionChangedEvent;
@@ -32,6 +33,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigura
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class InstitutionConfigurationOptionsProjector extends Projector
 {
     public function __construct(
@@ -130,5 +134,10 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     {
         $this->institutionConfigurationOptionsRepository->removeConfigurationOptionsFor($event->institution);
         $this->allowedSecondFactorRepository->clearAllowedSecondFactorListFor($event->institution);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

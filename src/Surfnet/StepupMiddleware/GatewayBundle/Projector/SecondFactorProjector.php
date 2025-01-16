@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;

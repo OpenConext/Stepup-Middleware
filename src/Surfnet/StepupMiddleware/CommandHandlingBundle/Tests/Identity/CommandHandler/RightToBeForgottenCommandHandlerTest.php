@@ -160,11 +160,8 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_identity_may_not_be_forgotten_twice(): void
+    public function an_identity_may_be_forgotten_twice(): void
     {
-        $this->expectExceptionMessage("Operation on this Identity is not allowed: it has been forgotten");
-        $this->expectException(DomainException::class);
-
         $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
         $nameId = new NameId('urn:eeva-kuopio');
@@ -177,6 +174,11 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ->once()
             ->with(new IsEqual($nameId), new IsEqual($institution))
             ->andReturn($this->createIdentity($identityId->getIdentityId()));
+
+        $this->sensitiveDataService
+            ->shouldReceive('forgetSensitiveData')
+            ->once()
+            ->with(new IsEqual($identityId));
 
         $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
 
@@ -207,7 +209,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                 ),
                 new IdentityForgottenEvent($identityId, $institution),
             ])
-            ->when($command);
+            ->when($command)
+            ->then([
+                new IdentityForgottenEvent($identityId, $institution),
+            ]);
     }
 
     /**

@@ -1003,8 +1003,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function forget(): void
     {
-        $this->assertNotForgotten();
-
         if ($this->registrationAuthorities->count() !== 0) {
             throw new DomainException('Cannot forget an identity that is currently accredited as an RA(A)');
         }

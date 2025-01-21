@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
@@ -74,5 +75,10 @@ class WhitelistProjector extends Projector
         $whitelistEntries = $this->whitelistEntryRepository->findEntriesByInstitutions($institutions);
 
         $this->whitelistEntryRepository->remove($whitelistEntries);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

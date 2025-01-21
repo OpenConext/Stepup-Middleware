@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
@@ -80,5 +81,10 @@ class IdentitySelfAssertedTokenOptionsProjector extends Projector
         }
         $identitySelfAssertedTokenOptions->possessedToken = true;
         $this->repository->save($identitySelfAssertedTokenOptions);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
@@ -39,5 +40,10 @@ final class ConfiguredInstitutionProjector extends Projector
     public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         $this->configuredInstitutionRepository->removeConfigurationFor($event->institution);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

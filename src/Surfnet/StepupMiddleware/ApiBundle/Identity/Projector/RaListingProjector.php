@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;

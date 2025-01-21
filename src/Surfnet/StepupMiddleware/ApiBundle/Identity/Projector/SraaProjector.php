@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
@@ -40,5 +41,10 @@ class SraaProjector extends Projector
         }
 
         $this->sraaRepository->saveAll($sraaList);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

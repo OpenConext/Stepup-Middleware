@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity;
@@ -55,5 +56,10 @@ class SamlEntityProjector extends Projector
         }
 
         $this->samlEntityRepository->replaceAllIdps($spConfigurations);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

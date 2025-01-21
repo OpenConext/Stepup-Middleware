@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
-use Broadway\EventHandling\EventListener;
 use DateTime as CoreDateTime;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -33,6 +32,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -42,7 +42,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AuditLogProjector implements EventListener
+class AuditLogProjector extends Projector
 {
     public function __construct(
         private readonly AuditLogRepository $auditLogRepository,
@@ -138,7 +138,7 @@ class AuditLogProjector implements EventListener
         $this->auditLogRepository->save($entry);
     }
 
-    private function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $entries = $this->auditLogRepository->findByIdentityId($event->identityId);
         foreach ($entries as $auditLogEntry) {

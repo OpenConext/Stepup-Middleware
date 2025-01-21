@@ -19,7 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use DateTime as CoreDateTime;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -60,5 +61,10 @@ class SecondFactorRevocationProjector extends Projector
         $revocation->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
         $this->repository->save($revocation);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

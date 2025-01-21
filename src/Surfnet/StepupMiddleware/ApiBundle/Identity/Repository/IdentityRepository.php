@@ -22,6 +22,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -139,5 +142,19 @@ class IdentityRepository extends ServiceEntityRepository
     public function findOneByNameId(string $nameId): ?Identity
     {
         return $this->findOneBy(['nameId' => $nameId]);
+    }
+
+    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId): void
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->update($this->getEntityName(), 'i')
+            ->set('i.commonName', ":name")
+            ->set('i.email', ":email")
+            ->where('i.id = :id')
+            ->setParameter('id', $identityId->getIdentityId())
+            ->setParameter('name', CommonName::unknown())
+            ->setParameter('email', Email::unknown())
+            ->getQuery()
+            ->execute();
     }
 }

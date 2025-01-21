@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 
@@ -35,5 +36,10 @@ class InstitutionListingProjector extends Projector
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $this->institutionListingRepository->addIfNotExists($event->identityInstitution);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // do nothing, no sensitive data in this projection
     }
 }

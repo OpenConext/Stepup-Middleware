@@ -24,9 +24,13 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
@@ -43,14 +47,21 @@ class DeprovisionServiceTest extends TestCase
 
     private MockInterface&IdentityRepository $eventRepo;
 
+    private MockInterface&SraaRepository $sraaRepo;
+
+    private MockInterface&RaListingRepository $raListingRepo;
+
     protected function setUp(): void
     {
         $this->pipeline = m::mock(Pipeline::class);
         $this->apiRepo = m::mock(ApiIdentityRepository::class);
         $this->eventRepo = m::mock(IdentityRepository::class);
+        $this->sraaRepo = m::mock(SraaRepository::class);
+        $this->raListingRepo = m::mock(RaListingRepository::class);
+
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing(); // Not going to verify every log message at this point
-        $this->deprovisionService = new DeprovisionService($this->pipeline, $this->eventRepo, $this->apiRepo, $logger);
+        $this->deprovisionService = new DeprovisionService($this->pipeline, $this->eventRepo, $this->apiRepo, $logger, $this->sraaRepo, $this->raListingRepo);
     }
 
     public function test_it_can_be_created(): void
@@ -124,5 +135,36 @@ class DeprovisionServiceTest extends TestCase
             ->once();
 
         $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
+    }
+
+    public function test_is_allowed_to_deprovision_user(): void
+    {
+        $nameId = 'urn:collab:person:example.com:maynard_keenan';
+        $identity = m::mock(Identity::class);
+        $identity->id = '0bf0b464-a5de-11ec-b909-0242ac120002';
+        $identity->institution = new Institution('tool');
+        $identity->nameId = new NameId($nameId);
+
+        $this->apiRepo
+            ->shouldReceive('findOneByNameId')
+            ->with($nameId)
+            ->once()
+            ->andReturn($identity);
+
+        $this->sraaRepo
+            ->shouldReceive('contains')
+            ->with($identity->nameId)
+            ->once()
+            ->andReturn(false);
+
+        $this->raListingRepo
+            ->shouldReceive('contains')
+            ->with(m::on(function (IdentityId $identityId) use ($identity): bool {
+                return $identityId->getIdentityId() === $identity->id;
+            }))
+            ->once()
+            ->andReturn(false);
+
+        $this->deprovisionService->assertIsAllowed($nameId);
     }
 }

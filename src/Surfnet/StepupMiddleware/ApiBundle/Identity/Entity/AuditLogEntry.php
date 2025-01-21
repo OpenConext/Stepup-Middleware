@@ -153,7 +153,7 @@ class AuditLogEntry implements JsonSerializable
     public ?string $secondFactorType = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    public ?string $recoveryTokenIdentifier;
+    public ?string $recoveryTokenIdentifier = null;
 
     #[ORM\Column(length: 36, nullable: true)]
     public ?string $recoveryTokenType = null;

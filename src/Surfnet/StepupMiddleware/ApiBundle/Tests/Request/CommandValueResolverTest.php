@@ -93,6 +93,33 @@ class CommandValueResolverTest extends TestCase
     /**
      * @test
      * @group api-bundle
+     * @dataProvider invalidCommandNames
+     */
+    public function it_fails_converting_invalid_command_name_notation(string $expectedCommandClass, string $commandName): void
+    {
+        $this->expectException(BadCommandRequestException::class);
+        $this->expectExceptionMessage(sprintf('Command does not have a valid command name %s', $commandName));
+
+        $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
+
+        /** @var Request&MockInterface $request */
+        $request = m::mock(Request::class)
+            ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
+            ->getMock();
+
+        /** @var ArgumentMetadata&MockInterface $argument */
+        $argument = m::mock(ArgumentMetadata::class);
+        $argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Command::class);
+
+        $converter = new CommandValueResolver();
+        $converter->resolve($request, $argument);
+    }
+
+    /**
+     * @test
+     * @group api-bundle
      */
     public function it_sets_uuid(): void
     {
@@ -185,6 +212,24 @@ class CommandValueResolverTest extends TestCase
             'It can convert namespaced command notation with a namespace' => [
                 QuuxCommand::class,
                 'Root:Ns.Quux',
+            ],
+        ];
+    }
+
+    public function invalidCommandNames(): array
+    {
+        return [
+            'It can not convert simple command notation with only a namespace' => [
+                FooBarCommand::class,
+                'Root',
+            ],
+            'It can not convert simple command notation without path' => [
+                FooBarCommand::class,
+                'Root:',
+            ],
+            'It can not convert empty command notation' => [
+                FooBarCommand::class,
+                '',
             ],
         ];
     }

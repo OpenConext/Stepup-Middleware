@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
@@ -74,6 +75,16 @@ class IdentityProjector extends Projector
 
         $this->identityRepository->save($identity);
     }
+
+    public function applyIdentityRestoredEvent(IdentityRestoredEvent $event): void
+    {
+        $identity = $this->identityRepository->find((string)$event->identityId);
+        $identity->email = $event->email;
+        $identity->commonName = $event->commonName;
+
+        $this->identityRepository->save($identity);
+    }
+
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {

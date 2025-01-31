@@ -32,6 +32,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
@@ -93,6 +94,7 @@ final class ForgettableEventsTest extends TestCase
             YubikeyPossessionProvenAndVerifiedEvent::class,
             YubikeySecondFactorBootstrappedEvent::class,
             RegistrationAuthorityRetractedForInstitutionEvent::class,
+            IdentityRestoredEvent::class,
         ];
         $otherIdentityEventFqcns = array_diff($this->getConcreteIdentityEventFqcns(), $forgettableEventFqcns);
         $forgettableFqcn = Forgettable::class;

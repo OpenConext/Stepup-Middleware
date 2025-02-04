@@ -2,8 +2,9 @@ surfnet_stepup_middleware_management:
     resource: "@SurfnetStepupMiddlewareManagementBundle/Resources/config/routing.yml"
     prefix:   /management
 
-openconext_monitor:
-    resource: "@OpenConextMonitorBundle/Resources/config/routing.yml"
+open_conext_monitor:
+    resource: "@OpenConextMonitorBundle/src/Controller"
+    type: attribute
     prefix: /
 
 surfnet_stepup_middleware_api:

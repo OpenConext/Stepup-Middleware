@@ -43,12 +43,19 @@ class CommandValueResolver implements ValueResolverInterface
 
         $this->assertIsValidCommandStructure($data);
 
-        $commandName = [];
-        preg_match('~^(\w+):([\w\\.]+)$~', (string)$data['command']['name'], $commandName);
+        $commandNameParts = [];
+        $found = preg_match('~^(\w+):([\w\\.]+)$~', (string)$data['command']['name'], $commandNameParts);
+        if ($found !== 1) {
+            $message = sprintf('Command does not have a valid command name %s', (string)$data['command']['name']);
+            throw new BadCommandRequestException(
+                [$message],
+                $message,
+            );
+        }
         $commandClassName = sprintf(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\%s\Command\%sCommand',
-            $commandName[1],
-            str_replace('.', '\\', $commandName[2]),
+            $commandNameParts[1],
+            str_replace('.', '\\', $commandNameParts[2]),
         );
 
         /** @var AbstractCommand $command */

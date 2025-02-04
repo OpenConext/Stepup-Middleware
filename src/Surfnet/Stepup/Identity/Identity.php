@@ -1477,9 +1477,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private function assertUserMayAddSecondFactor(int $maxNumberOfTokens): void
     {
-        if ($this->unverifiedSecondFactors->count() +
-            $this->verifiedSecondFactors->count() +
-            $this->vettedSecondFactors->count() >= $maxNumberOfTokens
+        $tokenCount = (int) count($this->unverifiedSecondFactors) + count($this->verifiedSecondFactors) + count($this->vettedSecondFactors);
+        if ($tokenCount >= $maxNumberOfTokens
         ) {
             throw new DomainException(
                 sprintf('User may not have more than %d token(s)', $maxNumberOfTokens),

@@ -1221,11 +1221,6 @@ parameters:
 			path: ../../src/Surfnet/Stepup/Identity/Event/SafeStoreSecretRecoveryTokenPossessionPromisedEvent.php
 
 		-
-			message: "#^Property Surfnet\\\\Stepup\\\\Identity\\\\Event\\\\SafeStoreSecretRecoveryTokenPossessionPromisedEvent\\:\\:\\$secret \\(Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\RecoveryTokenIdentifier\\) does not accept Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\RecoveryTokenIdentifier\\|null\\.$#"
-			count: 1
-			path: ../../src/Surfnet/Stepup/Identity/Event/SafeStoreSecretRecoveryTokenPossessionPromisedEvent.php
-
-		-
 			message: "#^Method Surfnet\\\\Stepup\\\\Identity\\\\Event\\\\SecondFactorMigratedEvent\\:\\:deserialize\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../src/Surfnet/Stepup/Identity/Event/SecondFactorMigratedEvent.php
@@ -1412,7 +1407,7 @@ parameters:
 
 		-
 			message: "#^Cannot call method count\\(\\) on Surfnet\\\\Stepup\\\\Identity\\\\Entity\\\\SecondFactorCollection\\|null\\.$#"
-			count: 2
+			count: 5
 			path: ../../src/Surfnet/Stepup/Identity/Identity.php
 
 		-
@@ -1527,7 +1522,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, Surfnet\\\\Stepup\\\\Identity\\\\Entity\\\\SecondFactorCollection\\|null given\\.$#"
-			count: 4
+			count: 1
 			path: ../../src/Surfnet/Stepup/Identity/Identity.php
 
 		-
@@ -2572,12 +2567,12 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$commonName on Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\Identity\\|null\\.$#"
-			count: 1
+			count: 2
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/IdentityProjector.php
 
 		-
 			message: "#^Cannot access property \\$email on Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\Identity\\|null\\.$#"
-			count: 1
+			count: 2
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/IdentityProjector.php
 
 		-
@@ -2587,7 +2582,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$identity of method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Repository\\\\IdentityRepository\\:\\:save\\(\\) expects Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\Identity, Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\Identity\\|null given\\.$#"
-			count: 3
+			count: 4
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/IdentityProjector.php
 
 		-

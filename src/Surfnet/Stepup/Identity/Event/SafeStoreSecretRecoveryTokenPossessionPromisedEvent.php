@@ -116,9 +116,14 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
+        $secret = $sensitiveData->getRecoveryTokenIdentifier();
+        if ($secret === null) {
+            $secret = SafeStore::unknown();
+        }
+
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->secret = $sensitiveData->getRecoveryTokenIdentifier();
+        $this->secret = $secret;
     }
 
     public function obtainUserData(): array

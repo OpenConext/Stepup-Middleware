@@ -38,7 +38,9 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -1166,6 +1168,47 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email)),
             ]);
     }
+
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function a_deprovisioned_identity_is_restored_when_updated(): void
+    {
+        $id = new IdentityId('42');
+        $institution = new Institution('A Corp.');
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+
+        $createdEvent = new IdentityCreatedEvent(
+            $id,
+            $institution,
+            new NameId('3'),
+            $commonName,
+            $email,
+            new Locale('de_DE'),
+        );
+
+        $forgottenEvent = new IdentityForgottenEvent(
+            $id,
+            $institution,
+        );
+
+        $updateCommand = new UpdateIdentityCommand();
+        $updateCommand->id = $id->getIdentityId();
+        $updateCommand->email = 'new-email@domain.invalid';
+        $updateCommand->commonName = 'Henk Hendriksen';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([$createdEvent, $forgottenEvent])
+            ->when($updateCommand)
+            ->then([
+                new IdentityRestoredEvent($id, $institution,  new CommonName($updateCommand->commonName), new Email($updateCommand->email)),
+            ]);
+    }
+
 
     /**
      * @test

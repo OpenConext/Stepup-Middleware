@@ -40,6 +40,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
@@ -291,6 +292,14 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
                     new Locale('en_GB'),
+                ),
+            ],
+            'IdentityRestoredEvent' => [
+                new IdentityRestoredEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('BabelFish Inc'),
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.invalid'),
                 ),
             ],
             'IdentityEmailChangedEvent' => [

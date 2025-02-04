@@ -52,6 +52,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
@@ -1010,6 +1011,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
     }
 
+    public function restore(
+        CommonName $commonName,
+        Email $email,
+    ): void {
+        if (!$this->forgotten) {
+            return;
+        }
+
+        $this->apply(new IdentityRestoredEvent($this->id, $this->institution, $commonName, $email));
+    }
+
     public function allVettedSecondFactorsRemoved(): void
     {
         $this->apply(
@@ -1035,6 +1047,19 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
         $this->recoveryTokens = new RecoveryTokenCollection();
+    }
+
+    protected function applyIdentityRestoredEvent(IdentityRestoredEvent $event): void
+    {
+        $this->unverifiedSecondFactors = new SecondFactorCollection();
+        $this->verifiedSecondFactors = new SecondFactorCollection();
+        $this->vettedSecondFactors = new SecondFactorCollection();
+        $this->registrationAuthorities = new RegistrationAuthorityCollection();
+        $this->recoveryTokens = new RecoveryTokenCollection();
+
+        $this->commonName = $event->commonName;
+        $this->email = $event->email;
+        $this->forgotten = false;
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event): void
@@ -1452,9 +1477,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private function assertUserMayAddSecondFactor(int $maxNumberOfTokens): void
     {
-        if (count($this->unverifiedSecondFactors) +
-            count($this->verifiedSecondFactors) +
-            count($this->vettedSecondFactors) >= $maxNumberOfTokens
+        if ($this->unverifiedSecondFactors->count() +
+            $this->verifiedSecondFactors->count() +
+            $this->vettedSecondFactors->count() >= $maxNumberOfTokens
         ) {
             throw new DomainException(
                 sprintf('User may not have more than %d token(s)', $maxNumberOfTokens),

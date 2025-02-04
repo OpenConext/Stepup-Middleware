@@ -232,6 +232,11 @@ interface Identity extends AggregateRoot
      */
     public function forget(): void;
 
+    public function restore(
+        CommonName $commonName,
+        Email $email,
+    ): void;
+
     /**
      * @return IdentityId
      */

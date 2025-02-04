@@ -122,6 +122,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->id));
 
+        $identity->restore(new CommonName($command->commonName), new Email($command->email));
         $identity->rename(new CommonName($command->commonName));
         $identity->changeEmail(new Email($command->email));
 

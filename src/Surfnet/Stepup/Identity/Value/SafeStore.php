@@ -18,14 +18,20 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Exception\RuntimeException;
+
 /**
  * Recovery token identifier for the SafeStore token type
  */
 class SafeStore implements RecoveryTokenIdentifier
 {
+    private ?Secret $secret = null;
+
     public function __construct(
-        private readonly Secret $secret,
+        Secret $secret,
     ) {
+        $this->secret = $secret;
     }
 
     public static function unknown(): self
@@ -40,6 +46,9 @@ class SafeStore implements RecoveryTokenIdentifier
 
     public function getValue(): string
     {
+        if ($this->secret === null) {
+            throw new RuntimeException("Secret should be set");
+        }
         return $this->secret->getSecret();
     }
 

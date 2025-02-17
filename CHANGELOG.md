@@ -1,5 +1,9 @@
 # Changelog
 
+# 6.0.2
+- Repair deprovisioning API calls
+- Restore deprovisioned user on new login (returing users)
+
 # 6.0.0
 - Move to PHP 8.2
 - Move to Synfony 6

@@ -103,6 +103,9 @@ doctrine:
             stepup_sso_on_2fa_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SsoOn2faOptionType
                 commented: false
+            stepup_sso_registration_bypass_option:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SsoRegistrationBypassOptionType
+                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
                 commented: false

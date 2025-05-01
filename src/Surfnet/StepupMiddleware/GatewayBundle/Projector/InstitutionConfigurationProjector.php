@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
+use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
@@ -39,6 +42,7 @@ class InstitutionConfigurationProjector extends Projector
         $institutionConfiguration = new InstitutionConfiguration(
             (string)$event->institution,
             $event->ssoOn2faOption->isEnabled(),
+            $event->ssoRegistrationBypassOption->isEnabled(),
         );
 
         $this->repository->save($institutionConfiguration);
@@ -57,6 +61,25 @@ class InstitutionConfigurationProjector extends Projector
         $institutionConfiguration = new InstitutionConfiguration(
             (string)$event->institution,
             $event->ssoOn2faOption->isEnabled(),
+            SsoRegistrationBypassOption::getDefault()->isEnabled(),
+        );
+        $this->repository->save($institutionConfiguration);
+    }
+
+    public function applySsoRegistrationBypassOptionChangedEvent(SsoRegistrationBypassOptionChangedEvent $event): void
+    {
+        $institutionConfiguration = $this->repository->findByInstitution((string)$event->institution);
+        if ($institutionConfiguration instanceof InstitutionConfiguration) {
+            $institutionConfiguration->ssoRegistrationBypass = $event->ssoRegistrationBypassOption->isEnabled();
+            $this->repository->save($institutionConfiguration);
+            return;
+        }
+        // It can happen that the event changed for an institution that already exists, but is not yet projected to
+        // this projection. In that case we can create it.
+        $institutionConfiguration = new InstitutionConfiguration(
+            (string)$event->institution,
+            SsoOn2faOption::getDefault()->isEnabled(),
+            $event->ssoRegistrationBypassOption->isEnabled(),
         );
         $this->repository->save($institutionConfiguration);
     }

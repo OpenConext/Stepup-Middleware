@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository;
 
@@ -35,7 +34,12 @@ class InstitutionConfiguration
          * @var bool is the SSO on 2FA feature enabled?
          */
         #[ORM\Column(type: 'boolean')]
-        public bool $ssoOn2faEnabled
+        public bool $ssoOn2faEnabled,
+        /**
+         * @var bool is the SSO registration bypass feature enabled?
+         */
+        #[ORM\Column(type: 'boolean')]
+        public bool $ssoRegistrationBypass,
     ) {
     }
 }

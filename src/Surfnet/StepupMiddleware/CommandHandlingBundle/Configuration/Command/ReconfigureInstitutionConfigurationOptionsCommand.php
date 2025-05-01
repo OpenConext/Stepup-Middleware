@@ -88,4 +88,9 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      * @var bool|null
      */
     public ?bool $ssoOn2faOption = null;
+
+    /**
+     * @var bool|null
+     */
+    public ?bool $ssoRegistrationBypassOption = null;
 }

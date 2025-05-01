@@ -53,6 +53,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
@@ -86,6 +87,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $defaultAllowedSecondFactorList = AllowedSecondFactorList::blank();
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
@@ -104,6 +106,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $defaultVerifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -149,6 +152,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
@@ -166,6 +170,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -204,6 +209,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
         $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa());
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
@@ -232,6 +238,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -273,6 +280,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
 
@@ -308,6 +316,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -355,6 +364,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
@@ -386,6 +396,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -433,6 +444,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
 
@@ -469,6 +481,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -522,6 +535,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
@@ -551,6 +565,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -597,6 +612,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $selfVetOption = SelfVetOption::getDefault();
@@ -613,6 +629,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -652,6 +669,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -667,6 +685,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -703,6 +722,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -718,6 +738,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -762,6 +783,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -777,6 +799,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -806,6 +829,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -821,6 +845,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -850,6 +875,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -865,6 +891,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -909,6 +936,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -924,6 +952,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -960,6 +989,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $verifyEmailOption = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $newSelfVetOption = new SelfVetOption(true);
@@ -989,6 +1019,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -1044,6 +1075,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -1059,6 +1091,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -1086,6 +1119,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -1101,6 +1135,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -1125,6 +1160,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -1140,6 +1176,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -1177,6 +1214,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -1193,6 +1231,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                         $verifyEmailOption,
                         $numberOfTokensPerIdentityOption,
                         $ssoOn2faOption,
+                        $ssoRegistrationBypassOption,
                         $selfVetOption,
                         $selfAssertedTokensOption,
                     ),

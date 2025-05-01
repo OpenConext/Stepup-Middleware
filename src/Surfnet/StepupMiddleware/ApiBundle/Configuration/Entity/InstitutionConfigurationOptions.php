@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
@@ -71,6 +72,12 @@ class InstitutionConfigurationOptions
     public SsoOn2faOption $ssoOn2faOption;
 
     /**
+     * @var SsoRegistrationBypassOption
+     */
+    #[ORM\Column(type: 'stepup_sso_registration_bypass_option', options: ['default' => 0])]
+    public SsoRegistrationBypassOption $ssoRegistrationBypassOption;
+
+    /**
      * @var SelfAssertedTokensOption
      */
     #[ORM\Column(type: 'stepup_self_asserted_tokens_option', options: ['default' => 0])]
@@ -89,6 +96,7 @@ class InstitutionConfigurationOptions
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         SsoOn2faOption $ssoOn2faOption,
+        SsoRegistrationBypassOption $ssoRegistrationBypassOption,
         SelfVetOption $selfVetOption,
         SelfAssertedTokensOption $selfAssertedTokensOption,
     ): self {
@@ -100,6 +108,7 @@ class InstitutionConfigurationOptions
         $options->verifyEmailOption = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $options->ssoOn2faOption = $ssoOn2faOption;
+        $options->ssoRegistrationBypassOption = $ssoRegistrationBypassOption;
         $options->selfVetOption = $selfVetOption;
         $options->selfAssertedTokensOption = $selfAssertedTokensOption;
 

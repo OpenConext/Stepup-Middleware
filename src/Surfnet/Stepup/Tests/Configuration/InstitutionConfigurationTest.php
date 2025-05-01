@@ -39,6 +39,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
@@ -57,6 +58,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -78,6 +80,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -115,6 +118,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaLocationsOption = new UseRaLocationsOption(false);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -136,6 +140,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -174,6 +179,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -190,6 +196,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -214,6 +221,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
@@ -230,6 +238,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -257,6 +266,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -273,6 +283,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -304,6 +315,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -320,6 +332,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
                     $ssoOn2faOption,
+                    $ssoRegistrationBypassOption,
                     $selfVetOption,
                     $selfAssertedTokensOption,
                 ),
@@ -353,6 +366,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption = new VerifyEmailOption(true);
         $ssoOn2faOption = SsoOn2faOption::getDefault();
+        $ssoRegistrationBypassOption = SsoRegistrationBypassOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(false);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -387,6 +401,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                         $verifyEmailOption,
                         $numberOfTokensPerIdentityOption,
                         $ssoOn2faOption,
+                        $ssoRegistrationBypassOption,
                         $selfVetOption,
                         $selfAssertedTokensOption,
                     ),

@@ -27,6 +27,7 @@ use Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -35,6 +36,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 final class InstitutionConfigurationOptionsProjector extends Projector
 {
@@ -53,6 +55,7 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->verifyEmailOption,
             $event->numberOfTokensPerIdentityOption,
             $event->ssoOn2faOption,
+            $event->ssoRegistrationBypassOption,
             $event->selfVetOption,
             $event->selfAssertedTokensOption,
         );
@@ -119,6 +122,15 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
+
+    public function applySsoRegistrationBypassOptionChangedEvent(SsoRegistrationBypassOptionChangedEvent $event): void
+    {
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->ssoRegistrationBypassOption = $event->ssoRegistrationBypassOption;
+
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
+    }
+
 
     public function applySelfAssertedTokensOptionChangedEvent(SelfAssertedTokensOptionChangedEvent $event): void
     {

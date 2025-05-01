@@ -40,6 +40,7 @@ use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
@@ -54,6 +55,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -132,6 +134,7 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new VerifyEmailOption(true),
                     new NumberOfTokensPerIdentityOption(0),
                     new SsoOn2faOption(false),
+                    new SsoRegistrationBypassOption(false),
                     new SelfVetOption(true),
                     new SelfAssertedTokensOption(true),
                 ),
@@ -169,6 +172,13 @@ class EventSerializationAndDeserializationTest extends TestCase
                     $institutionConfigurationId,
                     $institution,
                     new SsoOn2faOption(false),
+                ),
+            ],
+            'SsoRegistrationBypassOptionChangedEvent' => [
+                new SsoRegistrationBypassOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new SsoRegistrationBypassOption(false),
                 ),
             ],
             'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [

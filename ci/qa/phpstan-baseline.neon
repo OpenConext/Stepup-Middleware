@@ -316,6 +316,16 @@ parameters:
 			path: ../../src/Surfnet/Stepup/Configuration/Event/SsoOn2faOptionChangedEvent.php
 
 		-
+			message: "#^Method Surfnet\\\\Stepup\\\\Configuration\\\\Event\\\\SsoRegistrationBypassOptionChangedEvent\\:\\:deserialize\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../src/Surfnet/Stepup/Configuration/Event/SsoRegistrationBypassOptionChangedEvent.php
+
+		-
+			message: "#^Method Surfnet\\\\Stepup\\\\Configuration\\\\Event\\\\SsoRegistrationBypassOptionChangedEvent\\:\\:serialize\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../src/Surfnet/Stepup/Configuration/Event/SsoRegistrationBypassOptionChangedEvent.php
+
+		-
 			message: "#^Method Surfnet\\\\Stepup\\\\Configuration\\\\Event\\\\UseRaLocationsOptionChangedEvent\\:\\:deserialize\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../src/Surfnet/Stepup/Configuration/Event/UseRaLocationsOptionChangedEvent.php
@@ -1931,6 +1941,11 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Configuration/Projector/InstitutionConfigurationOptionsProjector.php
 
 		-
+			message: "#^Cannot access property \\$ssoRegistrationBypassOption on Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Configuration\\\\Entity\\\\InstitutionConfigurationOptions\\|null\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Configuration/Projector/InstitutionConfigurationOptionsProjector.php
+
+		-
 			message: "#^Cannot access property \\$useRaLocationsOption on Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Configuration\\\\Entity\\\\InstitutionConfigurationOptions\\|null\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Configuration/Projector/InstitutionConfigurationOptionsProjector.php
@@ -1942,7 +1957,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$institutionConfigurationOptions of method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Configuration\\\\Repository\\\\InstitutionConfigurationOptionsRepository\\:\\:save\\(\\) expects Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Configuration\\\\Entity\\\\InstitutionConfigurationOptions, Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Configuration\\\\Entity\\\\InstitutionConfigurationOptions\\|null given\\.$#"
-			count: 7
+			count: 8
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Configuration/Projector/InstitutionConfigurationOptionsProjector.php
 
 		-
@@ -3546,6 +3561,11 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Controller/InstitutionConfigurationController.php
 
 		-
+			message: "#^Cannot access offset 'sso_registration…' on mixed\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Controller/InstitutionConfigurationController.php
+
+		-
 			message: "#^Cannot access offset 'use_ra' on mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Controller/InstitutionConfigurationController.php
@@ -3602,6 +3622,11 @@ parameters:
 
 		-
 			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Configuration\\\\Command\\\\ReconfigureInstitutionConfigurationOptionsCommand\\:\\:\\$ssoOn2faOption \\(bool\\|null\\) does not accept mixed\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Controller/InstitutionConfigurationController.php
+
+		-
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Configuration\\\\Command\\\\ReconfigureInstitutionConfigurationOptionsCommand\\:\\:\\$ssoRegistrationBypassOption \\(bool\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Controller/InstitutionConfigurationController.php
 

@@ -26,6 +26,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
@@ -35,6 +36,10 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
  */
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         public InstitutionConfigurationId $institutionConfigurationId,
         public Institution $institution,
@@ -43,6 +48,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         public VerifyEmailOption $verifyEmailOption,
         public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         public SsoOn2faOption $ssoOn2faOption,
+        public SsoRegistrationBypassOption $ssoRegistrationBypassOption,
         public SelfVetOption $selfVetOption,
         public SelfAssertedTokensOption $selfAssertedTokensOption
     ) {
@@ -60,6 +66,10 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         if (!isset($data['sso_on_2fa_option'])) {
             $data['sso_on_2fa_option'] = false;
         }
+        // If sso registration bypass option is not yet present, default to false
+        if (!isset($data['sso_registration_bypass_option'])) {
+            $data['sso_registration_bypass_option'] = false;
+        }
         // If self vet option is not yet present, default to false
         if (!isset($data['self_vet_option'])) {
             $data['self_vet_option'] = false;
@@ -76,6 +86,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new VerifyEmailOption($data['verify_email_option']),
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
             new SsoOn2faOption($data['sso_on_2fa_option']),
+            new SsoRegistrationBypassOption($data['sso_registration_bypass_option']),
             new SelfVetOption($data['self_vet_option']),
             new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );
@@ -91,6 +102,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'verify_email_option' => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
             'sso_on_2fa_option' => $this->ssoOn2faOption->isEnabled(),
+            'sso_registration_bypass_option' => $this->ssoRegistrationBypassOption->isEnabled(),
             'self_vet_option' => $this->selfVetOption->isEnabled(),
             'self_asserted_tokens_option' => $this->selfAssertedTokensOption->isEnabled(),
         ];

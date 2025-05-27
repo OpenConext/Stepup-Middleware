@@ -70,6 +70,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
             'verify_email' => $institutionConfigurationOptions->verifyEmailOption,
             'sso_on_2fa' => $institutionConfigurationOptions->ssoOn2faOption,
+            'sso_registration_bypass' => $institutionConfigurationOptions->ssoRegistrationBypassOption,
             'self_vet' => $institutionConfigurationOptions->selfVetOption,
             'allow_self_asserted_tokens' => $institutionConfigurationOptions->selfAssertedTokensOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,

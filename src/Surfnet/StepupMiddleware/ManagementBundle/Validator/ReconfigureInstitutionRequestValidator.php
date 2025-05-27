@@ -97,6 +97,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function validateInstitutionConfigurationOptions(array $options, string $institution): void
     {
         $propertyPath = sprintf('Institution(%s)', $institution);
@@ -110,6 +113,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         $optionalOptions = [
             'self_vet',
             'sso_on_2fa',
+            'sso_registration_bypass',
             'allow_self_asserted_tokens',
             'use_ra',
             'use_raa',
@@ -153,6 +157,13 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             Assertion::boolean(
                 $options['sso_on_2fa'],
                 sprintf('Option "sso_on_2fa" for "%s" must be a boolean value', $institution),
+                $propertyPath,
+            );
+        }
+        if (isset($options['sso_registration_bypass'])) {
+            Assertion::boolean(
+                $options['sso_registration_bypass'],
+                sprintf('Option "sso_registration_bypass" for "%s" must be a boolean value', $institution),
                 $propertyPath,
             );
         }

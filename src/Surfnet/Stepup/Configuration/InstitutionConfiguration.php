@@ -35,6 +35,7 @@ use Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
@@ -54,6 +55,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
@@ -72,6 +74,7 @@ use Surfnet\Stepup\Exception\DomainException;
  * @SuppressWarnings(PHPMD.TooManyMethods) AggregateRoot
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregateRoot
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) AggregateRoot
+ * @SuppressWarnings(PHPMD.TooManyFields) AggregateRoot
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
 {
@@ -92,6 +95,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private SelfVetOption $selfVetOption;
 
     private ?SsoOn2faOption $ssoOn2faOption = null;
+
+    private ?SsoRegistrationBypassOption $ssoRegistrationBypassOption = null;
 
     private ?SelfAssertedTokensOption $selfAssertedTokensOption = null;
 
@@ -119,6 +124,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
                 SsoOn2faOption::getDefault(),
+                SsoRegistrationBypassOption::getDefault(),
                 SelfVetOption::getDefault(),
                 SelfAssertedTokensOption::getDefault(),
             ),
@@ -171,6 +177,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
                 SsoOn2faOption::getDefault(),
+                SsoRegistrationBypassOption::getDefault(),
                 SelfVetOption::getDefault(),
                 SelfAssertedTokensOption::getDefault(),
             ),
@@ -317,6 +324,22 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institution,
                 $ssoOn2faOption,
             ),
+        );
+    }
+
+    public function configureSsoRegistrationBypassOption(SsoRegistrationBypassOption $ssoRegistrationBypassOption): void
+    {
+        if ($this->ssoRegistrationBypassOption instanceof SsoRegistrationBypassOption
+            && $this->ssoRegistrationBypassOption->equals($ssoRegistrationBypassOption)) {
+            return;
+        }
+
+        $this->apply(
+            new SsoRegistrationBypassOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $ssoRegistrationBypassOption
+            )
         );
     }
 
@@ -526,6 +549,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->verifyEmailOption = $event->verifyEmailOption;
         $this->selfVetOption = $event->selfVetOption;
         $this->ssoOn2faOption = $event->ssoOn2faOption;
+        $this->ssoRegistrationBypassOption = $event->ssoRegistrationBypassOption;
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
         $this->raLocations = new RaLocationList([]);
@@ -590,6 +614,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         SsoOn2faOptionChangedEvent $event,
     ): void {
         $this->ssoOn2faOption = $event->ssoOn2faOption;
+    }
+
+    protected function applySsoRegistrationBypassOptionChangedEvent(
+        SsoRegistrationBypassOptionChangedEvent $event,
+    ): void {
+        $this->ssoRegistrationBypassOption = $event->ssoRegistrationBypassOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(

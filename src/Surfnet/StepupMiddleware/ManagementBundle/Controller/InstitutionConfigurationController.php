@@ -82,6 +82,7 @@ final class InstitutionConfigurationController extends AbstractController
                 'verify_email' => $options->verifyEmailOption,
                 'self_vet' => $options->selfVetOption,
                 'sso_on_2fa' => $options->ssoOn2faOption,
+                'sso_registration_bypass' => $options->ssoRegistrationBypassOption,
                 'allow_self_asserted_tokens' => $options->selfAssertedTokensOption,
                 'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
@@ -140,6 +141,7 @@ final class InstitutionConfigurationController extends AbstractController
             // So are sso_on_2fa and the allow_self_asserted_tokens options
             $command->selfVetOption = $options['self_vet'] ?? null;
             $command->ssoOn2faOption = $options['sso_on_2fa'] ?? null;
+            $command->ssoRegistrationBypassOption = $options['sso_registration_bypass'] ?? null;
             $command->selfAssertedTokensOption = $options['allow_self_asserted_tokens'] ?? null;
 
             $commands[] = $command;

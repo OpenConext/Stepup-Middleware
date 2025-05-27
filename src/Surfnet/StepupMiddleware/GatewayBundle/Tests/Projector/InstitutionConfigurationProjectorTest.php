@@ -26,9 +26,11 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\InstitutionConfiguration;
 use Surfnet\StepupMiddleware\GatewayBundle\Projector\InstitutionConfigurationProjector;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository;
@@ -49,15 +51,15 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->projector = $projector;
     }
 
-    public function test_create_row_when_non_existent(): void
+    public function test_create_row_when_non_existent_sso_on_2fa(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
             new SsoOn2faOption(true),
         );
-        $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn(null);
-        $this->repository->shouldReceive('save')->withArgs(
+        $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn(null);
+        $this->repository->shouldReceive('save')->once()->withArgs(
             fn(InstitutionConfiguration $configuration,
             ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled,
         );
@@ -65,21 +67,55 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }
 
-    public function test_updates_existing_row(): void
+    public function test_updates_existing_row_sso_on_2fa(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
             new SsoOn2faOption(true),
         );
-        $configuration = new InstitutionConfiguration('institution-a.nl', false);
+        $configuration = new InstitutionConfiguration('institution-a.nl', false,false);
 
-        $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn($configuration);
-        $this->repository->shouldReceive('save')->withArgs(
+        $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn($configuration);
+        $this->repository->shouldReceive('save')->once()->withArgs(
             fn(InstitutionConfiguration $configuration,
             ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled,
         );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
+    }
+
+    public function test_create_row_when_non_existent_registration_bypass(): void
+    {
+        $event = new SsoRegistrationBypassOptionChangedEvent(
+            new InstitutionConfigurationId(Uuid::uuid4()->toString()),
+            new Institution('institution-a.nl'),
+            new SsoRegistrationBypassOption(true),
+        );
+        $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn(null);
+        $this->repository->shouldReceive('save')->once()->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoRegistrationBypass,
+        );
+
+        $this->projector->applySsoRegistrationBypassOptionChangedEvent($event);
+    }
+
+    public function test_updates_existing_row_registration_bypass(): void
+    {
+        $event = new SsoRegistrationBypassOptionChangedEvent(
+            new InstitutionConfigurationId(Uuid::uuid4()->toString()),
+            new Institution('institution-a.nl'),
+            new SsoRegistrationBypassOption(true),
+        );
+        $configuration = new InstitutionConfiguration('institution-a.nl', false,false);
+
+        $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn($configuration);
+        $this->repository->shouldReceive('save')->once()->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoRegistrationBypass,
+        );
+
+        $this->projector->applySsoRegistrationBypassOptionChangedEvent($event);
     }
 }

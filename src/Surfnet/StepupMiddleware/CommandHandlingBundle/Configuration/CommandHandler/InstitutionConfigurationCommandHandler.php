@@ -36,6 +36,7 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
+use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -129,6 +130,9 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 
         $ssoOn2faOptionValue = $command->ssoOn2faOption ?? SsoOn2faOption::getDefault()->isEnabled();
         $institutionConfiguration->configureSsoOn2faOption(new SsoOn2faOption($ssoOn2faOptionValue));
+
+        $ssoRegistrationBypassOptionValue = $command->ssoRegistrationBypassOption ?? SsoRegistrationBypassOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSsoRegistrationBypassOption(new SsoRegistrationBypassOption($ssoRegistrationBypassOptionValue));
 
         $satOption = $command->selfAssertedTokensOption ?? SelfAssertedTokensOption::getDefault()->isEnabled();
         $institutionConfiguration->configureSelfAssertedTokensOption(

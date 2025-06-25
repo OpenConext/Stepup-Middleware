@@ -52,12 +52,12 @@
         "symfony/validator": "6.4.*",
         "twig/extra-bundle": "^3.20",
         "twig/intl-extra": "^3.20",
-        "twig/twig": "^3.20"
+        "twig/twig": "^3.20",
+        "liip/test-fixtures-bundle": "^2.9.2"
     },
     "require-dev": {
         "doctrine/data-fixtures": "^1.8.1",
         "doctrine/doctrine-fixtures-bundle": "^3.7.1",
-        "liip/test-fixtures-bundle": "^2.9.2",
         "malukenho/docheader": "^1.1",
         "mockery/mockery": "1.7.x-dev",
         "moontoast/math": "^1.2.1",

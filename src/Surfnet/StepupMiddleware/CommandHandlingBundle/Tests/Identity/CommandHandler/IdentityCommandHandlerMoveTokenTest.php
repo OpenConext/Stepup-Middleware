@@ -593,7 +593,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
     public function test_can_not_be_moved_if_already_present_as_unverified_token(): void
     {
-        $this->expectExceptionMessage("The second factor was already registered as a unverified second factor");
+        $this->expectExceptionMessage("The second factor was already registered as an unverified second factor");
         $this->expectException(DomainException::class);
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);

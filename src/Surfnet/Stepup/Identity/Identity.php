@@ -210,6 +210,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
+        $this->assertTokenTypeNotAlreadyRegistered(new SecondFactorType('yubikey'));
 
         $this->apply(
             new YubikeySecondFactorBootstrappedEvent(
@@ -234,6 +235,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
+        $this->assertTokenTypeNotAlreadyRegistered(new SecondFactorType('yubikey'));
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -278,6 +280,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
+        $this->assertTokenTypeNotAlreadyRegistered(new SecondFactorType('sms'));
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -373,6 +376,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
+        $this->assertTokenTypeNotAlreadyRegistered(new SecondFactorType($provider->getStepupProvider()));
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -422,6 +426,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
+        $this->assertTokenTypeNotAlreadyRegistered(new SecondFactorType('u2f'));
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -685,6 +690,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException("The second factor on the original identity can not be found");
         }
         $this->assertTokenNotAlreadyRegistered($secondFactor->getType(), $secondFactor->getIdentifier());
+        $this->assertTokenTypeNotAlreadyRegistered($secondFactor->getType());
         if ($sourceIdentity->getInstitution()->equals($this->getInstitution())) {
             throw new DomainException("Cannot move the second factor to the same institution");
         }
@@ -1546,7 +1552,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         foreach ($this->unverifiedSecondFactors as $unverified) {
             if ($unverified->typeAndIdentifierAreEqual($type, $identifier)) {
-                throw new DomainException("The second factor was already registered as a unverified second factor");
+                throw new DomainException("The second factor was already registered as an unverified second factor");
             }
         }
         foreach ($this->verifiedSecondFactors as $verified) {
@@ -1554,9 +1560,28 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 throw new DomainException("The second factor was already registered as a verified second factor");
             }
         }
-        foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
-            if ($vettedSecondFactor->typeAndIdentifierAreEqual($type, $identifier)) {
+        foreach ($this->vettedSecondFactors as $vetted) {
+            if ($vetted->typeAndIdentifierAreEqual($type, $identifier)) {
                 throw new DomainException("The second factor was registered as a vetted second factor");
+            }
+        }
+    }
+
+    private function assertTokenTypeNotAlreadyRegistered(SecondFactorType $type): void
+    {
+        foreach ($this->unverifiedSecondFactors as $unverified) {
+            if ($unverified->getType()->equals($type)) {
+                throw new DomainException("This second factor type was already registered as an unverified second factor");
+            }
+        }
+        foreach ($this->verifiedSecondFactors as $verified) {
+            if ($verified->getType()->equals($type)) {
+                throw new DomainException("This second factor type was already registered as a verified second factor");
+            }
+        }
+        foreach ($this->vettedSecondFactors as $vetted) {
+            if ($vetted->getType()->equals($type)) {
+                throw new DomainException("This second factor type was already registered as a vetted second factor");
             }
         }
     }

@@ -66,7 +66,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         if (!isset($data['sso_on_2fa_option'])) {
             $data['sso_on_2fa_option'] = false;
         }
-        // If sso registration bypass option is not yet present, default to false
+        // If GSSP fallback (sso registration bypass) option is not yet present, default to false
         if (!isset($data['sso_registration_bypass_option'])) {
             $data['sso_registration_bypass_option'] = false;
         }
@@ -86,7 +86,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new VerifyEmailOption($data['verify_email_option']),
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
             new SsoOn2faOption($data['sso_on_2fa_option']),
-            new SsoRegistrationBypassOption($data['sso_registration_bypass_option']),
+            new SsoRegistrationBypassOption($data['sso_registration_bypass_option']),   // Fallback authentication
             new SelfVetOption($data['self_vet_option']),
             new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );

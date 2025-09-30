@@ -26,6 +26,10 @@ use TypeError;
 
 /**
  * Custom Type for the SsoRegistrationBypassOption Value Object
+ *
+ * This option enables and disables the "GSSP fallback" option in the Stepup-Gateway for an institution.
+ * "GSSP fallback" forwards the second factor authentications at LoA 1.5 to the fallback GSSP when a user does not have
+ * any active tokens
  */
 class SsoRegistrationBypassOptionType extends IntegerType
 {

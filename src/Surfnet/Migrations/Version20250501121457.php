@@ -36,6 +36,11 @@ final class Version20250501121457 extends AbstractMigration implements Configura
             'Migration can only be executed safely on \'mysql\'.',
         );
         // Create the new sso_on_2fa option, note the name conversion 'error' made by doctrine.
+        /*
+         * The sso_registration_bypass_option enables and disables the "GSSP fallback" option in the Stepup-Gateway for an institution.
+         * "GSSP fallback" forwards the second factor authentications at LoA 1.5 to the fallback GSSP when a user does not have
+         * any active tokens
+         */
         $this->addSql('ALTER TABLE institution_configuration_options ADD sso_registration_bypass_option INT DEFAULT \'0\' NOT NULL');
         // Create the institution_configuration gateway schema
         $gatewaySchema = $this->getGatewaySchema();

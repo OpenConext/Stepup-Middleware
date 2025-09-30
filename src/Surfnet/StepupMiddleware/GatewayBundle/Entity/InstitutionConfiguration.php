@@ -36,7 +36,7 @@ class InstitutionConfiguration
         #[ORM\Column(type: 'boolean')]
         public bool $ssoOn2faEnabled,
         /**
-         * @var bool is the SSO registration bypass feature enabled?
+         * @var bool is the GSSP fallback (SSO registration bypass) feature enabled?
          */
         #[ORM\Column(type: 'boolean')]
         public bool $ssoRegistrationBypass,

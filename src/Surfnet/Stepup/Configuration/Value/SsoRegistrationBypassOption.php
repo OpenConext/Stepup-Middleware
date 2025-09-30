@@ -22,6 +22,12 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
+/*
+ * The SsoRegistrationBypassOption is the "GSSP fallback" option in the Stepup-Gateway for an institution that
+ * forwards the second factor authentications at LoA 1.5 to the fallback GSSP when a user does not have
+ * any active tokens
+ */
+
 final readonly class SsoRegistrationBypassOption implements JsonSerializable
 {
     public static function getDefault(): self

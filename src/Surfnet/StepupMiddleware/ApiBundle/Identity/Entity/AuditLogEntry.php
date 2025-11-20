@@ -62,7 +62,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 /**
- * @SuppressWarnings(PHPMD.UnusedPrivateField)
+ * @SuppressWarnings("PHPMD.UnusedPrivateField")
  */
 #[ORM\Table(name: 'audit_log')]
 #[ORM\Index(name: 'idx_auditlog_actorid', columns: ['actor_id'])]

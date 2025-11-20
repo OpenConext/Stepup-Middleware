@@ -25,6 +25,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
+/** @extends AbstractSearchService<RaCandidate> */
 class RaCandidateService extends AbstractSearchService
 {
     public function __construct(private readonly RaCandidateRepository $raCandidateRepository)

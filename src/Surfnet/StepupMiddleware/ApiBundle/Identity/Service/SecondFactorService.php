@@ -33,8 +33,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorR
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Coupling to Entities and ValueObjects in parameters cause the high
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects") Coupling to Entities and ValueObjects in parameters cause the high
  * coupling warning. Decoupling them (replacing VOs with primitives) bring a degradation in type strictness.
+ *
+ * @extends AbstractSearchService<UnverifiedSecondFactor|UnverifiedSecondFactor|VettedSecondFactor>
  */
 class SecondFactorService extends AbstractSearchService
 {

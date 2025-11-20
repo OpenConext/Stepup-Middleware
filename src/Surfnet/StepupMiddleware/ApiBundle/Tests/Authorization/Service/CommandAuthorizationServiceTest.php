@@ -499,10 +499,6 @@ class CommandAuthorizationServiceTest extends TestCase
             if ($files === false) {
                 continue;
             }
-            assert(
-                is_array($files),
-                sprintf('Unable to grab the files from %s with pattern %s', $folder , $commandPath)
-            );
 
             foreach ($files as $file) {
                 $className = str_replace($rootPath, '', $file);

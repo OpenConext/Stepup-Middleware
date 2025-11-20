@@ -89,7 +89,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
+        $actualErrorMessage = '';
         $context->shouldReceive('buildViolation')->with($this->spy($actualErrorMessage))->once()->andReturn($builder);
+        assert(is_string($actualErrorMessage));
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
@@ -139,7 +141,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $builder->shouldReceive('addViolation')->with()->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
+        $errorMessage = '';
         $context->shouldReceive('buildViolation')->once()->with($this->spy($errorMessage))->andReturn($builder);
+        assert(is_string($errorMessage));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock

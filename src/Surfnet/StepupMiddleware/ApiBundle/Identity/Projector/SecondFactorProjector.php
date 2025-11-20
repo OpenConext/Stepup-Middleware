@@ -47,9 +47,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorR
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class SecondFactorProjector extends Projector
 {

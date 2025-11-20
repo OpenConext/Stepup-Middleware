@@ -23,6 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 
+/** @extends AbstractSearchService<RaSecondFactor> */
 class RaSecondFactorService extends AbstractSearchService
 {
     public function __construct(private readonly RaSecondFactorRepository $repository)

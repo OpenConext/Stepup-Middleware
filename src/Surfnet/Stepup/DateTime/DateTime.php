@@ -25,8 +25,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use TypeError;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class DateTime implements Stringable
 {

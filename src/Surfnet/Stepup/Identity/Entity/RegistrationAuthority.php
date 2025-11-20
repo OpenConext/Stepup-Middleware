@@ -25,7 +25,7 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
 /**
- * @SuppressWarnings(PHPMD.UnusedPrivateField)
+ * @SuppressWarnings("PHPMD.UnusedPrivateField")
  */
 final class RegistrationAuthority extends SimpleEventSourcedEntity
 {

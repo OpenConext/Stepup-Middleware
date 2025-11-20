@@ -40,7 +40,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * The command utilizes a specific service for this task (VerifiedSecondFactorReminderService). Input validation is
  * performed on the incoming request parameters.
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {

@@ -111,11 +111,11 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
+ * @SuppressWarnings("PHPMD.ExcessiveClassLength")
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -489,7 +489,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function vetSecondFactor(
         IdentityApi                       $registrant,

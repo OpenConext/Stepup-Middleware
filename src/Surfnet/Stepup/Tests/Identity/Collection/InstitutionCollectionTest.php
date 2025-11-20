@@ -170,7 +170,7 @@ class InstitutionCollectionTest extends UnitTest
     }
 
     /**
-     * @return array
+     * @return list<Institution>
      */
     private function getInstitutions(): array
     {

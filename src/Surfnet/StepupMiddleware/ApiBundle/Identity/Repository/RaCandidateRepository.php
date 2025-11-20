@@ -33,8 +33,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  * @extends ServiceEntityRepository<RaCandidate>
  */
 class RaCandidateRepository extends ServiceEntityRepository

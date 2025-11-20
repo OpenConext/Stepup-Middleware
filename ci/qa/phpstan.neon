@@ -5,6 +5,7 @@ includes:
     - ../../vendor/phpstan/phpstan-symfony/extension.neon
 
 parameters:
+	treatPhpDocTypesAsCertain: false
 	level: 9
 	paths:
 		- ../../src

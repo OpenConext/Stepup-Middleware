@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  * @extends ServiceEntityRepository<RaListing>
  */
 class RaListingRepository extends ServiceEntityRepository
@@ -100,8 +100,8 @@ class RaListingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
-     * @SuppressWarnings(PHPMD.NPathComplexity)      below complex or hard to maintain.
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity") The amount of if statements do not necessarily make the method
+     * @SuppressWarnings("PHPMD.NPathComplexity")      below complex or hard to maintain.
      */
     public function createSearchQuery(RaListingQuery $query): Query
     {

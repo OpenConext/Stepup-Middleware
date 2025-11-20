@@ -40,7 +40,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SaveVettingT
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 {

@@ -26,7 +26,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
  * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!
  * @see Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Gateway project)
  *
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
+ * @SuppressWarnings("PHPMD.UnusedPrivateFields")
  */
 #[ORM\Table]
 #[ORM\Index(name: 'idx_secondfactor_nameid', columns: ['name_id'])]

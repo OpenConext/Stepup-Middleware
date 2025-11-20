@@ -39,8 +39,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - Events, events, events!
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects") - Events, events, events!
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class RaListingProjector extends Projector
 {

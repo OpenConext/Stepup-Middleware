@@ -58,7 +58,7 @@ final class AllowedSecondFactorMap
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings("PHPMD.UnusedPrivateMethod")
      */
     private function add(AllowedSecondFactor $allowedSecondFactor): void
     {

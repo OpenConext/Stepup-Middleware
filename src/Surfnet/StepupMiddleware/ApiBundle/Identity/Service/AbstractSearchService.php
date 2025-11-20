@@ -25,8 +25,15 @@ use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
 
-class AbstractSearchService
+/**
+ * @template T of object
+ */
+abstract class AbstractSearchService
 {
+    /**
+     * @param Query<int, T>|QueryBuilder $doctrineQuery
+     * @return Pagerfanta<T>
+     */
     protected function createPaginatorFrom(
         QueryBuilder|Query $doctrineQuery,
         AbstractQuery $query,
@@ -55,6 +62,7 @@ class AbstractSearchService
     }
 
     /**
+     * @param Query<int|string, array<string, string>> $doctrineQuery
      * @return array<int|string, array<string, string>>
      */
     protected function getFilteredQueryOptions(Query $doctrineQuery): array

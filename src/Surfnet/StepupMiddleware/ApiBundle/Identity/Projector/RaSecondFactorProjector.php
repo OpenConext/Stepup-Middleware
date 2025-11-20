@@ -52,9 +52,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorReposit
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class RaSecondFactorProjector extends Projector
 {

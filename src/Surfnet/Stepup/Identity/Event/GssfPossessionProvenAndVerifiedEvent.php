@@ -65,7 +65,7 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId     $identityId,

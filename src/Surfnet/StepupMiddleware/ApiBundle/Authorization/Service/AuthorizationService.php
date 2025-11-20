@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
  * Perform authorization checks
  * For example, test if an identity is allowed to register self-asserted tokens.
  *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings("PHPMD.CyclomaticComplexity")
  */
 class AuthorizationService
 {

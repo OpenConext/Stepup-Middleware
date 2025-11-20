@@ -34,7 +34,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Coupling to assertion classes is rather high, might be a good candidate for refactoring
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects") Coupling to assertion classes is rather high, might be a good candidate for refactoring
  */
 final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 {
@@ -98,7 +98,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
     public function validateInstitutionConfigurationOptions(array $options, string $institution): void
     {

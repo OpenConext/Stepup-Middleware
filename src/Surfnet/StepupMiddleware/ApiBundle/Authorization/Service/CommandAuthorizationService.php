@@ -52,7 +52,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
  * 1. A SRAA user may always execute the command
  * 2. Certain commands are actionable with a RA role. When the identity is RAA, the identity is also allowed to run
  *    the command.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class CommandAuthorizationService
 {
@@ -133,9 +133,9 @@ class CommandAuthorizationService
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity) - To keep the method readable, increased CC is allowed
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity") - To keep the method readable, increased CC is allowed
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function mayRaCommandBeExecutedOnBehalfOf(
         Command $command,

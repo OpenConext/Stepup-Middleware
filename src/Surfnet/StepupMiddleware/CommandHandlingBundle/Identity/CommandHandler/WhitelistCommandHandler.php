@@ -77,10 +77,10 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     }
 
     /**
-     * @return Institution[]
+     * @return list<Institution>
      */
     private function mapArrayToInstitutions(array $institutions): array
     {
-        return array_map(fn($institutionName): Institution => new Institution($institutionName), $institutions);
+        return array_values(array_map(fn($institutionName): Institution => new Institution($institutionName), $institutions));
     }
 }

@@ -70,11 +70,11 @@ use Surfnet\Stepup\Exception\DomainException;
  *    the aggregate but by playing the events onto the aggregate.
  * 2. If one of the configuration options should be nullable, take a look at the applyUseRaOptionChangedEvent doc block
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
- * @SuppressWarnings(PHPMD.TooManyMethods) AggregateRoot
- * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregateRoot
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) AggregateRoot
- * @SuppressWarnings(PHPMD.TooManyFields) AggregateRoot
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects") Events and value objects
+ * @SuppressWarnings("PHPMD.TooManyMethods") AggregateRoot
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods") AggregateRoot
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity") AggregateRoot
+ * @SuppressWarnings("PHPMD.TooManyFields") AggregateRoot
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
 {
@@ -669,7 +669,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {

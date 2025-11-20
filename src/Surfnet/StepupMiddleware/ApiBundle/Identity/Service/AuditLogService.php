@@ -23,6 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
+/** @extends AbstractSearchService<AuditLogEntry> */
 class AuditLogService extends AbstractSearchService
 {
     public function __construct(private readonly AuditLogRepository $repository)

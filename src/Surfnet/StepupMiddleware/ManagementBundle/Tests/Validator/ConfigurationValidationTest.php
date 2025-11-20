@@ -69,8 +69,11 @@ final class ConfigurationValidationTest extends TestCase
         $builder->shouldReceive('addViolation')->with()->once();
         $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
+
         $context = m::mock(ExecutionContextInterface::class);
+        $errorMessage = '';
         $context->shouldReceive('buildViolation')->with($this->spy($errorMessage))->once()->andReturn($builder);
+        assert(is_string($errorMessage));
 
         $validator = new ConfigurationStructureValidator(
             new GatewayConfigurationValidator(

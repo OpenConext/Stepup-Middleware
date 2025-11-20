@@ -44,12 +44,11 @@ final class SensitiveDataMessageStreamTest extends TestCase
     /**
      * @test
      * @group sensitive-data
+     * @doesNotPerformAssertions
      */
     public function it_can_work_with_zero_sensitive_data_messages_and_zero_events(): void
     {
         $this->apply([], []);
-
-        $this->assertTrue(true);
     }
 
     /**

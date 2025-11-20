@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
+/** @extends AbstractSearchService<RaListing> */
 class RaListingService extends AbstractSearchService
 {
     public function __construct(private readonly RaListingRepository $raListingRepository)

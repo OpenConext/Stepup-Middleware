@@ -23,7 +23,7 @@ use Broadway\ReadModel\Projector as BroadwayProjector;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 
 /**
- * @SuppressWarnings(PHPMD.NumberOfChildren) we simply have a lot of projectors
+ * @SuppressWarnings("PHPMD.NumberOfChildren") we simply have a lot of projectors
  */
 abstract class Projector extends BroadwayProjector implements EventListener
 {

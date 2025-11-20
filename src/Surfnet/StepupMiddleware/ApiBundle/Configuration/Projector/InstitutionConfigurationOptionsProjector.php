@@ -35,8 +35,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFac
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 final class InstitutionConfigurationOptionsProjector extends Projector
 {

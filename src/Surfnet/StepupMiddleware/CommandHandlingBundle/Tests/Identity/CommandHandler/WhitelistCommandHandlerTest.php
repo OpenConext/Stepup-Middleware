@@ -185,10 +185,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
 
     /**
      * Helper function to quickly map String[] to Institution[]
-     * @return array
+     * @return list<Institution> $institutions
      */
     private function mapStringValuesToInstitutions(array $institutions): array
     {
-        return array_map(fn($institution): Institution => new Institution($institution), $institutions);
+        return array_values(array_map(static fn($institution): Institution => new Institution($institution), $institutions));
     }
 }

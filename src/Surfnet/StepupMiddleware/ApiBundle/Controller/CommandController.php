@@ -39,7 +39,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use function sprintf;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class CommandController extends AbstractController
 {

@@ -34,8 +34,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @extends AbstractSearchService<Identity> */
 class IdentityService extends AbstractSearchService
 {
     public function __construct(

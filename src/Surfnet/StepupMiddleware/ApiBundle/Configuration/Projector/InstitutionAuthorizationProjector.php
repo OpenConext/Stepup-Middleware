@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAutho
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 final class InstitutionAuthorizationProjector extends Projector
 {

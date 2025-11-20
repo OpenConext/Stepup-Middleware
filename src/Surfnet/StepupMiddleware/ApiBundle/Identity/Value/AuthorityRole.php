@@ -48,8 +48,8 @@ class AuthorityRole implements Stringable
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) this is the actual used notation
-     * @SuppressWarnings(PHPMD.ShortMethodName)     this is the actual term
+     * @SuppressWarnings("PHPMD.CamelCaseMethodName") this is the actual used notation
+     * @SuppressWarnings("PHPMD.ShortMethodName")     this is the actual term
      *
      * @return AuthorityRole
      */
@@ -59,7 +59,7 @@ class AuthorityRole implements Stringable
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) this is the actual used notation
+     * @SuppressWarnings("PHPMD.CamelCaseMethodName") this is the actual used notation
      *
      * @return AuthorityRole
      */

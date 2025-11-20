@@ -143,7 +143,7 @@ final class AuditLogProjectorTest extends TestCase
     {
         $repository = m::mock(AuditLogRepository::class);
         $repository->shouldReceive('save')->with($this->spy($actualEntry));
-
+        $this->assertInstanceOf(AuditLogEntry::class, $actualEntry);
         $identityRepository = m::mock(IdentityRepository::class);
 
         $identity = new Identity();

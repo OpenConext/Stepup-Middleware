@@ -38,7 +38,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 use function array_key_exists;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
@@ -60,7 +60,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId $identityId,

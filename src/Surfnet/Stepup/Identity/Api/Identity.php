@@ -125,7 +125,7 @@ interface Identity extends AggregateRoot
      * Attempts to vet another identity's verified second factor.
      *
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function vetSecondFactor(
         Identity                          $registrant,

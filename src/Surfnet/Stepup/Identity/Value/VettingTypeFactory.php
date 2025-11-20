@@ -37,10 +37,7 @@ final class VettingTypeFactory
             }
         }
         // BC fix for older events without a vetting type, they default back to ON_PREMISE.
-        if ($vettingType instanceof UnknownVettingType &&
-            isset($data['document_number']) &&
-            $data['document_number'] !== null
-        ) {
+        if ($vettingType instanceof UnknownVettingType && isset($data['document_number'])) {
             $vettingType = new OnPremiseVettingType(new DocumentNumber($data['document_number']));
         }
 

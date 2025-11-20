@@ -77,14 +77,14 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Excep
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class IdentityCommandHandler extends SimpleCommandHandler
 {
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         private readonly RepositoryInterface $eventSourcedRepository,

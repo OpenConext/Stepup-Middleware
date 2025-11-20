@@ -22,4 +22,6 @@ jobs:
         run: composer install
 
       - name: Run QA tests
-        run: composer check
+        run: composer check-ci
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: 999999

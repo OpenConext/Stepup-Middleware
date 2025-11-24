@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -32,10 +35,10 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('eventProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
-    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
+    #[Test]
+    #[DataProvider('eventProvider')]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event,): void
     {
         $class = $event::class;

@@ -74,7 +74,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
             new Institution('institution-a.nl'),
             new SsoOn2faOption(true),
         );
-        $configuration = new InstitutionConfiguration('institution-a.nl', false,false);
+        $configuration = new InstitutionConfiguration('institution-a.nl', false, false);
 
         $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn($configuration);
         $this->repository->shouldReceive('save')->once()->withArgs(
@@ -108,7 +108,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
             new Institution('institution-a.nl'),
             new SsoRegistrationBypassOption(true),
         );
-        $configuration = new InstitutionConfiguration('institution-a.nl', false,false);
+        $configuration = new InstitutionConfiguration('institution-a.nl', false, false);
 
         $this->repository->shouldReceive('findByInstitution')->once()->with('institution-a.nl')->andReturn($configuration);
         $this->repository->shouldReceive('save')->once()->withArgs(

@@ -18,21 +18,22 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Value;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 
 final class AuthorizedInstitutionCollectionTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function empty_collection(): void
     {
         $collection = AuthorizedInstitutionCollection::from($this->buildInstitutionCollection([]), null);
         $this->assertEmpty($collection->getAuthorizations());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrieve_institutions(): void
     {
         $collection = AuthorizedInstitutionCollection::from(
@@ -47,7 +48,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrieve_institutions_only_raa(): void
     {
         $collection = AuthorizedInstitutionCollection::from(

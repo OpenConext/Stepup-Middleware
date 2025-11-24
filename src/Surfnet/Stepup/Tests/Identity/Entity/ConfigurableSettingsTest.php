@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use DateTime as CoreDateTime;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -30,8 +33,8 @@ class ConfigurableSettingsTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function a_new_email_verification_window_always_starts_now(): void
     {
         $settings = ConfigurableSettings::create(3, []);
@@ -67,9 +70,9 @@ class ConfigurableSettingsTest extends UnitTest
     /**
      * @param string[] $validLocaleStrings
      */
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('localeVerifications')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('localeVerifications')]
+    #[Group('domain')]
     public function a_locale_can_be_verified_to_be_a_valid_locale(
         bool $isValid,
         string $localeString,

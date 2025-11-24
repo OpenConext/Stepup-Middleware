@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
@@ -29,9 +32,9 @@ class TimeFrameTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidValueProviderInt')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidValueProviderInt')]
+    #[Group('domain')]
     public function it_cannot_be_given_an_non_positive_amount_of_seconds(int $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -39,8 +42,8 @@ class TimeFrameTest extends UnitTest
         TimeFrame::ofSeconds($invalidValue);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function to_string_output_matches_amount_of_seconds_as_string(): void
     {
         $seconds = 1000;

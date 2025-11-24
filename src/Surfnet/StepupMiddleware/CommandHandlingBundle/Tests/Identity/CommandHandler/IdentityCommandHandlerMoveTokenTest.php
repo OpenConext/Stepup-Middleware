@@ -24,6 +24,9 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -65,7 +68,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[RunTestsInSeparateProcesses]
 class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -121,8 +124,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_second_factor_can_be_moved(): void
     {
         $this->setUpInstitutionConfiguration(2, ['yubikey']);

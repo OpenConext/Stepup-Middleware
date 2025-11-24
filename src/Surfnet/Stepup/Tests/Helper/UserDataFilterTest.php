@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Tests\Helper;
 use DateTime as CoreDateTime;
 use Generator;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\UserDataFilter;
@@ -42,7 +43,7 @@ class UserDataFilterTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideEvents')]
+    #[DataProvider('provideEvents')]
     public function test_filtering_is_applied_with_expected_result(
         IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event,
         array $expectation,

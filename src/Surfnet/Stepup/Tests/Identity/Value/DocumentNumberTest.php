@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -29,17 +32,17 @@ class DocumentNumberTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidArgumentProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidArgumentProvider')]
+    #[Group('domain')]
     public function the_document_number_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
         new DocumentNumber($invalidValue);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_document_numbers_with_the_same_value_are_equal(): void
     {
         $commonName = new DocumentNumber('John Doe');

@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionSet;
@@ -31,8 +34,8 @@ class InstitutionSetTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function the_set_is_built_out_of_institution_vos(): void
     {
         $institutionA = new Institution('a');
@@ -43,8 +46,8 @@ class InstitutionSetTest extends UnitTest
         $this->assertSame(['a', 'b', 'c'], $set->toScalarArray());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function duplicate_entries_are_not_allowed(): void
     {
         $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
@@ -56,8 +59,8 @@ class InstitutionSetTest extends UnitTest
         InstitutionSet::create([$institutionB, $institutionBDupe]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function duplicate_entries_are_not_allowed_case_insensitive(): void
     {
         $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
@@ -69,8 +72,8 @@ class InstitutionSetTest extends UnitTest
         InstitutionSet::create([$institutionB, $institutionBDupe]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function only_institutions_can_be_present_in_set(): void
     {
         $this->expectExceptionMessage(
@@ -84,8 +87,8 @@ class InstitutionSetTest extends UnitTest
         InstitutionSet::create([$institution, $location]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function factory_method_can_build_from_empty_array(): void
     {
         $input = [];
@@ -93,8 +96,8 @@ class InstitutionSetTest extends UnitTest
         $this->assertEmpty($set->toScalarArray());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function factory_method_can_build_from_array_of_string(): void
     {
         $input = [
@@ -115,9 +118,9 @@ class InstitutionSetTest extends UnitTest
      *
      *
      */
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('dirtyInstitutionListProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('dirtyInstitutionListProvider')]
+    #[Group('domain')]
     public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -125,8 +128,8 @@ class InstitutionSetTest extends UnitTest
         InstitutionSet::create($invalid);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function sets_can_be_compared(): void
     {
         $input = [

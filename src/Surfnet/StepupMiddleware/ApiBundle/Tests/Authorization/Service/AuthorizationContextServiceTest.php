@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution as StepupConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -74,8 +76,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->authorizationRepository = $authorizationRepository;
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function it_can_build_a_context(): void
     {
         $actorInstitution = new Institution('institution-a');
@@ -125,8 +127,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->assertFalse($context->isActorSraa());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function it_can_build_a_context_with_sraa_actor(): void
     {
         $actorInstitution = new Institution('institution-a');
@@ -232,8 +234,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->assertFalse($context->isActorSraa());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function it_rejects_unknown_actor(): void
     {
         $this->expectExceptionMessage("The provided id is not associated with any known identity");

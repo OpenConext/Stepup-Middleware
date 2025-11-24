@@ -20,6 +20,8 @@ namespace Surfnet\Stepup\Tests\Configuration;
 
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
@@ -47,8 +49,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function use_ra_locations_option_is_set_to_false_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');
@@ -66,7 +68,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
         $this->scenario
-            ->when(fn(): \Surfnet\Stepup\Configuration\InstitutionConfiguration => InstitutionConfiguration::create(
+            ->when(fn(): InstitutionConfiguration => InstitutionConfiguration::create(
                 $institutionConfigurationId,
                 $institution,
             ))->then([
@@ -105,8 +107,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function show_raa_contact_information_option_is_set_to_true_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');
@@ -124,7 +126,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
         $this->scenario
-            ->when(fn(): \Surfnet\Stepup\Configuration\InstitutionConfiguration => InstitutionConfiguration::create(
+            ->when(fn(): InstitutionConfiguration => InstitutionConfiguration::create(
                 $institutionConfigurationId,
                 $institution,
             ))->then([
@@ -163,8 +165,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -203,8 +205,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -246,8 +248,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -293,8 +295,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -343,8 +345,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
+    #[Test]
+    #[Group('aggregate')]
     public function test_the_setting_of_fga_options_on_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');

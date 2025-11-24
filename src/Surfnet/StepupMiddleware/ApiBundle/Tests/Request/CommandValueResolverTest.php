@@ -20,13 +20,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\Matcher\MatcherAbstract;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandValueResolver;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,9 +38,9 @@ class CommandValueResolverTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidCommandJsonStructures')]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[DataProvider('invalidCommandJsonStructures')]
+    #[Group('api-bundle')]
     public function it_validates_the_command_structure(string $commandJson): void
     {
         $this->expectException(BadCommandRequestException::class);
@@ -61,9 +63,9 @@ class CommandValueResolverTest extends TestCase
         $this->assertInstanceOf(Command::class, $result[0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('convertibleCommandNames')]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[DataProvider('convertibleCommandNames')]
+    #[Group('api-bundle')]
     public function it_can_convert_command_name_notation(string $expectedCommandClass, string $commandName): void
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
@@ -86,9 +88,9 @@ class CommandValueResolverTest extends TestCase
         $this->assertInstanceOf($expectedCommandClass, $result[0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidCommandNames')]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[DataProvider('invalidCommandNames')]
+    #[Group('api-bundle')]
     public function it_fails_converting_invalid_command_name_notation(string $expectedCommandClass, string $commandName): void
     {
         $this->expectException(BadCommandRequestException::class);
@@ -111,8 +113,8 @@ class CommandValueResolverTest extends TestCase
         $converter->resolve($request, $argument);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[Group('api-bundle')]
     public function it_sets_uuid(): void
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
@@ -135,8 +137,8 @@ class CommandValueResolverTest extends TestCase
         $this->assertEquals('abcdef', $result[0]->UUID, 'UUID mismatch');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[Group('api-bundle')]
     public function it_sets_payload(): void
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];

@@ -22,9 +22,12 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
-use Mockery\Matcher\IsEqual;
 use Mockery as m;
+use Mockery\Matcher\IsEqual;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
@@ -46,6 +49,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ConcreteIdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
@@ -53,7 +57,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Right
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[RunTestsInSeparateProcesses]
 class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
 {
     /** @var MockInterface */
@@ -72,7 +76,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         $this->apiIdentityRepository = m::mock(
-            \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository::class,
+            ConcreteIdentityRepository::class,
         );
         $this->sensitiveDataService = m::mock(SensitiveDataService::class);
         $this->sraaRepository = m::mock(SraaRepository::class);
@@ -94,9 +98,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
     public function an_identity_can_be_forgotten(): void
     {
         $identityId = new IdentityId('A');
@@ -151,9 +155,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
     public function an_identity_may_be_forgotten_twice(): void
     {
         $identityId = new IdentityId('A');
@@ -209,9 +213,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
     public function an_ra_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
@@ -269,9 +273,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
     public function an_raa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
@@ -330,9 +334,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
     public function an_sraa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an SRAA");

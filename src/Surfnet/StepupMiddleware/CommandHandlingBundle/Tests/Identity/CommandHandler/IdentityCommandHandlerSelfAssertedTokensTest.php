@@ -24,6 +24,9 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
@@ -86,7 +89,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[RunTestsInSeparateProcesses]
 class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -131,8 +134,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         parent::setUp();
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_sms_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -164,8 +167,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_safe_store_secret_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -208,8 +211,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -271,8 +274,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_sms_recovery_code_possession_can_not_be_proven_twice(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -307,8 +310,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_only_one_safe_store_secret_allowed(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -355,8 +358,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_sms_recovery_token_possession_requires_institution_configuration_feature_enabled(): void
     {
         $identityCreatedEvent = $this->buildIdentityCreatedEvent();
@@ -393,8 +396,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -462,8 +465,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_token_can_be_registered_self_asserted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -543,8 +546,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_self_asserted_token_registration_requires_possession_of_recovery_token(): void
     {
         $madeUpRecoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -600,8 +603,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -640,8 +643,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_a_sat_token_can_be_used_to_self_vet_a_token(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -769,8 +772,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());

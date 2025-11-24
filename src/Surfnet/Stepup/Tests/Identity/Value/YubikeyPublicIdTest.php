@@ -19,6 +19,9 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -27,8 +30,8 @@ class YubikeyPublicIdTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_yubikey_public_ids_with_the_same_value_are_equal(): void
     {
         $id = new YubikeyPublicId('00001234');
@@ -55,9 +58,9 @@ class YubikeyPublicIdTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidFormatProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidFormatProvider')]
+    #[Group('domain')]
     public function it_cannot_be_constructed_with_an_invalid_format(string $invalidFormat): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -76,9 +79,9 @@ class YubikeyPublicIdTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('validFormatProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('validFormatProvider')]
+    #[Group('domain')]
     public function its_value_matches_its_input_value(string $validFormat): void
     {
         $id = new YubikeyPublicId($validFormat);

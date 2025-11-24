@@ -19,22 +19,24 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Twig;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Twig\BackwardsCompatibleExtension;
 use Twig\Environment;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\ArrayLoader;
 
-#[\PHPUnit\Framework\Attributes\RequiresPhpExtension('intl')]
+#[RequiresPhpExtension('intl')]
 class BackwardsCompatibleExtensionTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('templateProvider')]
+    #[DataProvider('templateProvider')]
     public function testLocalizedData(string $template, string $expected, string $locale): void
     {
         $dateString = "2024-12-05 13:12:10";
         $date = new DateTime($dateString);
         $twig = new Environment(new ArrayLoader(['template' => $template]), ['debug' => true, 'cache' => false, 'autoescape' => 'html', 'optimizations' => 0]);
-        $twig->addExtension( new BackwardsCompatibleExtension(new IntlExtension()));
+        $twig->addExtension(new BackwardsCompatibleExtension(new IntlExtension()));
 
         $output = $twig->render('template', ['date' => $date, 'locale' => $locale]);
         $this->assertEquals($expected, $output);

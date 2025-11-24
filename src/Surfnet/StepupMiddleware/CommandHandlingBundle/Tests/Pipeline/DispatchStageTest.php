@@ -22,18 +22,19 @@ use Broadway\CommandHandling\CommandBus;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage;
 
 class DispatchStageTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_dispatches_commands(): void
     {
         $command = m::mock(AbstractCommand::class);

@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
@@ -28,8 +30,8 @@ class RegistrationAuthorityRoleTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_roles_with_the_same_value_are_equal(): void
     {
         $role = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);

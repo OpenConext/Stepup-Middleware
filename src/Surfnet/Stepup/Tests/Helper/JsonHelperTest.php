@@ -19,9 +19,10 @@
 namespace Surfnet\Stepup\Tests\Helper;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use StdClass;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Exception\JsonException;
 use Surfnet\Stepup\Helper\JsonHelper;
 
@@ -29,8 +30,8 @@ class JsonHelperTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('json')]
+    #[Test]
+    #[Group('json')]
     public function json_helper_decodes_strings_to_arrays(): void
     {
         $expectedDecodedResult = ['hello' => 'world'];
@@ -41,8 +42,8 @@ class JsonHelperTest extends TestCase
         $this->assertSame($expectedDecodedResult, $actualDecodedResult);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('json')]
+    #[Test]
+    #[Group('json')]
     public function json_helper_throws_an_exception_when_there_is_a_syntax_error(): void
     {
         $this->expectException(JsonException::class);

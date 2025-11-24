@@ -27,6 +27,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
@@ -34,8 +36,8 @@ class BufferedEventBusTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-handling')]
+    #[Test]
+    #[Group('event-handling')]
     public function it_buffers_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
@@ -52,8 +54,8 @@ class BufferedEventBusTest extends TestCase
         $this->assertInstanceOf(BufferedEventBus::class, $bus);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-handling')]
+    #[Test]
+    #[Group('event-handling')]
     public function it_flushes_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
@@ -74,8 +76,8 @@ class BufferedEventBusTest extends TestCase
     /**
      * This is tested by checking that the mock event listener is invoked once, while flushing twice.
      */
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-handling')]
+    #[Test]
+    #[Group('event-handling')]
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice(): void
     {
         $event = $this->createDummyDomainMessage(null);
@@ -93,8 +95,8 @@ class BufferedEventBusTest extends TestCase
         $this->assertInstanceOf(BufferedEventBus::class, $bus);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-handling')]
+    #[Test]
+    #[Group('event-handling')]
     public function an_event_caused_by_an_event_in_the_current_buffer_being_flushed_is_buffered_and_flushed_after_events_in_the_current_buffer(): void
     {
         $bus = new BufferedEventBus($this->getDummyEntityManager());

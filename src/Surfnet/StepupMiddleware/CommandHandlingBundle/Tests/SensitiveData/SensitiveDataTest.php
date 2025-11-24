@@ -19,7 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -103,9 +106,9 @@ class SensitiveDataTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('sensitiveDataToSerialise')]
-    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
+    #[Test]
+    #[DataProvider('sensitiveDataToSerialise')]
+    #[Group('sensitive-data')]
     public function it_serialises_and_deserialises(
         SensitiveData $sensitiveData,
         array $getterExpectations,

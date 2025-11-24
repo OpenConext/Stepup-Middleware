@@ -19,11 +19,13 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionAuthorizationOptionTest extends TestCase
 {
@@ -45,16 +47,16 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $this->institutionRole = InstitutionRole::useRa();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function institution_entries_are_sorted(): void
     {
         $useRaOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, ['z', 'y', 'x']);
         $this->assertEquals(['x', 'y', 'z'], $useRaOption->getInstitutions($this->institution));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function institution_entries_default_is_own_institution(): void
     {
         $useRaOption1 = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, null);
@@ -66,9 +68,9 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $this->assertEquals([$this->institution], $useRaOption2->getInstitutions($this->institution));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('institutionSetComparisonProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('institutionSetComparisonProvider')]
+    #[Group('domain')]
     public function institution_option_instances_can_be_compared(
         bool $expectation,
         ?array $configurationA,
@@ -95,16 +97,16 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $this->assertEquals(['x', 'y', 'z'], $institutionOption->jsonSerialize());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function can_be_retrieved_json_serializable_on_empty_set(): void
     {
         $institutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole);
         $this->assertEquals(null, $institutionOption->jsonSerialize());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function should_be_set_to_default_if_created_with_own_institution_as_institutions(): void
     {
         $institutions = [
@@ -121,8 +123,8 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $this->assertEquals([], $option->getInstitutionSet()->toScalarArray());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function the_default_value_is_given_institution(): void
     {
         $this->assertEquals(
@@ -131,8 +133,8 @@ class InstitutionAuthorizationOptionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function the_empty_value_is_no_value(): void
     {
         $this->assertEquals(
@@ -141,16 +143,16 @@ class InstitutionAuthorizationOptionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function the_blank_method_should_return_null(): void
     {
         $this->assertEquals(null, InstitutionAuthorizationOption::blank());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('institutionHasInstitutionProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('institutionHasInstitutionProvider')]
+    #[Group('domain')]
     public function the_has_institution_method_should_check_for_institutions(
         bool $expectation,
         array $institutionList,

@@ -24,6 +24,8 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType;
@@ -51,8 +53,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -62,8 +64,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -76,8 +78,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -87,8 +89,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_contact_information_value_object(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -101,8 +103,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertEquals(new ContactInformation($input), $output);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

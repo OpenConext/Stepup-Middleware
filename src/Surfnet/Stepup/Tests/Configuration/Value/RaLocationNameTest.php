@@ -21,7 +21,10 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
@@ -29,9 +32,9 @@ class RaLocationNameTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrEmptyStringProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('nonStringOrEmptyStringProvider')]
+    #[Group('domain')]
     public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string(
         string $nonStringOrEmptyString,
     ): void {
@@ -40,8 +43,8 @@ class RaLocationNameTest extends TestCase
         new RaLocationName($nonStringOrEmptyString);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_ra_location_names_with_the_same_values_are_equal(): void
     {
         $raLocationName = new RaLocationName('a');
@@ -50,8 +53,8 @@ class RaLocationNameTest extends TestCase
         $this->assertTrue($raLocationName->equals($theSame));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_ra_location_names_with_different_values_are_not_equal(): void
     {
         $raLocationName = new RaLocationName('a');

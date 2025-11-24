@@ -22,6 +22,9 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
@@ -59,9 +62,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidPhpValues')]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[DataProvider('invalidPhpValues')]
+    #[Group('doctrine')]
     public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion(mixed $value): void
     {
         $this->expectException(ConversionException::class);
@@ -79,9 +82,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('validPhpValues')]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[DataProvider('validPhpValues')]
+    #[Group('doctrine')]
     public function a_valid_php_value_is_converted_to_a_sql_value(
         RecoveryTokenStatus $phpValue,
         int $databaseValue,
@@ -103,9 +106,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidDatabaseValues')]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[DataProvider('invalidDatabaseValues')]
+    #[Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(mixed $input): void
     {
         $this->expectException(ConversionException::class);
@@ -123,9 +126,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('validDatabaseValues')]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[DataProvider('validDatabaseValues')]
+    #[Group('doctrine')]
     public function a_valid_database_value_is_converted_to_a_sql_value(
         string $databaseValue,
         RecoveryTokenStatus $phpValue,

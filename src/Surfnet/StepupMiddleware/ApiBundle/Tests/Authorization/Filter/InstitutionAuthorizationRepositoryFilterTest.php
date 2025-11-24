@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -50,8 +52,8 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         $this->queryBuilder->from(InstitutionValue::class, 'i');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context(): void
     {
         $this->mockedAuthorizationContext->method('getInstitutions')

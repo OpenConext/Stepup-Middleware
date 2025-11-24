@@ -19,7 +19,10 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
@@ -27,18 +30,18 @@ class InstitutionRoleTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidConstructorArgumentsProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidConstructorArgumentsProvider')]
+    #[Group('domain')]
     public function invalid_types_are_rejected_during_construction(bool|string|int $arguments): void
     {
         $this->expectException(InvalidArgumentException::class);
         new InstitutionRole($arguments);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('institutionTypeProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('institutionTypeProvider')]
+    #[Group('domain')]
     public function institution_roles_can_be_created_by_type(string $type): void
     {
         $role1 = new InstitutionRole($type);

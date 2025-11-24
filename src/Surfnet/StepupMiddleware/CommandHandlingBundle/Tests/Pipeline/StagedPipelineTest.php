@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
@@ -31,8 +33,8 @@ class StagedPipelineTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_passes_a_command_through_a_single_stage(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -47,8 +49,8 @@ class StagedPipelineTest extends TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_passes_a_command_through_multiple_stages(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -68,8 +70,8 @@ class StagedPipelineTest extends TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next(): void
     {
         $command1 = m::mock(AbstractCommand::class);

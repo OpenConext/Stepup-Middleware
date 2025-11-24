@@ -21,7 +21,10 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
@@ -58,9 +61,9 @@ final class ConfigurationValidationTest extends TestCase
         return $dataSet;
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidConfigurations')]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[DataProvider('invalidConfigurations')]
+    #[Group('command-handler')]
     public function it_rejects_invalid_configuration(array $configuration, string $expectedPropertyPath): void
     {
         $builder = m::mock(ConstraintViolationBuilderInterface::class);

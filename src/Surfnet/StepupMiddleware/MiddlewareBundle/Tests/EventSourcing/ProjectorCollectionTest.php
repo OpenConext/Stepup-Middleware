@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\EventSourcing;
 
 use Mockery as m;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\WhitelistProjector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
@@ -30,8 +32,8 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException
 class ProjectorCollectionTest extends TestCase
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
+    #[Test]
+    #[Group('event-replay')]
     public function projectors_can_be_added_to_a_projector_collection_during_runtime(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -51,8 +53,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
+    #[Test]
+    #[Group('event-replay')]
     public function projector_names_can_be_retrieved_from_a_projector_collection(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -72,8 +74,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
+    #[Test]
+    #[Group('event-replay')]
     public function a_subset_of_projectors_can_be_selected_from_a_projector_collection(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -95,8 +97,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
+    #[Test]
+    #[Group('event-replay')]
     public function a_subset_containing_projectors_not_present_in_a_projector_collection_cannot_be_selected(): void
     {
         $this->expectException(InvalidArgumentException::class);

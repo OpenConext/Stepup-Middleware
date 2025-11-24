@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command {
 
+    use AllowDynamicProperties;
     use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
-    #[\AllowDynamicProperties]
+    #[AllowDynamicProperties]
     class FooBarCommand extends AbstractCommand
     {
     }
@@ -30,6 +31,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns {
 
     use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
+    // phpcs:ignore PSR1.Classes.ClassDeclaration.MultipleClasses
     class QuuxCommand extends AbstractCommand
     {
     }

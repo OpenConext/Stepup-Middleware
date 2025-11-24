@@ -21,6 +21,9 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 use Broadway\Serializer\Serializable as SerializableInterface;
 use DateTime as CoreDateTime;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -79,9 +82,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('eventProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('eventProvider')]
+    #[Group('domain')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
@@ -111,9 +114,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertTrue($event == $deserializedEvent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('serializedDataProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('serializedDataProvider')]
+    #[Group('domain')]
     public function an_serialized_event_should_be_the_same(
         string $serializedData,
         string $serializedSensitiveData,
@@ -132,8 +135,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertEquals($event, $deserializedEvent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization(): void
     {
         // use a fixed datetime instance, to prevent microsecond precision issues in PHP 7.1+

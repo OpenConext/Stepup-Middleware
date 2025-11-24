@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Service;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
@@ -69,7 +70,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertInstanceOf(DeprovisionService::class, $this->deprovisionService);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Group('api-bundle')]
     public function test_it_deals_with_non_exisiting_collab_user_id(): void
     {
         $this->apiRepo
@@ -81,7 +82,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertEmpty($data);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Group('api-bundle')]
     public function test_it_can_return_data(): void
     {
         $identity = m::mock(Identity::class);

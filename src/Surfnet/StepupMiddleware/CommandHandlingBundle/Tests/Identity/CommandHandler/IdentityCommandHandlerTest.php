@@ -23,9 +23,13 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
-use Mockery\Matcher\IsEqual;
 use Mockery as m;
+use Mockery\Matcher\IsEqual;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -67,7 +71,6 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
-use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
@@ -96,7 +99,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
 
-#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[RunTestsInSeparateProcesses]
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -158,9 +161,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_can_be_bootstrapped_with_a_yubikey_second_factor(): void
     {
         $command = new BootstrapIdentityWithYubikeySecondFactorCommand();
@@ -206,9 +209,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_cannot_be_bootstrapped_twice(): void
     {
         $command = new BootstrapIdentityWithYubikeySecondFactorCommand();
@@ -232,9 +235,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_yubikey_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -294,9 +297,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_yubikey_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -339,8 +342,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function yubikey_possession_cannot_be_proven_twice(): void
     {
         $this->expectException(DomainException::class);
@@ -396,9 +399,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_phone_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -458,9 +461,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_phone_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -502,9 +505,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_gssf_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -577,9 +580,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_gssf_possession_can_not_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -623,9 +626,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_u2f_device_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -685,9 +688,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_u2f_device_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -729,8 +732,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function phone_possession_cannot_be_proven_twice(): void
     {
         $this->expectException(DomainException::class);
@@ -786,8 +789,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function cannot_prove_possession_of_arbitrary_second_factor_type_twice(): void
     {
         $this->expectException(DomainException::class);
@@ -844,9 +847,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_unverified_second_factors_email_can_be_verified(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -911,8 +914,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_verified_second_factors_email_cannot_be_verified(): void
     {
         $this->expectException(DomainException::class);
@@ -975,8 +978,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function cannot_verify_an_email_after_the_verification_window_has_closed(): void
     {
         $this->expectException(DomainException::class);
@@ -1025,8 +1028,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function it_can_create_a_new_identity(): void
     {
         $createCommand = new CreateIdentityCommand();
@@ -1062,8 +1065,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function an_identity_can_be_updated(): void
     {
         $id = new IdentityId('42');
@@ -1095,8 +1098,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function an_identity_can_be_updated_twice_only_emitting_events_when_changed(): void
     {
         $id = new IdentityId('42');
@@ -1130,8 +1133,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_deprovisioned_identity_is_restored_when_updated(): void
     {
         $id = new IdentityId('42');
@@ -1163,13 +1166,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->given([$createdEvent, $forgottenEvent])
             ->when($updateCommand)
             ->then([
-                new IdentityRestoredEvent($id, $institution,  new CommonName($updateCommand->commonName), new Email($updateCommand->email)),
+                new IdentityRestoredEvent($id, $institution, new CommonName($updateCommand->commonName), new Email($updateCommand->email)),
             ]);
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_second_factor_can_be_vetted(): void
     {
         $command = new VetSecondFactorCommand();
@@ -1281,8 +1284,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_second_factor_cannot_be_vetted_without_a_secure_enough_vetted_second_factor(): void
     {
         $this->expectExceptionMessage("Authority does not have the required LoA");
@@ -1424,8 +1427,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_second_factor_can_be_vetted_without_a_physical_proven_possession(): void
     {
         $command = new VetSecondFactorCommand();
@@ -1537,8 +1540,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[Group('command-handler')]
     public function a_second_factor_cannot_be_vetted_without_physical_prove_of_possession_when_not_configured(): void
     {
         $this->expectExceptionMessage(
@@ -1686,9 +1689,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_can_express_its_locale_preference(): void
     {
         $command = new ExpressLocalePreferenceCommand();
@@ -1716,9 +1719,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_can_send_registration_mail(): void
     {
         $command = new SendSecondFactorRegistrationEmailCommand();
@@ -1748,9 +1751,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([]); // No event is emanated from this command
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_cannot_express_a_preference_for_an_unsupported_locale(): void
     {
         $this->expectExceptionMessage("Given locale \"fi_FI\" is not a supported locale");
@@ -1778,9 +1781,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function an_identity_can_express_its_locale_preference_more_than_one_time(): void
     {
         $command = new ExpressLocalePreferenceCommand();
@@ -1810,9 +1813,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_second_factor_can_be_self_vetted(): void
     {
         $command = new SelfVetSecondFactorCommand();
@@ -1939,9 +1942,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      *
      * @todo remove this test once we drop BC support for SelfService 3.5
      */
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('command-handler')]
     public function a_second_factor_can_be_self_vetted_using_old_authoringSecondFactorIdentifier_command_property(): void
     {
         $command = new SelfVetSecondFactorCommand();

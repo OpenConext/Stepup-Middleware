@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -29,18 +32,18 @@ class EmailTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidArgumentProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidArgumentProvider')]
+    #[Group('domain')]
     public function the_email_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Email($invalidValue);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidEmailProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('invalidEmailProvider')]
+    #[Group('domain')]
     public function the_email_address_given_must_be_rfc_822_compliant(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -48,8 +51,8 @@ class EmailTest extends UnitTest
         new Email($invalidValue);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[Group('domain')]
     public function two_emails_with_the_same_value_are_equal(): void
     {
         $email = new Email('email@example.invalid');

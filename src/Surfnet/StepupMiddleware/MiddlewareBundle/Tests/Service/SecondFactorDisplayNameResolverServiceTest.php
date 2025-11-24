@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
@@ -27,7 +28,7 @@ class SecondFactorDisplayNameResolverServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_resolve_displayname(): void
     {
         $factors = ['azuremfa' => 'Azure MFA'];
@@ -37,7 +38,7 @@ class SecondFactorDisplayNameResolverServiceTest extends TestCase
         self::assertEquals('Azure MFA', $resolver->resolveByType($type));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_resolve_displayname_fallback(): void
     {
         $factors = ['azuremfa' => 'Azure MFA'];

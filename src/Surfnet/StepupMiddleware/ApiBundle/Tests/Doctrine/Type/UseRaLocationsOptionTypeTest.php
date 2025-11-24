@@ -22,9 +22,13 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType;
+use Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider;
 
 class UseRaLocationsOptionTypeTest extends UnitTest
 {
@@ -49,8 +53,8 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
@@ -60,9 +64,9 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::class, 'notNull')]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[DataProviderExternal(TestDataProvider::class, 'notNull')]
+    #[Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_a_use_ra_locations_option_or_null(mixed $incorrectValue,): void
     {
         $this->expectException(ConversionException::class);
@@ -71,8 +75,8 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
@@ -85,8 +89,8 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
@@ -96,8 +100,8 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_use_ra_locations_option_value_object(): void
     {
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);

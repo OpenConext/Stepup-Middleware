@@ -19,18 +19,18 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
-use StdClass;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class ShowRaaContactInformationOptionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
-    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
+    #[Test]
+    #[Group('domain')]
+    #[Group('institution-configuration-option')]
     public function two_show_raa_contact_information_options_with_the_same_values_are_equal(): void
     {
         $option = true;
@@ -41,9 +41,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertTrue($showRaaContactInformationOption->equals($theSame));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
-    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
+    #[Test]
+    #[Group('domain')]
+    #[Group('institution-configuration-option')]
     public function two_show_raa_contact_information_options_with_different_values_are_not_equal(): void
     {
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
@@ -52,9 +52,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertFalse($showRaaContactInformationOption->equals($different));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
-    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
+    #[Test]
+    #[Group('domain')]
+    #[Group('institution-configuration-option')]
     public function default_value_is_true(): void
     {
         $default = ShowRaaContactInformationOption::getDefault();

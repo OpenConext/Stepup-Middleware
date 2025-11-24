@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
@@ -64,9 +67,9 @@ class EventSerializationAndDeserializationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('institutionConfigurationEventsProvider')]
-    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[Test]
+    #[DataProvider('institutionConfigurationEventsProvider')]
+    #[Group('domain')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(
         SerializableInterface $unserializedEvent,
     ): void {

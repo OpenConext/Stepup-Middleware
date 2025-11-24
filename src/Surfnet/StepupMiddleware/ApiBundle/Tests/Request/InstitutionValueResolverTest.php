@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
@@ -46,8 +48,8 @@ class InstitutionValueResolverTest extends UnitTest
             ->andReturn(Institution::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[Group('api-bundle')]
     public function an_exception_is_thrown_when_the_parameter_is_missing(): void
     {
         $this->expectException(BadApiRequestException::class);
@@ -58,8 +60,8 @@ class InstitutionValueResolverTest extends UnitTest
         $converter->resolve($this->request, $this->argument);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
+    #[Test]
+    #[Group('api-bundle')]
     public function an_institution_is_resolved(): void
     {
         $query = $this->mockQuery('ABC');

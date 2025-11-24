@@ -22,6 +22,8 @@ use ArrayIterator;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
@@ -34,8 +36,8 @@ class ValidationStageTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_validates_commands(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -52,8 +54,8 @@ class ValidationStageTest extends TestCase
         $this->assertSame($command, $stage->process($command));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
+    #[Test]
+    #[Group('pipeline')]
     public function it_throws_an_exception_when_validation_fails(): void
     {
         $this->expectException(InvalidCommandException::class);

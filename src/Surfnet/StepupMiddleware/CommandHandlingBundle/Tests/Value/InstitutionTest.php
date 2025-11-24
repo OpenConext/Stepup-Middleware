@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
@@ -27,8 +29,8 @@ class InstitutionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrNonEmptyStringProvider')]
+    #[Test]
+    #[DataProvider('nonStringOrNonEmptyStringProvider')]
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
         string $invalidValue,
     ): void {
@@ -37,7 +39,7 @@ class InstitutionTest extends UnitTest
         new Institution($invalidValue);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function two_institutions_with_the_same_value_are_equal(): void
     {
         $institution = new Institution('a');

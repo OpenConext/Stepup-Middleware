@@ -28,11 +28,9 @@ class GssfIdTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidValueProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string(
         string $invalidValue,
     ): void {
@@ -41,10 +39,8 @@ class GssfIdTest extends UnitTest
         new GssfId($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_gssf_ids_with_the_same_value_are_equal(): void
     {
         $gssf = new GssfId('a');
@@ -60,7 +56,7 @@ class GssfIdTest extends UnitTest
     /**
      * DataProvider for {@see a_gssf_od_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidValueProvider(): array
+    public static function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],

@@ -28,10 +28,8 @@ class RegistrationAuthorityRoleTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_roles_with_the_same_value_are_equal(): void
     {
         $role = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);

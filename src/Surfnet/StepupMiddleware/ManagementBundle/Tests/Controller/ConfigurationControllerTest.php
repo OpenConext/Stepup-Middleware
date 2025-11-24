@@ -69,10 +69,8 @@ class ConfigurationControllerTest extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('management')]
     public function requests_with_invalid_content_are_bad_requests(): void
     {
         $this->client->request(
@@ -96,10 +94,8 @@ class ConfigurationControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('management')]
     public function authorization_is_required(): void
     {
         $this->client->request(
@@ -117,10 +113,8 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('management')]
     public function readonly_user_cannot_modify_configuration(): void
     {
         $this->client->request(
@@ -140,12 +134,9 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     *
-     * @dataProvider invalidHttpMethodProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidHttpMethodProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('management')]
     public function only_post_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
@@ -163,10 +154,8 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('management')]
     public function json_is_returned_from_the_configuration_api(): void
     {
         $this->client->request(
@@ -194,7 +183,7 @@ class ConfigurationControllerTest extends WebTestCase
     /**
      * Dataprovider for only_post_requests_are_accepted
      */
-    public function invalidHttpMethodProvider(): array
+    public static function invalidHttpMethodProvider(): array
     {
         return [
             'GET' => ['GET'],

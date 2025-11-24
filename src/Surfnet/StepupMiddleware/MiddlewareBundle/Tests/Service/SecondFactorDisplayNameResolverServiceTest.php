@@ -27,9 +27,7 @@ class SecondFactorDisplayNameResolverServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_resolve_displayname(): void
     {
         $factors = ['azuremfa' => 'Azure MFA'];
@@ -39,9 +37,7 @@ class SecondFactorDisplayNameResolverServiceTest extends TestCase
         self::assertEquals('Azure MFA', $resolver->resolveByType($type));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_resolve_displayname_fallback(): void
     {
         $factors = ['azuremfa' => 'Azure MFA'];

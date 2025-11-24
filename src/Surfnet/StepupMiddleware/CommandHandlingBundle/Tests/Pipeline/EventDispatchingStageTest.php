@@ -32,10 +32,8 @@ class EventDispatchingStageTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function buffered_event_bus_flush_is_called_during_process(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -50,10 +48,8 @@ class EventDispatchingStageTest extends UnitTest
         $this->assertInstanceOf(EventDispatchingStage::class, $stage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_returns_the_same_command_as_it_processes_unmodified(): void
     {
         $command = new FixedUuidStubCommand();

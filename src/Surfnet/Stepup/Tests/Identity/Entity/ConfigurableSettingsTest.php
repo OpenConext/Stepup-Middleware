@@ -30,10 +30,8 @@ class ConfigurableSettingsTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_new_email_verification_window_always_starts_now(): void
     {
         $settings = ConfigurableSettings::create(3, []);
@@ -56,7 +54,7 @@ class ConfigurableSettingsTest extends UnitTest
         $this->assertTrue($secondWindow->isOpen());
     }
 
-    public function localeVerifications(): array
+    public static function localeVerifications(): array
     {
         return [
             'No app locales, false' => [false, 'nl_NL', []],
@@ -67,11 +65,11 @@ class ConfigurableSettingsTest extends UnitTest
     }
 
     /**
-     * @test
-     * @group domain
-     * @dataProvider localeVerifications
      * @param string[] $validLocaleStrings
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('localeVerifications')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_locale_can_be_verified_to_be_a_valid_locale(
         bool $isValid,
         string $localeString,

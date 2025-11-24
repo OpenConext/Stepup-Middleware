@@ -47,10 +47,8 @@ class AuthorizingStageTest extends UnitTest
         );
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -63,11 +61,9 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     * @dataProvider interfaceToRoleMappingProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('interfaceToRoleMappingProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role(
         string $interface,
         string $role,
@@ -87,10 +83,8 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required(): void
     {
         /** @var AbstractCommand&SelfServiceExecutable&RaExecutable&ManagementExecutable&MockInterface $command */
@@ -126,10 +120,8 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown(): void
     {
         $this->expectException(ForbiddenException::class);
@@ -156,7 +148,7 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    public function interfaceToRoleMappingProvider(): array
+    public static function interfaceToRoleMappingProvider(): array
     {
         return [
             'SelfServiceExecutable => ROLE_SS' => [

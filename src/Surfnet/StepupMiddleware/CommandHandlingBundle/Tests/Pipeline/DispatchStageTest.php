@@ -32,10 +32,8 @@ class DispatchStageTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_dispatches_commands(): void
     {
         $command = m::mock(AbstractCommand::class);

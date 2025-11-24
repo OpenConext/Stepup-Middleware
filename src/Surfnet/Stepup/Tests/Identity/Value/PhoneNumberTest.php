@@ -28,11 +28,9 @@ class PhoneNumberTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidValueProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_phone_number_cannot_be_created_with_anything_but_a_nonempty_string(
         string $invalidValue,
     ): void {
@@ -41,10 +39,8 @@ class PhoneNumberTest extends UnitTest
         new PhoneNumber($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_phone_numbers_with_the_same_value_are_equal(): void
     {
         $one = new PhoneNumber('+31 (0) 12345678');
@@ -60,7 +56,7 @@ class PhoneNumberTest extends UnitTest
     /**
      * DataProvider for {@see a_phonenumber_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidValueProvider(): array
+    public static function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],

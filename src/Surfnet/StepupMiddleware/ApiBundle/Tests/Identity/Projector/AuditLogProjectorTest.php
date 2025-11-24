@@ -134,11 +134,9 @@ final class AuditLogProjectorTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @group api-projector
-     * @dataProvider auditable_events
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('auditable_events')]
+    #[\PHPUnit\Framework\Attributes\Group('api-projector')]
     public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry): void
     {
         $repository = m::mock(AuditLogRepository::class);

@@ -43,7 +43,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     /**
      * @return mixed[][]
      */
-    public function invalidReconfigureInstitutionRequests(): array
+    public static function invalidReconfigureInstitutionRequests(): array
     {
         $dataSet = [];
         $fixtureDir = __DIR__ . '/Fixtures/invalid_reconfigure_institution_request/*.php';
@@ -63,11 +63,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         return $dataSet;
     }
 
-    /**
-     * @test
-     * @group validator
-     * @dataProvider invalidReconfigureInstitutionRequests
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidReconfigureInstitutionRequests')]
+    #[\PHPUnit\Framework\Attributes\Group('validator')]
     public function it_rejects_invalid_configuration(
         array  $reconfigureRequest,
         string $expectedPropertyPath,
@@ -125,10 +123,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('validator')]
     public function reconfigure_institution_request_cannot_contain_institutions_that_do_not_exist(): void
     {
         $existingInstitutions = [];
@@ -167,10 +163,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $this->assertStringContainsString($expectedErrorMessage, $errorMessage);
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('validator')]
     public function validation_for_existing_institutions_is_done_case_insensitively(): void
     {
         $existingInstitutions = [ConfiguredInstitution::createFrom(new Institution('surfnet.nl'))];
@@ -216,10 +210,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $this->assertInstanceOf(ConfiguredInstitution::class, $existingInstitutions[0]);
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('validator')]
     public function valid_reconfigure_institution_requests_do_not_cause_any_violations(): void
     {
         $institution = 'surfnet.nl';

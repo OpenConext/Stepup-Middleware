@@ -74,10 +74,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->authorizationRepository = $authorizationRepository;
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function it_can_build_a_context(): void
     {
         $actorInstitution = new Institution('institution-a');
@@ -127,10 +125,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->assertFalse($context->isActorSraa());
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function it_can_build_a_context_with_sraa_actor(): void
     {
         $actorInstitution = new Institution('institution-a');
@@ -236,10 +232,8 @@ class AuthorizationContextServiceTest extends TestCase
         $this->assertFalse($context->isActorSraa());
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function it_rejects_unknown_actor(): void
     {
         $this->expectExceptionMessage("The provided id is not associated with any known identity");

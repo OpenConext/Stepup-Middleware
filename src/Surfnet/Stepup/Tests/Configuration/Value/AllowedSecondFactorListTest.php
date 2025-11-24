@@ -28,10 +28,8 @@ class AllowedSecondFactorListTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_list_deduplicates_its_second_factors_upon_creation(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
@@ -47,12 +45,12 @@ class AllowedSecondFactorListTest extends TestCase
     }
 
     /**
-     * @test
-     * @group domain
      *
-     * @dataProvider availableSecondFactorTypeProvider
      * @param $availableSecondFactorType
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('availableSecondFactorTypeProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_blank_allowed_second_factor_list_allows_all_second_factors(\Surfnet\StepupBundle\Value\SecondFactorType $availableSecondFactorType): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::blank();
@@ -62,10 +60,8 @@ class AllowedSecondFactorListTest extends TestCase
         $this->assertTrue($isSecondFactorAllowed);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_list_contains_a_given_second_factor(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
@@ -79,10 +75,8 @@ class AllowedSecondFactorListTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_list_does_not_contain_a_given_second_factor(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
@@ -96,10 +90,8 @@ class AllowedSecondFactorListTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_list_contains_the_given_second_factors(): void
     {
         $secondFactorTypes = [
@@ -119,10 +111,8 @@ class AllowedSecondFactorListTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_second_factor_on_the_allowed_second_factor_list_is_allowed(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
@@ -136,10 +126,8 @@ class AllowedSecondFactorListTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
@@ -154,13 +142,12 @@ class AllowedSecondFactorListTest extends TestCase
     }
 
     /**
-     * @test
-     * @group domain
-     *
-     * @dataProvider differentAllowedSecondFactorListsProvider
      * @param SecondFactorType[] $firstList
      * @param SecondFactorType[] $secondList
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('differentAllowedSecondFactorListsProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(
         array $firstList,
         array $secondList,
@@ -172,13 +159,12 @@ class AllowedSecondFactorListTest extends TestCase
     }
 
     /**
-     * @test
-     * @group domain
-     *
-     * @dataProvider sameAllowedSecondFactorListsProvider
      * @param SecondFactorType[] $firstList
      * @param SecondFactorType[] $secondList
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('sameAllowedSecondFactorListsProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(
         array $firstList,
         array $secondList,
@@ -189,7 +175,7 @@ class AllowedSecondFactorListTest extends TestCase
         $this->assertTrue($base->equals($other));
     }
 
-    public function differentAllowedSecondFactorListsProvider(): array
+    public static function differentAllowedSecondFactorListsProvider(): array
     {
         return [
             'Different second factor types' => [
@@ -211,7 +197,7 @@ class AllowedSecondFactorListTest extends TestCase
         ];
     }
 
-    public function sameAllowedSecondFactorListsProvider(): array
+    public static function sameAllowedSecondFactorListsProvider(): array
     {
         return [
             'Same second factor types' => [
@@ -233,7 +219,7 @@ class AllowedSecondFactorListTest extends TestCase
         ];
     }
 
-    public function availableSecondFactorTypeProvider(): array
+    public static function availableSecondFactorTypeProvider(): array
     {
         $service = new SecondFactorTypeService([
             'biometric' => ['loa' => 3],

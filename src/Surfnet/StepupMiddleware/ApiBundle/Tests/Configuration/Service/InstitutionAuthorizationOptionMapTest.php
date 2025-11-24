@@ -38,10 +38,8 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
         $this->institution = new Institution('inst');
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_array_initialized_with_authorizations_should_return_valid_institutions_per_role(): void
     {
         $testData = [
@@ -90,10 +88,8 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_array_initialized_with_no_authorizations_should_return_valid_institutions_per_role(): void
     {
         $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations(

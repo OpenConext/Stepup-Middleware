@@ -29,11 +29,9 @@ class InstitutionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider nonStringOrNonEmptyStringProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrNonEmptyStringProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
         string $invalidValue,
     ): void {
@@ -41,10 +39,8 @@ class InstitutionTest extends UnitTest
         new Institution($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_institutions_with_the_same_value_are_equal(): void
     {
         $institution = new Institution('a');
@@ -57,7 +53,7 @@ class InstitutionTest extends UnitTest
         $this->assertTrue($institution->equals($different));
     }
 
-    public function nonStringOrNonEmptyStringProvider(): array
+    public static function nonStringOrNonEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],

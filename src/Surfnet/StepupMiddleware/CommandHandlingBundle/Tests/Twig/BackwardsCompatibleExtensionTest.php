@@ -25,14 +25,10 @@ use Twig\Environment;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\ArrayLoader;
 
-/**
- * @requires extension intl
- */
+#[\PHPUnit\Framework\Attributes\RequiresPhpExtension('intl')]
 class BackwardsCompatibleExtensionTest extends TestCase
 {
-    /**
-     * @dataProvider templateProvider
- */
+    #[\PHPUnit\Framework\Attributes\DataProvider('templateProvider')]
     public function testLocalizedData(string $template, string $expected, string $locale): void
     {
         $dateString = "2024-12-05 13:12:10";
@@ -47,7 +43,7 @@ class BackwardsCompatibleExtensionTest extends TestCase
         $this->assertEquals($expected, $output);
     }
 
-    public function templateProvider(): array
+    public static function templateProvider(): array
     {
         return [
             'date en' => ["{{ date | localizeddate('full', 'none', locale)  }}", 'Thursday, 5 December 2024', 'en_GB'],

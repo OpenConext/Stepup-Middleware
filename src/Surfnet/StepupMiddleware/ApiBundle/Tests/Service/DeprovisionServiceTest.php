@@ -69,9 +69,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertInstanceOf(DeprovisionService::class, $this->deprovisionService);
     }
 
-    /**
-     * @group api-bundle
-     */
+    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
     public function test_it_deals_with_non_exisiting_collab_user_id(): void
     {
         $this->apiRepo
@@ -83,9 +81,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertEmpty($data);
     }
 
-    /**
-     * @group api-bundle
-     */
+    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
     public function test_it_can_return_data(): void
     {
         $identity = m::mock(Identity::class);

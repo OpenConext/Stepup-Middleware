@@ -26,10 +26,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitutio
 class ConfiguredInstitutionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group entity
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('entity')]
     public function a_configured_institution_is_correctly_serialized_to_json(): void
     {
         $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];

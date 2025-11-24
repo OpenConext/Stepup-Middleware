@@ -28,11 +28,9 @@ class UseRaLocationsOptionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function two_use_ra_location_options_with_the_same_values_are_equal(): void
     {
         $option = true;
@@ -43,11 +41,9 @@ class UseRaLocationsOptionTest extends TestCase
         $this->assertTrue($useRaLocationsOption->equals($theSame));
     }
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function two_use_ra_location_options_with_different_values_are_not_equal(): void
     {
         $useRaLocationsOption = new UseRaLocationsOption(true);
@@ -56,11 +52,9 @@ class UseRaLocationsOptionTest extends TestCase
         $this->assertFalse($useRaLocationsOption->equals($different));
     }
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function default_value_is_false(): void
     {
         $default = UseRaLocationsOption::getDefault();

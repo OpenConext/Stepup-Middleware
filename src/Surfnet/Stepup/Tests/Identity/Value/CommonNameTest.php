@@ -29,11 +29,9 @@ class CommonNameTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidArgumentProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidArgumentProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function the_common_name_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -41,10 +39,8 @@ class CommonNameTest extends UnitTest
         new CommonName($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_common_names_with_the_same_value_are_equal(): void
     {
         $commonName = new CommonName('John Doe');
@@ -57,7 +53,7 @@ class CommonNameTest extends UnitTest
         $this->assertFalse($commonName->equals($unknown));
     }
 
-    public function invalidArgumentProvider(): array
+    public static function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],

@@ -31,13 +31,10 @@ class HasInstitutionMatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     *
-     * @dataProvider nonObjectProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonObjectProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_only_matches_objects_against_a_given_institution(
         bool|int|float|string|array|null $nonObject,
     ): void {
@@ -49,11 +46,9 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertFalse($match);
     }
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_does_not_match_when_object_has_no_institution_property_and_no_institution_accessor(): void
     {
         $institution = 'surfnet.nl';
@@ -66,11 +61,9 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertFalse($match);
     }
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_does_not_match_when_objects_accessed_institution_differs_from_given_institution(): void
     {
         $institution = 'surfnet.nl';
@@ -84,11 +77,9 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertFalse($match);
     }
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_matches_when_objects_accessed_institution_is_the_same_as_given_institution(): void
     {
         $institution = 'surfnet.nl';
@@ -101,11 +92,9 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertTrue($match);
     }
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_does_not_match_when_objects_institution_property_differs_from_given_institution(): void
     {
         $institution = 'surfnet.nl';
@@ -119,11 +108,9 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertFalse($match);
     }
 
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('mockery')]
+    #[\PHPUnit\Framework\Attributes\Group('institution')]
     public function has_institution_matcher_matches_when_objects_institution_property_is_the_same_as_given_institution(): void
     {
         $institution = 'surfnet.nl';
@@ -148,7 +135,7 @@ class HasInstitutionMatcherTest extends TestCase
         ];
     }
 
-    public function nonObjectProvider(): array
+    public static function nonObjectProvider(): array
     {
         return [
             'null' => [null],

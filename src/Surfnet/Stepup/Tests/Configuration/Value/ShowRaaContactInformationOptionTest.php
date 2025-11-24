@@ -28,11 +28,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function two_show_raa_contact_information_options_with_the_same_values_are_equal(): void
     {
         $option = true;
@@ -43,11 +41,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertTrue($showRaaContactInformationOption->equals($theSame));
     }
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function two_show_raa_contact_information_options_with_different_values_are_not_equal(): void
     {
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
@@ -56,11 +52,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertFalse($showRaaContactInformationOption->equals($different));
     }
 
-    /**
-     * @test
-     * @group domain
-     * @group institution-configuration-option
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('institution-configuration-option')]
     public function default_value_is_true(): void
     {
         $default = ShowRaaContactInformationOption::getDefault();

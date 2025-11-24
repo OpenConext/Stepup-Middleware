@@ -60,9 +60,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         );
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_mails_when_complied_with_recovery_token_revocation(): void
     {
         $identity = $this->returnABogusIdentity();
@@ -92,9 +90,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handleCompliedWithRecoveryCodeRevocationEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_does_not_mail_when_identity_not_found_complied_with_recovery_token_revocation(): void
     {
         $this->identityService
@@ -114,9 +110,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handleCompliedWithRecoveryCodeRevocationEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_it_mails_when_recovery_token_revoked_by_identity(): void
     {
         $identity = $this->returnABogusIdentity();
@@ -145,9 +139,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handleRecoveryTokenRevokedEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_does_not_mail_when_identity_not_found_recovery_token_revocation(): void
     {
         $this->identityService
@@ -166,9 +158,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handleRecoveryTokenRevokedEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_it_mails_when_sms_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
@@ -197,9 +187,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handlePhoneRecoveryTokenPossessionProvenEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_does_not_mail_when_identity_not_found_sms_creation(): void
     {
         $this->identityService
@@ -221,9 +209,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handlePhoneRecoveryTokenPossessionProvenEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_it_mails_when_safe_store_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
@@ -252,9 +238,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->processor->handleSafeStoreSecretRecoveryTokenPossessionPromisedEvent($event);
     }
 
-    /**
-     * @group processor
-     */
+    #[\PHPUnit\Framework\Attributes\Group('processor')]
     public function test_does_not_mail_when_identity_not_found_safe_store_creation(): void
     {
         $this->identityService

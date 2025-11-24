@@ -39,7 +39,7 @@ final class ConfigurationValidationTest extends TestCase
     /**
      * @return mixed[][]
      */
-    public function invalidConfigurations(): array
+    public static function invalidConfigurations(): array
     {
         $dataSet = [];
         $fixtureDir = __DIR__ . '/Fixtures/invalid_configuration/*.php';
@@ -58,11 +58,9 @@ final class ConfigurationValidationTest extends TestCase
         return $dataSet;
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @dataProvider invalidConfigurations
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidConfigurations')]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function it_rejects_invalid_configuration(array $configuration, string $expectedPropertyPath): void
     {
         $builder = m::mock(ConstraintViolationBuilderInterface::class);

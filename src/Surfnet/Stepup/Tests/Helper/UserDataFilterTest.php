@@ -42,9 +42,7 @@ class UserDataFilterTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @dataProvider provideEvents
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEvents')]
     public function test_filtering_is_applied_with_expected_result(
         IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event,
         array $expectation,
@@ -54,7 +52,7 @@ class UserDataFilterTest extends TestCase
         $this->assertSame($expectation, array_keys($data));
     }
 
-    public function provideEvents(): Generator
+    public static function provideEvents(): Generator
     {
         $event = new IdentityCreatedEvent(
             new IdentityId("id"),

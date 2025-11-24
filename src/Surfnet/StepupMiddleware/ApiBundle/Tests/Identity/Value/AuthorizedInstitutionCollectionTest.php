@@ -25,18 +25,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionColle
 
 final class AuthorizedInstitutionCollectionTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function empty_collection(): void
     {
         $collection = AuthorizedInstitutionCollection::from($this->buildInstitutionCollection([]), null);
         $this->assertEmpty($collection->getAuthorizations());
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function retrieve_institutions(): void
     {
         $collection = AuthorizedInstitutionCollection::from(
@@ -51,9 +47,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function retrieve_institutions_only_raa(): void
     {
         $collection = AuthorizedInstitutionCollection::from(

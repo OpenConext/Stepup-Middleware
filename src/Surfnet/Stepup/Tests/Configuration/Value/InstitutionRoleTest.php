@@ -27,22 +27,18 @@ class InstitutionRoleTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidConstructorArgumentsProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidConstructorArgumentsProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function invalid_types_are_rejected_during_construction(bool|string|int $arguments): void
     {
         $this->expectException(InvalidArgumentException::class);
         new InstitutionRole($arguments);
     }
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider institutionTypeProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('institutionTypeProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function institution_roles_can_be_created_by_type(string $type): void
     {
         $role1 = new InstitutionRole($type);
@@ -52,7 +48,7 @@ class InstitutionRoleTest extends TestCase
         $this->assertTrue($role1->equals($role2));
     }
 
-    public function institutionTypeProvider(): array
+    public static function institutionTypeProvider(): array
     {
         return [
             'use_ra' => ['use_ra'],
@@ -61,7 +57,7 @@ class InstitutionRoleTest extends TestCase
         ];
     }
 
-    public function invalidConstructorArgumentsProvider(): array
+    public static function invalidConstructorArgumentsProvider(): array
     {
         return [
             'cant-be-boolean' => [false],

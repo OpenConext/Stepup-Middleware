@@ -29,20 +29,16 @@ class InstitutionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidValueProviderInvalidString
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidValueProviderInvalidString')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(string $invalidValue): void {
         $this->expectException(InvalidArgumentException::class);
         new Institution($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_institutions_with_the_same_value_are_equal(): void
     {
         $institution = new Institution('a');
@@ -58,7 +54,7 @@ class InstitutionTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProviderInvalidString(): array
+    public static function invalidValueProviderInvalidString(): array
     {
         return [
             'empty string' => [''],

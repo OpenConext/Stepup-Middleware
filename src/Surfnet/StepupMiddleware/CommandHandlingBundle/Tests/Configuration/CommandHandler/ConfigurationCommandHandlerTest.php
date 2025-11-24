@@ -45,10 +45,8 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public const CID = Configuration::CONFIGURATION_ID;
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function configuration_can_be_initialised(): void
     {
         $configuration = [
@@ -70,10 +68,8 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
             ->then($this->createConfigurationUpdatedEvents($configuration, null));
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function configuration_can_be_updated(): void
     {
         $configuration1 = [

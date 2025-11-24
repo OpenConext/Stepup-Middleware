@@ -41,10 +41,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function infers_the_correct_remove_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
@@ -71,10 +69,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals($institution->getInstitution(), $command->institution);
     }
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function infers_the_correct_create_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
@@ -101,10 +97,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals($institution->getInstitution(), $command->institution);
     }
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function infers_the_correct_reconfigure_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
@@ -135,10 +129,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals($selfVetOption->isEnabled(), $command->selfVetOption);
     }
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function no_ra_locations_means_no_add_ra_location_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
@@ -164,10 +156,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals(0, count($commands));
     }
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function a_single_ra_location_means_a_single_correct_add_ra_location_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
@@ -206,10 +196,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertCommandMatches($command, $institution, $raLocation);
     }
 
-    /**
-     * @test
-     * @group middleware-migration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('middleware-migration')]
     public function multiple_ra_locations_mean_multiple_correct_add_ra_location_commands(): void
     {
         $institution = new Institution('Babelfish Inc.');

@@ -30,11 +30,9 @@ class RaLocationIdTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider nonStringOrEmptyStringProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrEmptyStringProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string(
         string $nonStringOrEmptyString,
     ): void {
@@ -43,10 +41,8 @@ class RaLocationIdTest extends TestCase
         new RaLocationId($nonStringOrEmptyString);
     }
 
-    /**
-     * @test
-     * @group        domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -56,10 +52,8 @@ class RaLocationIdTest extends TestCase
         new RaLocationId($nonUuid);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_ra_location_ids_with_the_same_values_are_equal(): void
     {
         $uuid = $this->uuid();
@@ -70,10 +64,8 @@ class RaLocationIdTest extends TestCase
         $this->assertTrue($raLocationId->equals($theSame));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_ra_location_ids_with_different_values_are_not_equal(): void
     {
         $raLocationId = new RaLocationId($this->uuid());
@@ -82,7 +74,7 @@ class RaLocationIdTest extends TestCase
         $this->assertFalse($raLocationId->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider(): array
+    public static function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],

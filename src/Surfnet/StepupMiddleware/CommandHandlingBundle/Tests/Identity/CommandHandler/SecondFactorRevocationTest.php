@@ -69,9 +69,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 class SecondFactorRevocationTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -104,10 +102,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function an_identity_can_revoke_its_own_unverified_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -160,10 +156,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function an_identity_can_revoke_its_own_verified_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -228,10 +222,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function an_identity_can_revoke_its_own_vetted_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -314,10 +306,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function a_registration_authority_can_revoke_an_unverified_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -400,10 +390,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function a_registration_authority_can_revoke_a_verified_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -499,10 +487,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function a_registration_authority_can_revoke_a_vetted_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -615,10 +601,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function a_registration_authority_can_revoke_a_possession_proved_skipped_vetted_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -732,9 +716,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 
     /**
      * Test if the VettedSecondFactorsAllRevokedEvent is not triggered with multiple 2fa's
-     * @test
-     * @group command-handler
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function a_registration_authority_can_revoke_one_of_multiple_vetted_second_factors(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();

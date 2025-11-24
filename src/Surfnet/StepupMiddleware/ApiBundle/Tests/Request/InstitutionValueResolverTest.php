@@ -46,10 +46,8 @@ class InstitutionValueResolverTest extends UnitTest
             ->andReturn(Institution::class);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
     public function an_exception_is_thrown_when_the_parameter_is_missing(): void
     {
         $this->expectException(BadApiRequestException::class);
@@ -60,10 +58,8 @@ class InstitutionValueResolverTest extends UnitTest
         $converter->resolve($this->request, $this->argument);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('api-bundle')]
     public function an_institution_is_resolved(): void
     {
         $query = $this->mockQuery('ABC');

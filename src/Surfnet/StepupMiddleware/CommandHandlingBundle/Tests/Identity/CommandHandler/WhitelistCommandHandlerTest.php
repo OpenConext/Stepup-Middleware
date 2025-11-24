@@ -53,11 +53,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
         return new WhitelistCommandHandler(new WhitelistRepository($eventStore, $eventBus, $aggregateFactory));
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function when_the_whitelist_does_not_exist_yet_it_is_created(): void
     {
         $command = new ReplaceWhitelistCommand();
@@ -72,11 +70,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function the_whitelist_can_be_fully_replaced(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
@@ -96,11 +92,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
@@ -119,11 +113,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function an_institution_on_the_whitelist_may_not_be_added_again(): void
     {
         $this->expectExceptionMessage("Cannot add institution \"already exists\" as it is already whitelisted");
@@ -140,11 +132,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'On the whitelist']);
@@ -163,11 +153,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed(): void
     {
         $this->expectExceptionMessage("Cannot remove institution \"not on the whitelist\" as it is not whitelisted");

@@ -47,10 +47,8 @@ class LocaleTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $locale = Type::getType(LocaleType::NAME);
@@ -60,10 +58,8 @@ class LocaleTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $locale = Type::getType(LocaleType::NAME);
@@ -76,10 +72,8 @@ class LocaleTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $locale = Type::getType(LocaleType::NAME);
@@ -89,10 +83,8 @@ class LocaleTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_locale_value_object(): void
     {
         $locale = Type::getType(LocaleType::NAME);
@@ -105,10 +97,8 @@ class LocaleTypeTest extends UnitTest
         $this->assertEquals(new Locale($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

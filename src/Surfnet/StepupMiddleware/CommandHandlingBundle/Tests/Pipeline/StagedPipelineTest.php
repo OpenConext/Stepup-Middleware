@@ -31,10 +31,8 @@ class StagedPipelineTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_passes_a_command_through_a_single_stage(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -49,10 +47,8 @@ class StagedPipelineTest extends TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_passes_a_command_through_multiple_stages(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -72,10 +68,8 @@ class StagedPipelineTest extends TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next(): void
     {
         $command1 = m::mock(AbstractCommand::class);

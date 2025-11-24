@@ -42,7 +42,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
      */
     private ?object $authzRepository;
 
-    public function authorizationMatrix(): array
+    public static function authorizationMatrix(): array
     {
         $ra = RegistrationAuthorityRole::ra();
         $raa = RegistrationAuthorityRole::raa();
@@ -60,7 +60,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
         ];
     }
 
-    public function selectRaaMatrix(): array
+    public static function selectRaaMatrix(): array
     {
         $aRaa = new IdentityId('cccfece4-e5e5-40b7-9aa4-a800d7cd3633'); // Raa @ institution A
         $ghRaa = new IdentityId('02b70719-243f-4c7d-8649-48952a816ddf'); // RAA @ institution H
@@ -87,8 +87,8 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
     /**
      * A test matrix to verify the correct institutions are selected for a given identity for a
      * specific institution role.
-     * @dataProvider authorizationMatrix
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('authorizationMatrix')]
     public function test_get_institutions_for_role_matrix(
         RegistrationAuthorityRole $requiredRole,
         IdentityId $identity,
@@ -108,9 +108,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
         );
     }
 
-    /**
-     * @dataProvider selectRaaMatrix
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('selectRaaMatrix')]
     public function test_select_raa_authorization(IdentityId $identityId, array $expected): void
     {
         $institutions = $this->authzRepository->getInstitutionsForSelectRaaRole($identityId);

@@ -30,9 +30,7 @@ final class RecoveryTokenIdentifierFactoryTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function test_generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(

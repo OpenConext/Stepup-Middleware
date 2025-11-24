@@ -49,10 +49,8 @@ class DocumentNumberTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
@@ -62,10 +60,8 @@ class DocumentNumberTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_normal_document_number_is_converted_to_a_database_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
@@ -77,10 +73,8 @@ class DocumentNumberTypeTest extends UnitTest
         $this->assertEquals('a', $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
@@ -90,12 +84,9 @@ class DocumentNumberTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     *
-     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::class, 'notNull')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_a_document_number_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
@@ -104,10 +95,8 @@ class DocumentNumberTypeTest extends UnitTest
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_stepup_document_number_object(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
@@ -119,10 +108,8 @@ class DocumentNumberTypeTest extends UnitTest
         $this->assertTrue((new DocumentNumber($input))->equals($output));
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(TypeError::class);

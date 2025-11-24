@@ -29,10 +29,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 class RaLocationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group entity
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('entity')]
     public function an_ra_location_is_correctly_serialized_to_json(): void
     {
         $deserializedRaLocation = [

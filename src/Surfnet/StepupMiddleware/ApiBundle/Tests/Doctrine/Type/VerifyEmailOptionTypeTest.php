@@ -48,10 +48,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(VerifyEmailOptionType::NAME);
@@ -61,12 +59,9 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     *
-     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::class, 'notNull')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_option_type_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
@@ -75,10 +70,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(VerifyEmailOptionType::NAME);
@@ -91,10 +84,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(VerifyEmailOptionType::NAME);
@@ -104,10 +95,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_an_option_valu_object(): void
     {
         $configurationInstitution = Type::getType(VerifyEmailOptionType::NAME);

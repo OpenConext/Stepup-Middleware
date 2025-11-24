@@ -8,11 +8,6 @@
     bootstrap="../../tests/bootstrap.php"
     cacheDirectory="../../var/qa/phpunit.cache"
 >
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix="Test.php">../../src</directory>
-    </include>
-  </coverage>
   <php>
     <ini name="error_reporting" value="-1"/>
     <ini name="memory_limit" value="256M"/>
@@ -29,8 +24,4 @@
       <directory suffix="Test.php">../../tests/database</directory>
     </testsuite>
   </testsuites>
-  <listeners>
-    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
-  </listeners>
 </phpunit>

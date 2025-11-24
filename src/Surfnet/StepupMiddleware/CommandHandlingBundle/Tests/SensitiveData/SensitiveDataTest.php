@@ -35,7 +35,7 @@ class SensitiveDataTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function sensitiveDataToSerialise(): array
+    public static function sensitiveDataToSerialise(): array
     {
         return [
             'None' => [
@@ -103,11 +103,9 @@ class SensitiveDataTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     * @dataProvider sensitiveDataToSerialise
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('sensitiveDataToSerialise')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function it_serialises_and_deserialises(
         SensitiveData $sensitiveData,
         array $getterExpectations,

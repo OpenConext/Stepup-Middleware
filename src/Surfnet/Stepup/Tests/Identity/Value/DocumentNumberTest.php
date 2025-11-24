@@ -29,21 +29,17 @@ class DocumentNumberTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidArgumentProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidArgumentProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function the_document_number_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
         new DocumentNumber($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_document_numbers_with_the_same_value_are_equal(): void
     {
         $commonName = new DocumentNumber('John Doe');
@@ -56,7 +52,7 @@ class DocumentNumberTest extends UnitTest
         $this->assertFalse($commonName->equals($unknown));
     }
 
-    public function invalidArgumentProvider(): array
+    public static function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],

@@ -47,10 +47,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function use_ra_locations_option_is_set_to_false_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');
@@ -107,10 +105,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function show_raa_contact_information_option_is_set_to_true_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');
@@ -167,10 +163,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -209,10 +203,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -254,10 +246,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->then([]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -303,10 +293,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution = new Institution('Institution');
@@ -355,10 +343,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ]);
     }
 
-    /**
-     * @test
-     * @group aggregate
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('aggregate')]
     public function test_the_setting_of_fga_options_on_an_institution_configuration(): void
     {
         $institution = new Institution('Institution');

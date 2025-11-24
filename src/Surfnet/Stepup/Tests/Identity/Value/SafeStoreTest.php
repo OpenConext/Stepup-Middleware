@@ -31,9 +31,7 @@ class SafeStoreTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function test_creation_of_safe_store(): void
     {
         $unhashed = new UnhashedSecret('super-secret');
@@ -42,9 +40,7 @@ class SafeStoreTest extends UnitTest
         $this->assertTrue(password_verify('super-secret', $instance->getValue()));
     }
 
-    /**
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function test_equals(): void
     {
         $safeStore = new SafeStore(new UnhashedSecret('a'));

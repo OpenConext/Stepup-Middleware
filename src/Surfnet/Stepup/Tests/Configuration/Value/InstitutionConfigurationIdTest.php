@@ -29,10 +29,8 @@ class InstitutionConfigurationIdTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_institution_configuration_ids_created_for_the_different_institution_are_not_equal(): void
     {
         $institutionConfigurationId = InstitutionConfigurationId::from(new Institution('An institution'));
@@ -41,12 +39,9 @@ class InstitutionConfigurationIdTest extends TestCase
         $this->assertNotEquals($institutionConfigurationId, $different);
     }
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @dataProvider nonStringOrEmptyStringProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrEmptyStringProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(
         string $nonStringOrEmptyString,
     ): void {
@@ -55,10 +50,8 @@ class InstitutionConfigurationIdTest extends TestCase
         new InstitutionConfigurationId($nonStringOrEmptyString);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_uuid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -68,10 +61,8 @@ class InstitutionConfigurationIdTest extends TestCase
         new InstitutionConfigurationId($nonUuid);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_institution_configuration_ids_created_for_the_same_institution_are_equal(): void
     {
         $institutionConfigurationId = InstitutionConfigurationId::from(new Institution('An institution'));
@@ -80,10 +71,8 @@ class InstitutionConfigurationIdTest extends TestCase
         $this->assertEquals($institutionConfigurationId, $same);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function institution_configuration_ids_are_created_case_insensitively_from_institutions(): void
     {
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
@@ -101,10 +90,8 @@ class InstitutionConfigurationIdTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_the_same(): void
     {
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
@@ -120,7 +107,7 @@ class InstitutionConfigurationIdTest extends TestCase
     /**
      * dataprovider
      */
-    public function nonStringOrEmptyStringProvider(): array
+    public static function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],

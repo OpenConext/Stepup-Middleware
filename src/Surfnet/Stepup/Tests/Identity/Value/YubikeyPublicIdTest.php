@@ -27,10 +27,8 @@ class YubikeyPublicIdTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_yubikey_public_ids_with_the_same_value_are_equal(): void
     {
         $id = new YubikeyPublicId('00001234');
@@ -43,7 +41,7 @@ class YubikeyPublicIdTest extends UnitTest
         $this->assertFalse($id->equals($unknown));
     }
 
-    public function invalidFormatProvider(): array
+    public static function invalidFormatProvider(): array
     {
         return [
             '7-character unpadded ID' => ['1906381'],
@@ -57,11 +55,9 @@ class YubikeyPublicIdTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidFormatProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidFormatProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function it_cannot_be_constructed_with_an_invalid_format(string $invalidFormat): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -69,7 +65,7 @@ class YubikeyPublicIdTest extends UnitTest
         new YubikeyPublicId($invalidFormat);
     }
 
-    public function validFormatProvider(): array
+    public static function validFormatProvider(): array
     {
         return [
             '8-character ID' => ['01906381'],
@@ -80,11 +76,9 @@ class YubikeyPublicIdTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider validFormatProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('validFormatProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function its_value_matches_its_input_value(string $validFormat): void
     {
         $id = new YubikeyPublicId($validFormat);

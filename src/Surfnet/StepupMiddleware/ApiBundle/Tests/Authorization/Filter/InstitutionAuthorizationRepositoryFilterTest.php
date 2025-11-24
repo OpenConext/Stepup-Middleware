@@ -50,10 +50,8 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         $this->queryBuilder->from(InstitutionValue::class, 'i');
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context(): void
     {
         $this->mockedAuthorizationContext->method('getInstitutions')

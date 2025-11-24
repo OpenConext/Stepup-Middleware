@@ -51,10 +51,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -64,10 +62,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -80,10 +76,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -93,10 +87,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_contact_information_value_object(): void
     {
         $contactInformation = Type::getType(ContactInformationType::NAME);
@@ -109,10 +101,8 @@ class ContactInformationTypeTest extends UnitTest
         $this->assertEquals(new ContactInformation($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

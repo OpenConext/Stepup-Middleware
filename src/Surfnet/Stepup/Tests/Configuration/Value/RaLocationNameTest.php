@@ -29,11 +29,9 @@ class RaLocationNameTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider nonStringOrEmptyStringProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('nonStringOrEmptyStringProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string(
         string $nonStringOrEmptyString,
     ): void {
@@ -42,10 +40,8 @@ class RaLocationNameTest extends TestCase
         new RaLocationName($nonStringOrEmptyString);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_ra_location_names_with_the_same_values_are_equal(): void
     {
         $raLocationName = new RaLocationName('a');
@@ -54,10 +50,8 @@ class RaLocationNameTest extends TestCase
         $this->assertTrue($raLocationName->equals($theSame));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_ra_location_names_with_different_values_are_not_equal(): void
     {
         $raLocationName = new RaLocationName('a');
@@ -66,7 +60,7 @@ class RaLocationNameTest extends TestCase
         $this->assertFalse($raLocationName->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider(): array
+    public static function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],

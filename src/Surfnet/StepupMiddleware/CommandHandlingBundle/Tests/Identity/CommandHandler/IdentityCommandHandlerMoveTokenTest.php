@@ -65,9 +65,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -123,10 +121,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @group command-handler
-     * @runInSeparateProcess
-     */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function test_a_second_factor_can_be_moved(): void
     {
         $this->setUpInstitutionConfiguration(2, ['yubikey']);

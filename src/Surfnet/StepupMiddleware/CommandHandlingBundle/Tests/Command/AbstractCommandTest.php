@@ -25,10 +25,8 @@ class AbstractCommandTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group command
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command')]
     public function to_string_generates_command_identifiable_information(): void
     {
         $command = new FixedUuidStubCommand();

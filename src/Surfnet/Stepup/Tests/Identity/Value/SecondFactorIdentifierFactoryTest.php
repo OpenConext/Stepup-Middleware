@@ -30,10 +30,8 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(

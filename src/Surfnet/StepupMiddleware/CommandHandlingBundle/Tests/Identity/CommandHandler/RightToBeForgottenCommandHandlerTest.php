@@ -53,9 +53,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Right
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
 {
     /** @var MockInterface */
@@ -96,11 +94,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function an_identity_can_be_forgotten(): void
     {
         $identityId = new IdentityId('A');
@@ -155,11 +151,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function an_identity_may_be_forgotten_twice(): void
     {
         $identityId = new IdentityId('A');
@@ -215,11 +209,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function an_ra_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
@@ -277,11 +269,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function an_raa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
@@ -340,11 +330,9 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function an_sraa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an SRAA");

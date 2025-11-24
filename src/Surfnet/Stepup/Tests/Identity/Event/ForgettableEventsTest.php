@@ -58,10 +58,8 @@ final class ForgettableEventsTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function certain_events_are_forgettable_events_and_others_are_not(): void
     {
         $forgettableEventFqcns = [

@@ -33,10 +33,8 @@ class SecondFactorCollectionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function collection_can_return_second_factor_with_highest_loa(): void
     {
         $collection = new SecondFactorCollection([

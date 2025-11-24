@@ -46,10 +46,8 @@ class NameIdTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
@@ -59,10 +57,8 @@ class NameIdTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
@@ -75,10 +71,8 @@ class NameIdTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
@@ -88,10 +82,8 @@ class NameIdTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_name_id_value_object(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
@@ -104,10 +96,8 @@ class NameIdTypeTest extends UnitTest
         $this->assertEquals(new NameId($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);
@@ -117,10 +107,8 @@ class NameIdTypeTest extends UnitTest
         $nameId->convertToPHPValue(false, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_excessive_long_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

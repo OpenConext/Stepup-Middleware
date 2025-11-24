@@ -23,17 +23,13 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 class DateTimeHelperTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group testing
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('testing')]
     public function it_mocks_now(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -41,10 +37,8 @@ class DateTimeHelperTest extends TestCase
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
     }
 
-    /**
-     * @test
-     * @group testing
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('testing')]
     public function it_can_be_disabled_in_the_same_process(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
@@ -56,10 +50,8 @@ class DateTimeHelperTest extends TestCase
         $this->assertTrue((new DateTime())->comesAfterOrIsEqual($now));
     }
 
-    /**
-     * @test
-     * @group testing
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('testing')]
     public function it_works_with_separate_processes(): void
     {
         // The stub value has been removed.

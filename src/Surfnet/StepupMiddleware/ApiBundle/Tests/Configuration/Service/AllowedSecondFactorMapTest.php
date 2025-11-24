@@ -29,10 +29,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 class AllowedSecondFactorMapTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_that_contains_a_given_institution_will_result_in_a_filled_allowed_second_factor_list(): void
     {
         $institution = new Institution('institution-with-filled-list.test');
@@ -52,10 +50,8 @@ class AllowedSecondFactorMapTest extends TestCase
         $this->assertTrue($expectedAllowedSecondFactorList->equals($actualAllowedSecondFactorList));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_allowed_second_factor_map_that_does_not_contain_a_given_institution_will_result_in_a_blank_allowed_second_factor_list(): void
     {
         $institution = new Institution('institution-with-blank-list.test');

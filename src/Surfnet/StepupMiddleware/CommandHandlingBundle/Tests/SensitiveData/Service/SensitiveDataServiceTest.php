@@ -30,10 +30,8 @@ final class SensitiveDataServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('sensitive-data')]
     public function it_can_forget_sensitive_data_in_a_stream(): void
     {
         $identityId = new IdentityId('A');

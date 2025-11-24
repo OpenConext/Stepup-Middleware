@@ -34,10 +34,8 @@ class ValidationStageTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_validates_commands(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -54,10 +52,8 @@ class ValidationStageTest extends TestCase
         $this->assertSame($command, $stage->process($command));
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('pipeline')]
     public function it_throws_an_exception_when_validation_fails(): void
     {
         $this->expectException(InvalidCommandException::class);

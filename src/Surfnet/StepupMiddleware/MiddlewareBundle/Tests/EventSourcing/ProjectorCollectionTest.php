@@ -30,10 +30,8 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException
 class ProjectorCollectionTest extends TestCase
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group event-replay
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
     public function projectors_can_be_added_to_a_projector_collection_during_runtime(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -53,10 +51,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group event-replay
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
     public function projector_names_can_be_retrieved_from_a_projector_collection(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -76,10 +72,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group event-replay
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
     public function a_subset_of_projectors_can_be_selected_from_a_projector_collection(): void
     {
         $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
@@ -101,10 +95,8 @@ class ProjectorCollectionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group event-replay
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('event-replay')]
     public function a_subset_containing_projectors_not_present_in_a_projector_collection_cannot_be_selected(): void
     {
         $this->expectException(InvalidArgumentException::class);

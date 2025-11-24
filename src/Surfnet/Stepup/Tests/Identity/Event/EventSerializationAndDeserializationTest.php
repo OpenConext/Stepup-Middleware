@@ -79,11 +79,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider eventProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('eventProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
@@ -113,11 +111,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertTrue($event == $deserializedEvent);
     }
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider serializedDataProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('serializedDataProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_serialized_event_should_be_the_same(
         string $serializedData,
         string $serializedSensitiveData,
@@ -136,10 +132,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertEquals($event, $deserializedEvent);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization(): void
     {
         // use a fixed datetime instance, to prevent microsecond precision issues in PHP 7.1+
@@ -569,7 +563,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
         ];
     }
 
-    public function serializedDataProvider(): array
+    public static function serializedDataProvider(): array
     {
         return [
             // Tests for changes in BC support for adding the VettingType in the SecondFactorVettedEvents in favour of the 'DocumentNumber'

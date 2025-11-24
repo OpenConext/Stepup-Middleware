@@ -29,22 +29,18 @@ class EmailTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidArgumentProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidArgumentProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function the_email_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Email($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidEmailProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidEmailProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function the_email_address_given_must_be_rfc_822_compliant(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -52,10 +48,8 @@ class EmailTest extends UnitTest
         new Email($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function two_emails_with_the_same_value_are_equal(): void
     {
         $email = new Email('email@example.invalid');
@@ -68,7 +62,7 @@ class EmailTest extends UnitTest
         $this->assertFalse($email->equals($unknown));
     }
 
-    public function invalidArgumentProvider(): array
+    public static function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
@@ -83,7 +77,7 @@ class EmailTest extends UnitTest
      *
      * @return array
      */
-    public function invalidEmailProvider(): array
+    public static function invalidEmailProvider(): array
     {
         return [
             'no @-sign' => ['mailboxexample.invalid'],

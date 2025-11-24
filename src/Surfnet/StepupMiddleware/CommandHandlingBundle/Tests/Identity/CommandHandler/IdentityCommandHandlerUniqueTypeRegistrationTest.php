@@ -70,9 +70,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTest
 {
     private static int $window = 3600;
@@ -134,9 +132,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
         );
     }
 
-    /**
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function test_yubikey_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -194,9 +190,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
             ->when($command);
     }
 
-    /**
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function test_phone_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -255,9 +249,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
     }
 
 
-    /**
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function test_gssf_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -322,10 +314,8 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('command-handler')]
     public function test_u2f_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);

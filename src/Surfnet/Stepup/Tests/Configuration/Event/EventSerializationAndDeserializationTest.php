@@ -64,12 +64,9 @@ class EventSerializationAndDeserializationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @dataProvider institutionConfigurationEventsProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('institutionConfigurationEventsProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(
         SerializableInterface $unserializedEvent,
     ): void {
@@ -80,7 +77,7 @@ class EventSerializationAndDeserializationTest extends TestCase
         $this->assertEquals($unserializedEvent, $deserializedEvent);
     }
 
-    public function institutionConfigurationEventsProvider(): array
+    public static function institutionConfigurationEventsProvider(): array
     {
         $institution = new Institution('A test institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);

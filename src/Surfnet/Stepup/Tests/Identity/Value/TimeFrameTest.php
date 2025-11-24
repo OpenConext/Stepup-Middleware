@@ -29,11 +29,9 @@ class TimeFrameTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProviderInt
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidValueProviderInt')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function it_cannot_be_given_an_non_positive_amount_of_seconds(int $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -41,10 +39,8 @@ class TimeFrameTest extends UnitTest
         TimeFrame::ofSeconds($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
     public function to_string_output_matches_amount_of_seconds_as_string(): void
     {
         $seconds = 1000;
@@ -61,7 +57,7 @@ class TimeFrameTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProviderInt(): array
+    public static function invalidValueProviderInt(): array
     {
         return [
             'zero' => [0],

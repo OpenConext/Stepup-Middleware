@@ -46,7 +46,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    public function invalidPhpValues(): array
+    public static function invalidPhpValues(): array
     {
         return [
             'null' => [null],
@@ -59,11 +59,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidPhpValues
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidPhpValues')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion(mixed $value): void
     {
         $this->expectException(ConversionException::class);
@@ -72,7 +70,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         $type->convertToDatabaseValue($value, $this->platform);
     }
 
-    public function validPhpValues(): array
+    public static function validPhpValues(): array
     {
         return [
             'active' => [RecoveryTokenStatus::active(), 0],
@@ -81,11 +79,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validPhpValues
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('validPhpValues')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_valid_php_value_is_converted_to_a_sql_value(
         RecoveryTokenStatus $phpValue,
         int $databaseValue,
@@ -94,7 +90,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         $this->assertSame($databaseValue, $type->convertToDatabaseValue($phpValue, $this->platform));
     }
 
-    public function invalidDatabaseValues(): array
+    public static function invalidDatabaseValues(): array
     {
         return [
             'null' => [null],
@@ -107,11 +103,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidDatabaseValues
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidDatabaseValues')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(mixed $input): void
     {
         $this->expectException(ConversionException::class);
@@ -120,7 +114,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         $type->convertToPHPValue($input, $this->platform);
     }
 
-    public function validDatabaseValues(): array
+    public static function validDatabaseValues(): array
     {
         return [
             'active' => ['0', RecoveryTokenStatus::active()],
@@ -129,11 +123,9 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validDatabaseValues
-     * @group doctrine
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('validDatabaseValues')]
+    #[\PHPUnit\Framework\Attributes\Group('doctrine')]
     public function a_valid_database_value_is_converted_to_a_sql_value(
         string $databaseValue,
         RecoveryTokenStatus $phpValue,

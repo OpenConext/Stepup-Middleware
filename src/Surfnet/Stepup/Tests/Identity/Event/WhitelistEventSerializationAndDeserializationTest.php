@@ -32,12 +32,10 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     * @dataProvider eventProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('eventProvider')]
+    #[\PHPUnit\Framework\Attributes\Group('domain')]
+    #[\PHPUnit\Framework\Attributes\Group('whitelist')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event,): void
     {
         $class = $event::class;

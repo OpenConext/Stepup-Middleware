@@ -75,7 +75,7 @@ class CommandAuthorizationService
         if (!is_null($actorId) && $this->isSraa($actorId)) {
             return true;
         }
-        return (bool)$this->whitelistService->isWhitelisted($institution->getInstitution());
+        return $this->whitelistService->isWhitelisted($institution->getInstitution());
     }
 
     public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool

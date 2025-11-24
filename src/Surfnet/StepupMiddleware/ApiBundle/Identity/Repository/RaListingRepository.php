@@ -134,13 +134,13 @@ class RaListingRepository extends ServiceEntityRepository
         if ($query->role) {
             $queryBuilder
                 ->andWhere('r.role = :role')
-                ->setParameter('role', (string)$query->role);
+                ->setParameter('role', $query->role);
         }
 
         if ($query->raInstitution) {
             $queryBuilder
                 ->andWhere('r.raInstitution = :raInstitution')
-                ->setParameter('raInstitution', (string)$query->raInstitution);
+                ->setParameter('raInstitution', $query->raInstitution);
         }
 
         // Modify query to filter on authorization:

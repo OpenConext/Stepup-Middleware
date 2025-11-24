@@ -95,7 +95,7 @@ class SecondFactorStatusType extends Type
             sprintf(
                 "Encountered illegal second factor status of type %s '%s', expected it to be one of [0,10,20,30,40]",
                 get_debug_type($value),
-                is_scalar($value) ? (string)$value : '',
+                is_scalar($value) ? $value : '',
             ),
         );
     }

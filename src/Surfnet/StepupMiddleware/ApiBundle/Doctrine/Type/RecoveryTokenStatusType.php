@@ -82,7 +82,7 @@ class RecoveryTokenStatusType extends Type
             sprintf(
                 "Encountered illegal recovery token status of type %s '%s', expected it to be one of [0,10,20]",
                 get_debug_type($value),
-                is_scalar($value) ? (string)$value : '',
+                is_scalar($value) ? $value : '',
             ),
         );
     }

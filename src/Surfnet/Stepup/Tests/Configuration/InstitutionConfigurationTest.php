@@ -182,7 +182,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $theSameUseRaLocationsOption = $originalUseRaLocationsOption;
 
         $this->scenario
-            ->withAggregateId((string)$institutionConfigurationId->getInstitutionConfigurationId())
+            ->withAggregateId($institutionConfigurationId->getInstitutionConfigurationId())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
@@ -222,7 +222,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $sameShowRaaContactInformationOption = $originalShowRaaContactInformationOption;
 
         $this->scenario
-            ->withAggregateId((string)$institutionConfigurationId->getInstitutionConfigurationId())
+            ->withAggregateId($institutionConfigurationId->getInstitutionConfigurationId())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
@@ -265,7 +265,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
 
         $this->scenario
-            ->withAggregateId((string)$institutionConfigurationId->getInstitutionConfigurationId())
+            ->withAggregateId($institutionConfigurationId->getInstitutionConfigurationId())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
@@ -312,7 +312,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(false);
 
         $this->scenario
-            ->withAggregateId((string)$institutionConfigurationId->getInstitutionConfigurationId())
+            ->withAggregateId($institutionConfigurationId->getInstitutionConfigurationId())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,

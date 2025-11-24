@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command {
 
     use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
+    #[\AllowDynamicProperties]
     class FooBarCommand extends AbstractCommand
     {
     }

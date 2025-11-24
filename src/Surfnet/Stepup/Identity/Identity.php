@@ -52,8 +52,8 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -516,7 +516,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
 
-        if (!$registrantsSecondFactor instanceof \Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor) {
+        if (!$registrantsSecondFactor instanceof VerifiedSecondFactor) {
             throw new DomainException(
                 sprintf('Registrant second factor with ID %s does not exist', $registrantsSecondFactorId),
             );

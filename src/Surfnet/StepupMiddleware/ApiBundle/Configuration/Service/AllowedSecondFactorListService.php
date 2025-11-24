@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 
@@ -33,7 +34,7 @@ class AllowedSecondFactorListService
     public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
         $allowedSecondFactors = array_map(
-            fn(AllowedSecondFactor $allowedSecondFactor): \Surfnet\StepupBundle\Value\SecondFactorType => $allowedSecondFactor->secondFactorType,
+            fn(AllowedSecondFactor $allowedSecondFactor): SecondFactorType => $allowedSecondFactor->secondFactorType,
             $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution),
         );
 

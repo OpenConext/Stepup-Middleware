@@ -19,11 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository;
 

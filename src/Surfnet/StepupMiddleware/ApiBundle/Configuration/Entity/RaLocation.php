@@ -25,7 +25,6 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 #[ORM\Table]
 #[ORM\Index(name: 'idx_ra_location_institution', columns: ['institution'])]

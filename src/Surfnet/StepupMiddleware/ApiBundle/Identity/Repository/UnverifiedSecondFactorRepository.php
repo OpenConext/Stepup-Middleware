@@ -50,7 +50,7 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
+        if ($query->identityId instanceof IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);

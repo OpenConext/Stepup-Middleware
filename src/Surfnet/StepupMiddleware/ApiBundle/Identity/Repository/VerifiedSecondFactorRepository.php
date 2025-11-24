@@ -23,6 +23,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
@@ -72,13 +73,13 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
+        if ($query->identityId instanceof IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);
         }
 
-        if ($query->secondFactorId instanceof \Surfnet\Stepup\Identity\Value\SecondFactorId) {
+        if ($query->secondFactorId instanceof SecondFactorId) {
             $queryBuilder
                 ->andWhere('sf.id = :secondFactorId')
                 ->setParameter('secondFactorId', (string)$query->secondFactorId);

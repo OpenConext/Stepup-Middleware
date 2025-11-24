@@ -297,7 +297,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSelfAssertedTokensOption(SelfAssertedTokensOption $selfAssertedTokensOption): void
     {
-        if ($this->selfAssertedTokensOption instanceof \Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption &&
+        if ($this->selfAssertedTokensOption instanceof SelfAssertedTokensOption &&
             $this->selfAssertedTokensOption->equals($selfAssertedTokensOption)
         ) {
             return;
@@ -314,7 +314,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSsoOn2faOption(SsoOn2faOption $ssoOn2faOption): void
     {
-        if ($this->ssoOn2faOption instanceof \Surfnet\Stepup\Configuration\Value\SsoOn2faOption && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
+        if ($this->ssoOn2faOption instanceof SsoOn2faOption && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
             return;
         }
 
@@ -345,7 +345,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateUseRaOption(InstitutionAuthorizationOption $useRaOption): void
     {
-        if ($this->useRaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
+        if ($this->useRaOption instanceof InstitutionAuthorizationOption
             && $this->useRaOption->equals($useRaOption)
         ) {
             return;
@@ -362,7 +362,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateUseRaaOption(InstitutionAuthorizationOption $useRaaOption): void
     {
-        if ($this->useRaaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
+        if ($this->useRaaOption instanceof InstitutionAuthorizationOption
             && $this->useRaaOption->equals($useRaaOption)
         ) {
             return;
@@ -379,7 +379,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateSelectRaaOption(InstitutionAuthorizationOption $selectRaaOption): void
     {
-        if ($this->selectRaaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
+        if ($this->selectRaaOption instanceof InstitutionAuthorizationOption
             && $this->selectRaaOption->equals($selectRaaOption)
         ) {
             return;
@@ -397,7 +397,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     public function updateAllowedSecondFactorList(AllowedSecondFactorList $allowedSecondFactorList): void
     {
         // AllowedSecondFactorList can be null for InstitutionConfigurations for which this functionality did not exist
-        if ($this->allowedSecondFactorList instanceof \Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList
+        if ($this->allowedSecondFactorList instanceof AllowedSecondFactorList
             && $this->allowedSecondFactorList->equals($allowedSecondFactorList)
         ) {
             return;

@@ -22,7 +22,6 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 /**
  * Do not confuse with \Surfnet\StepupBundle\DateTime\DateTime

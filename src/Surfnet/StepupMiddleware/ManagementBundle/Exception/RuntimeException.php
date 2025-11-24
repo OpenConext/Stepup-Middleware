@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Exception;
 
+// phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly
 class RuntimeException extends \RuntimeException implements Exception
 {
 }

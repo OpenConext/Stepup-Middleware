@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class VerifyEmailOption implements JsonSerializable
 {

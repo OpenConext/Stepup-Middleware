@@ -31,8 +31,11 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Projector\Projector;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -108,11 +111,11 @@ class AuditLogProjector extends Projector
         $entry->event = $event::class;
         $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
-        if ($auditLogMetadata->secondFactorId instanceof \Surfnet\Stepup\Identity\Value\SecondFactorId) {
+        if ($auditLogMetadata->secondFactorId instanceof SecondFactorId) {
             $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;
         }
 
-        if ($auditLogMetadata->secondFactorType instanceof \Surfnet\StepupBundle\Value\SecondFactorType) {
+        if ($auditLogMetadata->secondFactorType instanceof SecondFactorType) {
             $entry->secondFactorType = (string)$auditLogMetadata->secondFactorType;
         }
 
@@ -123,15 +126,15 @@ class AuditLogProjector extends Projector
             $entry->recoveryTokenIdentifier = (string)$auditLogMetadata->recoveryTokenId;
         }
 
-        if ($auditLogMetadata->recoveryTokenType instanceof \Surfnet\Stepup\Identity\Value\RecoveryTokenType) {
+        if ($auditLogMetadata->recoveryTokenType instanceof RecoveryTokenType) {
             $entry->recoveryTokenType = (string)$auditLogMetadata->recoveryTokenType;
         }
 
-        if ($auditLogMetadata->secondFactorIdentifier instanceof \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier) {
+        if ($auditLogMetadata->secondFactorIdentifier instanceof SecondFactorIdentifier) {
             $entry->secondFactorIdentifier = (string)$auditLogMetadata->secondFactorIdentifier;
         }
 
-        if ($auditLogMetadata->raInstitution instanceof \Surfnet\Stepup\Identity\Value\Institution) {
+        if ($auditLogMetadata->raInstitution instanceof Institution) {
             $entry->raInstitution = (string)$auditLogMetadata->raInstitution;
         }
 

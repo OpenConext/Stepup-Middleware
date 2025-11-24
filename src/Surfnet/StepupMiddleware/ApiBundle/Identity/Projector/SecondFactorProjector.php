@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -39,6 +38,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
@@ -186,7 +186,7 @@ class SecondFactorProjector extends Projector
         // In case the vetting type is unknown (for example when no event replay was performed)
         // fall back to the unknown vetting type.
         $vettingType = $event->vettingType;
-        if (!$vettingType instanceof \Surfnet\Stepup\Identity\Value\VettingType) {
+        if (!$vettingType instanceof VettingType) {
             $vettingType = new UnknownVettingType();
         }
         $vetted->vettingType = $vettingType->type();
@@ -225,7 +225,7 @@ class SecondFactorProjector extends Projector
         $vettingType = $event->vettingType;
         // In case the vetting type is unknown (for example when no event replay was performed)
         // fall back to the unknown vetting type.
-        if (!$vettingType instanceof \Surfnet\Stepup\Identity\Value\VettingType) {
+        if (!$vettingType instanceof VettingType) {
             $vettingType = new UnknownVettingType();
         }
         $vetted->vettingType = $vettingType->type();

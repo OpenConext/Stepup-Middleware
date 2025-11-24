@@ -22,6 +22,7 @@ use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
@@ -89,7 +90,7 @@ class BootstrapCommandService
         $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(
             new ConfigurationInstitution($institution),
         );
-        if ($configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
+        if ($configuration instanceof InstitutionConfigurationOptions) {
             return $configuration->verifyEmailOption->isEnabled();
         }
         return true;

@@ -22,6 +22,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,7 +73,7 @@ class IdentityController extends AbstractController
 
         $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
 
-        if (!$credentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
+        if (!$credentials instanceof RegistrationAuthorityCredentials) {
             return new JsonNotFoundResponse();
         }
 

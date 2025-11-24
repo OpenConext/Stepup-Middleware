@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Exception;
 
+// phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly
 class InvalidArgumentException extends \InvalidArgumentException implements Exception
 {
     public static function invalidType(string $expected, string $parameterName, mixed $parameter): self

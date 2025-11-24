@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
@@ -264,7 +265,7 @@ class CommandAuthorizationService
         $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf(
             $actorId->getIdentityId(),
         );
-        if (!$registrationAuthorityCredentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
+        if (!$registrationAuthorityCredentials instanceof RegistrationAuthorityCredentials) {
             return false;
         }
         return $registrationAuthorityCredentials->isSraa();

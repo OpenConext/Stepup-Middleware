@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
 final class IdentityId implements Id, JsonSerializable

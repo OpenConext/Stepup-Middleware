@@ -83,7 +83,7 @@ final class InstitutionSet
 
     public function toScalarArray(): array
     {
-        return array_map('strval', $this->institutions);
+        return array_map(strval(...), $this->institutions);
     }
 
     /**

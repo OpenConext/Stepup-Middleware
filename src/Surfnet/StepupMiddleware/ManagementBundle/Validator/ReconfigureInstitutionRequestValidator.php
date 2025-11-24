@@ -250,7 +250,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     public function determineNonExistentInstitutions(array $institutions, array $configuredInstitutions): array
     {
         $normalizedConfiguredInstitutions = array_map(
-            fn($institution): string => strtolower($institution),
+            strtolower(...),
             $configuredInstitutions,
         );
 

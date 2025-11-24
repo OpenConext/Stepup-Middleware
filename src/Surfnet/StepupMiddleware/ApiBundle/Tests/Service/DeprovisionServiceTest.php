@@ -156,9 +156,7 @@ class DeprovisionServiceTest extends TestCase
 
         $this->raListingRepo
             ->shouldReceive('contains')
-            ->with(m::on(function (IdentityId $identityId) use ($identity): bool {
-                return $identityId->getIdentityId() === $identity->id;
-            }))
+            ->with(m::on(fn(IdentityId $identityId): bool => $identityId->getIdentityId() === $identity->id))
             ->once()
             ->andReturn(false);
 

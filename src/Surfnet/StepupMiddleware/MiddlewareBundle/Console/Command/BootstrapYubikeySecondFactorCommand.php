@@ -24,11 +24,16 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'middleware:bootstrap:yubikey',
+    description: 'Creates a Yubikey second factor for a specified user'
+)]
 final class BootstrapYubikeySecondFactorCommand extends Command
 {
     public function __construct(
@@ -41,7 +46,6 @@ final class BootstrapYubikeySecondFactorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Creates a Yubikey second factor for a specified user')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument(

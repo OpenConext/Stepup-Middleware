@@ -26,6 +26,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,14 +35,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
+#[AsCommand(
+    name: 'middleware:bootstrap:identity-with-yubikey',
+    description: 'Creates an identity with a vetted Yubikey second factor',
+)]
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
-    protected static $defaultName = 'middleware:bootstrap:identity-with-yubikey';
-
     protected function configure(): void
     {
         $this
-            ->setDescription('Creates an identity with a vetted Yubikey second factor')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument('common-name', InputArgument::REQUIRED, 'The Common Name of the identity to create')

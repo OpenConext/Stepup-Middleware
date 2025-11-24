@@ -23,11 +23,13 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'middleware:bootstrap:identity', description: 'Creates an identity')]
 final class BootstrapIdentityCommand extends Command
 {
     public function __construct(
@@ -40,7 +42,6 @@ final class BootstrapIdentityCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Creates an identity')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument('common-name', InputArgument::REQUIRED, 'The Common Name of the identity to create')

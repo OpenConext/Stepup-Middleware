@@ -26,11 +26,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'middleware:migrate:vetted-tokens',
+    description: 'Migrates the tokens of an identity to a new institution while preserving the old tokens'
+)
+]
 final class MigrateSecondFactorCommand extends Command
 {
     public function __construct(
@@ -43,7 +49,6 @@ final class MigrateSecondFactorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Migrates the tokens of an identity to a new institution while preserving the old tokens')
             ->addArgument(
                 'old-name-id',
                 InputArgument::REQUIRED,

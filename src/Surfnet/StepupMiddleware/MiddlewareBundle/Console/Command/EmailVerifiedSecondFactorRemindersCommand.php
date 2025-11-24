@@ -29,6 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,14 +43,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
+#[AsCommand(
+    name: 'middleware:cron:email-reminder',
+    description: 'Sends email reminders to identities with verified tokens more than 7 days old.'
+)]
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
-    protected static $defaultName = 'middleware:cron:email-reminder';
-
     protected function configure(): void
     {
         $this
-            ->setDescription('Sends email reminders to identities with verified tokens more than 7 days old.')
             ->addOption(
                 'dry-run',
                 null,

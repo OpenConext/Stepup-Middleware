@@ -42,7 +42,7 @@ class BackwardsCompatibleExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('localizeddate', [$this, 'localizedDate'], ['needs_environment' => true]),
+            new TwigFilter('localizeddate', $this->localizedDate(...), ['needs_environment' => true]),
         ];
     }
 

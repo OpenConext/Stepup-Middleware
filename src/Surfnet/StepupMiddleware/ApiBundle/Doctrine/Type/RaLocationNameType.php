@@ -33,7 +33,7 @@ class RaLocationNameType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL([]);
+        return $platform->getStringTypeDeclarationSQL([]);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed

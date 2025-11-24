@@ -37,7 +37,7 @@ class AuthorityRoleType extends Type
             $column['length'] = 20;
         }
 
-        return $platform->getVarcharTypeDeclarationSQL($column);
+        return $platform->getStringTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string

@@ -68,9 +68,6 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return Query
-     */
     public function createSearchQuery(VerifiedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');

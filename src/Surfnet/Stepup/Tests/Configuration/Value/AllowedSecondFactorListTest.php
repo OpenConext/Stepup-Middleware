@@ -109,7 +109,12 @@ class AllowedSecondFactorListTest extends TestCase
 
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes($secondFactorTypes);
 
-        foreach ($allowedSecondFactorList as $index => $actualSecondFactorType) {
+        $builtList = [];
+        foreach ($allowedSecondFactorList as $item){
+            $builtList[] = $item;
+        }
+
+        foreach ($builtList as $index => $actualSecondFactorType) {
             $this->assertTrue($secondFactorTypes[$index]->equals($actualSecondFactorType));
         }
     }

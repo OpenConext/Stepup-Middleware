@@ -25,6 +25,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use TypeError;
 
 /**
+ * Do not confuse with \Surfnet\StepupBundle\DateTime\DateTime
+ *
  * @SuppressWarnings("PHPMD.TooManyMethods")
  * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */

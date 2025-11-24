@@ -121,9 +121,15 @@ final class ForgettableEventsTest extends TestCase
      */
     private function getConcreteIdentityEventFqcns(): array
     {
+        $files = glob(__DIR__ . '/../../../Identity/Event/*Event.php');
+
+        if($files === false){
+            return [];
+        }
+
         return array_filter(
             array_map(
-                function ($file): ?string {
+                static function ($file): ?string {
                     $fqcn = sprintf(
                         'Surfnet\Stepup\Identity\Event\%s',
                         preg_replace('/\\..+?$/', '', basename($file)),
@@ -131,7 +137,7 @@ final class ForgettableEventsTest extends TestCase
                     $reflection = new ReflectionClass($fqcn);
                     return $reflection->isInstantiable() ? $fqcn : null;
                 },
-                glob(__DIR__ . '/../../../Identity/Event/*Event.php'),
+                $files,
             ),
         );
     }

@@ -42,7 +42,7 @@ class InstitutionSetTest extends UnitTest
         $institutionC = new Institution('C');
 
         $set = InstitutionSet::create([$institutionA, $institutionB, $institutionC]);
-        $this->assertTrue(is_array($set->toScalarArray()));
+        $this->assertSame(['a', 'b', 'c'], $set->toScalarArray());
     }
 
     /**

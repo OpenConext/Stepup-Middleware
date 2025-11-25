@@ -6,10 +6,7 @@
 <body>
 
 {% set template = template_from_string(templateString) %}
-
-{% sandbox %}
-    {% include template %}
-{% endsandbox %}
+{{ include(template, sandboxed: true) }}
 
 </body>
 </html>

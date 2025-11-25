@@ -115,6 +115,8 @@ doctrine:
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
+        controller_resolver:
+          auto_mapping: false
         entity_managers:
             middleware:
                 report_fields_where_declared: true

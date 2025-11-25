@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fb5f5fa256ef2100369aef0c719000d",
+    "content-hash": "ebafaf3d5b0bc2794aae08529f4be6cb",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -75,16 +75,16 @@
         },
         {
             "name": "brick/math",
-            "version": "0.14.0",
+            "version": "0.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2"
+                "reference": "f05858549e5f9d7bb45875a75583240a38a281d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2",
-                "reference": "113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2",
+                "url": "https://api.github.com/repos/brick/math/zipball/f05858549e5f9d7bb45875a75583240a38a281d0",
+                "reference": "f05858549e5f9d7bb45875a75583240a38a281d0",
                 "shasum": ""
             },
             "require": {
@@ -123,7 +123,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.0"
+                "source": "https://github.com/brick/math/tree/0.14.1"
             },
             "funding": [
                 {
@@ -131,7 +131,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-29T12:40:03+00:00"
+            "time": "2025-11-24T14:40:29+00:00"
         },
         {
             "name": "broadway/broadway",
@@ -1200,16 +1200,16 @@
         },
         {
             "name": "doctrine/migrations",
-            "version": "3.9.4",
+            "version": "3.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations.git",
-                "reference": "1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c"
+                "reference": "1b823afbc40f932dae8272574faee53f2755eac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/migrations/zipball/1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c",
-                "reference": "1b88fcb812f2cd6e77c83d16db60e3cf1e35c66c",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/1b823afbc40f932dae8272574faee53f2755eac5",
+                "reference": "1b823afbc40f932dae8272574faee53f2755eac5",
                 "shasum": ""
             },
             "require": {
@@ -1219,15 +1219,15 @@
                 "doctrine/event-manager": "^1.2 || ^2.0",
                 "php": "^8.1",
                 "psr/log": "^1.1.3 || ^2 || ^3",
-                "symfony/console": "^5.4 || ^6.0 || ^7.0",
-                "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0",
-                "symfony/var-exporter": "^6.2 || ^7.0"
+                "symfony/console": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/var-exporter": "^6.2 || ^7.0 || ^8.0"
             },
             "conflict": {
                 "doctrine/orm": "<2.12 || >=4"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^13",
+                "doctrine/coding-standard": "^14",
                 "doctrine/orm": "^2.13 || ^3",
                 "doctrine/persistence": "^2 || ^3 || ^4",
                 "doctrine/sql-formatter": "^1.0",
@@ -1239,9 +1239,9 @@
                 "phpstan/phpstan-strict-rules": "^2",
                 "phpstan/phpstan-symfony": "^2",
                 "phpunit/phpunit": "^10.3 || ^11.0 || ^12.0",
-                "symfony/cache": "^5.4 || ^6.0 || ^7.0",
-                "symfony/process": "^5.4 || ^6.0 || ^7.0",
-                "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
+                "symfony/cache": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/process": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0 || ^8.0"
             },
             "suggest": {
                 "doctrine/sql-formatter": "Allows to generate formatted SQL with the diff command.",
@@ -1283,7 +1283,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/migrations/issues",
-                "source": "https://github.com/doctrine/migrations/tree/3.9.4"
+                "source": "https://github.com/doctrine/migrations/tree/3.9.5"
             },
             "funding": [
                 {
@@ -1299,7 +1299,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-19T06:41:07+00:00"
+            "time": "2025-11-20T11:15:36+00:00"
         },
         {
             "name": "doctrine/orm",
@@ -8693,115 +8693,23 @@
             "time": "2025-11-11T04:32:07+00:00"
         },
         {
-            "name": "doctrine/common",
-            "version": "3.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/common.git",
-                "reference": "d9ea4a54ca2586db781f0265d36bea731ac66ec5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/d9ea4a54ca2586db781f0265d36bea731ac66ec5",
-                "reference": "d9ea4a54ca2586db781f0265d36bea731ac66ec5",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/persistence": "^2.0 || ^3.0 || ^4.0",
-                "php": "^7.1 || ^8.0"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^9.0 || ^10.0",
-                "doctrine/collections": "^1",
-                "phpstan/phpstan": "^1.4.1",
-                "phpstan/phpstan-phpunit": "^1",
-                "phpunit/phpunit": "^7.5.20 || ^8.5 || ^9.0",
-                "squizlabs/php_codesniffer": "^3.0",
-                "symfony/phpunit-bridge": "^6.1",
-                "vimeo/psalm": "^4.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Common\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
-                    "name": "Roman Borschel",
-                    "email": "roman@code-factory.org"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com"
-                },
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com"
-                }
-            ],
-            "description": "PHP Doctrine Common project is a library that provides additional functionality that other Doctrine projects depend on such as better reflection support, proxies and much more.",
-            "homepage": "https://www.doctrine-project.org/projects/common.html",
-            "keywords": [
-                "common",
-                "doctrine",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/doctrine/common/issues",
-                "source": "https://github.com/doctrine/common/tree/3.5.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcommon",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-01-01T22:12:03+00:00"
-        },
-        {
             "name": "doctrine/data-fixtures",
-            "version": "1.8.2",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/data-fixtures.git",
-                "reference": "6fb221da56dae2011b33d47508e3b8aeb1d91db5"
+                "reference": "7a615ba135e45d67674bb623d90f34f6c7b6bd97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/6fb221da56dae2011b33d47508e3b8aeb1d91db5",
-                "reference": "6fb221da56dae2011b33d47508e3b8aeb1d91db5",
+                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/7a615ba135e45d67674bb623d90f34f6c7b6bd97",
+                "reference": "7a615ba135e45d67674bb623d90f34f6c7b6bd97",
                 "shasum": ""
             },
             "require": {
-                "doctrine/deprecations": "^0.5.3 || ^1.0",
-                "doctrine/persistence": "^2.0 || ^3.0",
-                "php": "^7.4 || ^8.0",
-                "symfony/polyfill-php80": "^1"
+                "doctrine/persistence": "^3.1 || ^4.0",
+                "php": "^8.1",
+                "psr/log": "^1.1 || ^2 || ^3"
             },
             "conflict": {
                 "doctrine/dbal": "<3.5 || >=5",
@@ -8809,18 +8717,16 @@
                 "doctrine/phpcr-odm": "<1.3.0"
             },
             "require-dev": {
-                "doctrine/annotations": "^1.12 || ^2",
-                "doctrine/coding-standard": "^13",
+                "doctrine/coding-standard": "^14",
                 "doctrine/dbal": "^3.5 || ^4",
                 "doctrine/mongodb-odm": "^1.3.0 || ^2.0.0",
                 "doctrine/orm": "^2.14 || ^3",
                 "ext-sqlite3": "*",
                 "fig/log-test": "^1",
-                "phpstan/phpstan": "2.1.17",
-                "phpunit/phpunit": "^9.6.13 || 10.5.45",
-                "psr/log": "^1.1 || ^2 || ^3",
-                "symfony/cache": "^5.4 || ^6.3 || ^7",
-                "symfony/var-exporter": "^5.4 || ^6.3 || ^7"
+                "phpstan/phpstan": "2.1.31",
+                "phpunit/phpunit": "10.5.45 || 12.4.0",
+                "symfony/cache": "^6.4 || ^7",
+                "symfony/var-exporter": "^6.4 || ^7"
             },
             "suggest": {
                 "alcaeus/mongo-php-adapter": "For using MongoDB ODM 1.3 with PHP 7 (deprecated)",
@@ -8851,7 +8757,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/data-fixtures/issues",
-                "source": "https://github.com/doctrine/data-fixtures/tree/1.8.2"
+                "source": "https://github.com/doctrine/data-fixtures/tree/2.2.0"
             },
             "funding": [
                 {
@@ -8867,35 +8773,35 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-10T07:00:05+00:00"
+            "time": "2025-10-17T20:06:20+00:00"
         },
         {
             "name": "doctrine/doctrine-fixtures-bundle",
-            "version": "3.7.2",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineFixturesBundle.git",
-                "reference": "0afaecd65e5791e855edddf125b77576e7bcbbfb"
+                "reference": "11941deb6f2899b91e8b8680b07ffe63899d864b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/0afaecd65e5791e855edddf125b77576e7bcbbfb",
-                "reference": "0afaecd65e5791e855edddf125b77576e7bcbbfb",
+                "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/11941deb6f2899b91e8b8680b07ffe63899d864b",
+                "reference": "11941deb6f2899b91e8b8680b07ffe63899d864b",
                 "shasum": ""
             },
             "require": {
-                "doctrine/data-fixtures": "^1.5 || ^2.0",
-                "doctrine/doctrine-bundle": "^2.2",
+                "doctrine/data-fixtures": "^2.2",
+                "doctrine/doctrine-bundle": "^2.2 || ^3.0",
                 "doctrine/orm": "^2.14.0 || ^3.0",
-                "doctrine/persistence": "^2.4 || ^3.0",
-                "php": "^7.4 || ^8.0",
-                "psr/log": "^1 || ^2 || ^3",
-                "symfony/config": "^5.4 || ^6.0 || ^7.0",
-                "symfony/console": "^5.4 || ^6.0 || ^7.0",
-                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
+                "doctrine/persistence": "^2.4 || ^3.0 || ^4.0",
+                "php": "^8.1",
+                "psr/log": "^2 || ^3",
+                "symfony/config": "^6.4 || ^7.0",
+                "symfony/console": "^6.4 || ^7.0",
+                "symfony/dependency-injection": "^6.4 || ^7.0",
                 "symfony/deprecation-contracts": "^2.1 || ^3",
-                "symfony/doctrine-bridge": "^5.4.48 || ^6.4.16 || ^7.1.9",
-                "symfony/http-kernel": "^5.4 || ^6.0 || ^7.0"
+                "symfony/doctrine-bridge": "^6.4.16 || ^7.1.9",
+                "symfony/http-kernel": "^6.4 || ^7.0"
             },
             "conflict": {
                 "doctrine/dbal": "< 3"
@@ -8903,8 +8809,7 @@
             "require-dev": {
                 "doctrine/coding-standard": "14.0.0",
                 "phpstan/phpstan": "2.1.11",
-                "phpunit/phpunit": "^9.6.13 || 11.4.14",
-                "symfony/phpunit-bridge": "7.2.0"
+                "phpunit/phpunit": "^10.5.38 || 11.4.14"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -8938,7 +8843,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineFixturesBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineFixturesBundle/tree/3.7.2"
+                "source": "https://github.com/doctrine/DoctrineFixturesBundle/tree/4.3.0"
             },
             "funding": [
                 {
@@ -8954,7 +8859,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-11T16:14:44+00:00"
+            "time": "2025-10-20T06:18:40+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -9051,22 +8956,21 @@
         },
         {
             "name": "liip/test-fixtures-bundle",
-            "version": "2.10.0",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipTestFixturesBundle.git",
-                "reference": "45b1961d2a19d4cbb61d45bb756e9a152d43624b"
+                "reference": "29942037076433f0189f33ccd7d53198dd818fe7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipTestFixturesBundle/zipball/45b1961d2a19d4cbb61d45bb756e9a152d43624b",
-                "reference": "45b1961d2a19d4cbb61d45bb756e9a152d43624b",
+                "url": "https://api.github.com/repos/liip/LiipTestFixturesBundle/zipball/29942037076433f0189f33ccd7d53198dd818fe7",
+                "reference": "29942037076433f0189f33ccd7d53198dd818fe7",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "^2.13 || ^3.0",
-                "doctrine/persistence": "^1.3.3 || ^2.0 || ^3.0",
-                "php": "^7.4 || ^8.0",
+                "doctrine/persistence": "^1.3.3 || ^2.0 || ^3.0 || ^4.0",
+                "php": "^8.1",
                 "symfony/deprecation-contracts": "^2.1 || ^3.0",
                 "symfony/event-dispatcher": "^5.4 || ^6.3 || ^7.0",
                 "symfony/event-dispatcher-contracts": "^1 || ^2 || ^3",
@@ -9075,28 +8979,22 @@
             },
             "conflict": {
                 "doctrine/annotations": "<1.13.1 || >=3.0",
-                "doctrine/dbal": "<2.13.1 || ~3.0.0 || >=4.0",
+                "doctrine/dbal": "<2.13.1 || ~3.0.0 || >=5.0",
                 "doctrine/mongodb-odm": "<2.2 || >=3.0",
                 "doctrine/orm": "<2.14 || >=4.0"
             },
             "require-dev": {
-                "doctrine/annotations": "^1.13.1 || ^2.0",
-                "doctrine/data-fixtures": "^1.4.4",
-                "doctrine/dbal": "^2.13.1 || ^3.1",
-                "doctrine/doctrine-bundle": "^2.2",
-                "doctrine/doctrine-fixtures-bundle": "^3.4.4 || ^4.0",
-                "doctrine/mongodb-odm": "^2.2",
-                "doctrine/mongodb-odm-bundle": "^4.2.1 || ^5.0",
-                "doctrine/orm": "^2.14 || ^3.0",
-                "doctrine/phpcr-bundle": "^2.4.3 || ^3.0",
-                "doctrine/phpcr-odm": "^1.7.2 || ^2.0",
-                "jackalope/jackalope-doctrine-dbal": "^1.10.1 || ^2.0",
+                "doctrine/data-fixtures": "^1.7 || ^2.0.1",
+                "doctrine/doctrine-bundle": "^2.11",
+                "doctrine/doctrine-fixtures-bundle": "^3.5.1 || ^4.0",
+                "doctrine/mongodb-odm": "^2.5",
+                "doctrine/mongodb-odm-bundle": "^4.4 || ^5.0",
+                "doctrine/orm": "^2.14 || ^3.1.0",
                 "monolog/monolog": "^1.25.1 || ^2.0 || ^3.0",
-                "phpunit/phpunit": "^9.6.17 || ^10.5.11 || ^11.0.4",
+                "phpunit/phpunit": "^10.5.11 || ^11.0.4 || ^12.0.0",
                 "symfony/doctrine-bridge": "^5.4 || ^6.3 || ^7.0",
                 "symfony/monolog-bridge": "^5.4 || ^6.3 || ^7.0",
                 "symfony/monolog-bundle": "^3.2",
-                "symfony/phpunit-bridge": "^7.0",
                 "theofidry/alice-data-fixtures": "^1.5.2"
             },
             "suggest": {
@@ -9109,7 +9007,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-master": "3.x-dev"
                 }
             },
             "autoload": {
@@ -9139,9 +9037,9 @@
             ],
             "support": {
                 "issues": "https://github.com/liip/LiipTestFixturesBundle/issues",
-                "source": "https://github.com/liip/LiipTestFixturesBundle/tree/2.10.0"
+                "source": "https://github.com/liip/LiipTestFixturesBundle/tree/3.6.0"
             },
-            "time": "2025-06-05T19:13:23+00:00"
+            "time": "2025-10-06T18:40:34+00:00"
         },
         {
             "name": "malukenho/docheader",
@@ -9351,61 +9249,6 @@
             "time": "2023-10-01T17:31:30+00:00"
         },
         {
-            "name": "moontoast/math",
-            "version": "1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ramsey/moontoast-math.git",
-                "reference": "5f47d34c87767dbcc08b30377a9827df71de91fa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/moontoast-math/zipball/5f47d34c87767dbcc08b30377a9827df71de91fa",
-                "reference": "5f47d34c87767dbcc08b30377a9827df71de91fa",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "phpseclib/bcmath_compat": ">=1.0.3"
-            },
-            "require-dev": {
-                "jakub-onderka/php-parallel-lint": "^0.9.0",
-                "phpunit/phpunit": "^4.8 || ^5.5 || ^6.5 || ^7.0",
-                "satooshi/php-coveralls": "^0.6.1",
-                "squizlabs/php_codesniffer": "^2.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Moontoast\\Math\\": "src/Moontoast/Math",
-                    "Moontoast\\Math\\Exception\\": "src/Moontoast/Math/Exception"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Ben Ramsey",
-                    "email": "ben@benramsey.com",
-                    "homepage": "https://benramsey.com"
-                }
-            ],
-            "description": "A mathematics library, providing functionality for large numbers",
-            "homepage": "https://github.com/ramsey/moontoast-math",
-            "keywords": [
-                "bcmath",
-                "math"
-            ],
-            "support": {
-                "issues": "https://github.com/ramsey/moontoast-math/issues",
-                "source": "https://github.com/ramsey/moontoast-math"
-            },
-            "abandoned": "brick/math",
-            "time": "2020-01-05T04:49:34+00:00"
-        },
-        {
             "name": "myclabs/deep-copy",
             "version": "1.13.4",
             "source": {
@@ -9557,125 +9400,6 @@
                 }
             ],
             "time": "2025-04-10T13:12:51+00:00"
-        },
-        {
-            "name": "paragonie/constant_time_encoding",
-            "version": "v3.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/constant_time_encoding.git",
-                "reference": "d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77",
-                "reference": "d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8"
-            },
-            "require-dev": {
-                "infection/infection": "^0",
-                "nikic/php-fuzzer": "^0",
-                "phpunit/phpunit": "^9|^10|^11",
-                "vimeo/psalm": "^4|^5|^6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ParagonIE\\ConstantTime\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com",
-                    "homepage": "https://paragonie.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Steve 'Sc00bz' Thomas",
-                    "email": "steve@tobtu.com",
-                    "homepage": "https://www.tobtu.com",
-                    "role": "Original Developer"
-                }
-            ],
-            "description": "Constant-time Implementations of RFC 4648 Encoding (Base-64, Base-32, Base-16)",
-            "keywords": [
-                "base16",
-                "base32",
-                "base32_decode",
-                "base32_encode",
-                "base64",
-                "base64_decode",
-                "base64_encode",
-                "bin2hex",
-                "encoding",
-                "hex",
-                "hex2bin",
-                "rfc4648"
-            ],
-            "support": {
-                "email": "info@paragonie.com",
-                "issues": "https://github.com/paragonie/constant_time_encoding/issues",
-                "source": "https://github.com/paragonie/constant_time_encoding"
-            },
-            "time": "2025-09-24T15:06:41+00:00"
-        },
-        {
-            "name": "paragonie/random_compat",
-            "version": "v9.99.100",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 7"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*|5.*",
-                "vimeo/psalm": "^1"
-            },
-            "suggest": {
-                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com",
-                    "homepage": "https://paragonie.com"
-                }
-            ],
-            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-            "keywords": [
-                "csprng",
-                "polyfill",
-                "pseudorandom",
-                "random"
-            ],
-            "support": {
-                "email": "info@paragonie.com",
-                "issues": "https://github.com/paragonie/random_compat/issues",
-                "source": "https://github.com/paragonie/random_compat"
-            },
-            "time": "2020-10-15T08:29:30+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -9940,178 +9664,6 @@
                 }
             ],
             "time": "2023-12-11T08:22:20+00:00"
-        },
-        {
-            "name": "phpseclib/bcmath_compat",
-            "version": "2.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpseclib/bcmath_compat.git",
-                "reference": "ae8f87ea0c96b2ef08ecf0d291d45372d0f7bc5a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/bcmath_compat/zipball/ae8f87ea0c96b2ef08ecf0d291d45372d0f7bc5a",
-                "reference": "ae8f87ea0c96b2ef08ecf0d291d45372d0f7bc5a",
-                "shasum": ""
-            },
-            "require": {
-                "phpseclib/phpseclib": "^3.0"
-            },
-            "provide": {
-                "ext-bcmath": "8.1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35|^5.7|^6.0|^9.4",
-                "squizlabs/php_codesniffer": "^3.0"
-            },
-            "suggest": {
-                "ext-gmp": "Will enable faster math operations"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/bcmath.php"
-                ],
-                "psr-4": {
-                    "bcmath_compat\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "homepage": "http://phpseclib.sourceforge.net"
-                }
-            ],
-            "description": "PHP 5.x-8.x polyfill for bcmath extension",
-            "keywords": [
-                "BigInteger",
-                "bcmath",
-                "bigdecimal",
-                "math",
-                "polyfill"
-            ],
-            "support": {
-                "email": "terrafrost@php.net",
-                "issues": "https://github.com/phpseclib/bcmath_compat/issues",
-                "source": "https://github.com/phpseclib/bcmath_compat"
-            },
-            "time": "2024-06-06T14:17:54+00:00"
-        },
-        {
-            "name": "phpseclib/phpseclib",
-            "version": "3.0.47",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "9d6ca36a6c2dd434765b1071b2644a1c683b385d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/9d6ca36a6c2dd434765b1071b2644a1c683b385d",
-                "reference": "9d6ca36a6c2dd434765b1071b2644a1c683b385d",
-                "shasum": ""
-            },
-            "require": {
-                "paragonie/constant_time_encoding": "^1|^2|^3",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": ">=5.6.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "suggest": {
-                "ext-dom": "Install the DOM extension to load XML formatted public keys.",
-                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
-                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
-                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "phpseclib/bootstrap.php"
-                ],
-                "psr-4": {
-                    "phpseclib3\\": "phpseclib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Patrick Monnerat",
-                    "email": "pm@datasphere.ch",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Andreas Fischer",
-                    "email": "bantu@phpbb.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Hans-Jürgen Petrich",
-                    "email": "petrich@tronic-media.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
-            "keywords": [
-                "BigInteger",
-                "aes",
-                "asn.1",
-                "asn1",
-                "blowfish",
-                "crypto",
-                "cryptography",
-                "encryption",
-                "rsa",
-                "security",
-                "sftp",
-                "signature",
-                "signing",
-                "ssh",
-                "twofish",
-                "x.509",
-                "x509"
-            ],
-            "support": {
-                "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.47"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/terrafrost",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/phpseclib",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-10-06T01:07:24+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -12224,90 +11776,6 @@
                 }
             ],
             "time": "2025-09-12T08:37:02+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php80",
-            "version": "v1.33.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2"
-            },
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/symfony/polyfill",
-                    "name": "symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php80\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ion Bazan",
-                    "email": "ion.bazan@gmail.com"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.33.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-01-02T08:10:11+00:00"
         },
         {
             "name": "symfony/process",

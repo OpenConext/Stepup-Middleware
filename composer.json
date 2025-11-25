@@ -54,13 +54,12 @@
         "twig/twig": "^3.20"
     },
     "require-dev": {
-        "doctrine/data-fixtures": "^1.8.1",
-        "doctrine/doctrine-fixtures-bundle": "^3.7.1",
+        "doctrine/data-fixtures": "^2.2",
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
         "irstea/phpcpd-shim": "^6.0",
-        "liip/test-fixtures-bundle": "^2.9.2",
+        "liip/test-fixtures-bundle": "^3.6",
         "malukenho/docheader": "^1.1",
         "mockery/mockery": "1.7.x-dev",
-        "moontoast/math": "^1.2.1",
         "overtrue/phplint": ">=9.5.6",
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.0",

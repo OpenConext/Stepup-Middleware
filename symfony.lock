@@ -38,9 +38,6 @@
     "doctrine/collections": {
         "version": "1.6.5"
     },
-    "doctrine/common": {
-        "version": "2.13.3"
-    },
     "doctrine/data-fixtures": {
         "version": "1.4.3"
     },
@@ -504,9 +501,6 @@
         "version": "v1.17.0"
     },
     "symfony/polyfill-php73": {
-        "version": "v1.17.0"
-    },
-    "symfony/polyfill-php80": {
         "version": "v1.17.0"
     },
     "symfony/process": {

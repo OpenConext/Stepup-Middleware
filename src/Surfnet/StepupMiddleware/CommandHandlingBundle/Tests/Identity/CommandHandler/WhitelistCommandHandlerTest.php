@@ -37,9 +37,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhiteli
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\WhitelistCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-class WhitelistCommandHandlerTest extends CommandHandlerTest
+class WhitelistCommandHandlerTest extends CommandHandlerTestBase
 {
     /**
      * Shorthand for fixed Whitelist ID.

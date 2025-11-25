@@ -22,7 +22,7 @@ use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
 
-abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
+abstract class CommandHandlerTestBase extends CommandHandlerScenarioTestCase
 {
     use MockeryPHPUnitIntegration;
 

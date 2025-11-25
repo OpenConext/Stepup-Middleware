@@ -87,10 +87,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegist
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
 #[RunTestsInSeparateProcesses]
-class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
+class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 

@@ -59,9 +59,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleC
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
+class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTestBase
 {
 
     private MockInterface&InstitutionConfigurationRepository $institutionConfigurationRepositoryMock;

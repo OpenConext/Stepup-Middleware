@@ -66,9 +66,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\Reconfi
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
+class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTestBase
 {
 
     #[Test]

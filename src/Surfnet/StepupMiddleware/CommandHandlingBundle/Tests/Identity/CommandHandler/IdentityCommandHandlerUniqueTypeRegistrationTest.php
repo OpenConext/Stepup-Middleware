@@ -69,12 +69,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevi
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
 
 #[RunTestsInSeparateProcesses]
-class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTest
+class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 

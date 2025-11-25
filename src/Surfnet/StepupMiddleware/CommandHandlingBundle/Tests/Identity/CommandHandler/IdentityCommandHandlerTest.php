@@ -95,12 +95,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
 
 #[RunTestsInSeparateProcesses]
-class IdentityCommandHandlerTest extends CommandHandlerTest
+class IdentityCommandHandlerTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 

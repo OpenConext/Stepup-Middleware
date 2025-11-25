@@ -55,10 +55,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
 #[RunTestsInSeparateProcesses]
-class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
+class RightToBeForgottenCommandHandlerTest extends CommandHandlerTestBase
 {
     /** @var MockInterface */
     private MockInterface $apiIdentityRepository;

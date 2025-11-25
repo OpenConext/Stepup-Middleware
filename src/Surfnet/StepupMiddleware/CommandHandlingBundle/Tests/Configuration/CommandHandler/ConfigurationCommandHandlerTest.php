@@ -35,10 +35,10 @@ use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 use function is_string;
 
-final class ConfigurationCommandHandlerTest extends CommandHandlerTest
+final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
 {
 
     /**

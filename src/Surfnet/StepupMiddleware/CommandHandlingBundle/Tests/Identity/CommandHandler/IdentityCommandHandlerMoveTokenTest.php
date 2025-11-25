@@ -66,10 +66,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
 #[RunTestsInSeparateProcesses]
-class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
+class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 

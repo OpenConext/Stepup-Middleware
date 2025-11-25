@@ -70,10 +70,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSec
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
 #[RunTestsInSeparateProcesses]
-class SecondFactorRevocationTest extends CommandHandlerTest
+class SecondFactorRevocationTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 

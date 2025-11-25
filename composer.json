@@ -66,7 +66,6 @@
         "phpstan/phpstan-doctrine": "^2.0",
         "phpstan/phpstan-mockery": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpunit/php-code-coverage": "^10.1",
         "phpunit/phpunit": "^10",
         "rector/rector": "^2.2",
         "slevomat/coding-standard": "^8.25",

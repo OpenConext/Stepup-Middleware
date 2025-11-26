@@ -3793,9 +3793,9 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionValueResolverTest.php
 
 		-
-			message: '#^Property Symfony\\Component\\HttpFoundation\\Request\:\:\$query \(Symfony\\Component\\HttpFoundation\\InputBag\<string\>\) does not accept Mockery\\MockInterface&Symfony\\Component\\HttpFoundation\\ParameterBag\.$#'
-			identifier: assign.propertyType
-			count: 2
+			message: '#^Method Surfnet\\StepupMiddleware\\ApiBundle\\Tests\\Request\\InstitutionValueResolverTest\:\:mockQuery\(\) return type with generic class Symfony\\Component\\HttpFoundation\\InputBag does not specify its types\: TValue$#'
+			identifier: missingType.generics
+			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionValueResolverTest.php
 
 		-

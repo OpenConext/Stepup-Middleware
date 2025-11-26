@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionValueResolver;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
@@ -64,9 +64,7 @@ class InstitutionValueResolverTest extends UnitTest
     #[Group('api-bundle')]
     public function an_institution_is_resolved(): void
     {
-        $query = $this->mockQuery('ABC');
-
-        $this->request->query = $query;
+        $this->request->query =  $this->mockQuery('ABC');
 
         $equal = new Institution('ABC');
 
@@ -77,15 +75,8 @@ class InstitutionValueResolverTest extends UnitTest
         $this->assertEquals($equal, $result[0]);
     }
 
-    private function mockQuery(bool|string $returnValue): ParameterBag&MockInterface
+    private function mockQuery(string|bool $returnValue): InputBag
     {
-        $query = m::mock(ParameterBag::class);
-        $query
-            ->shouldReceive('get')
-            ->once()
-            ->with('institution')
-            ->andReturn($returnValue);
-
-        return $query;
+        return new InputBag(['institution' => $returnValue]);
     }
 }

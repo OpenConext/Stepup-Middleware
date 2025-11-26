@@ -19,10 +19,9 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Twig;
 
 use DateTimeInterface;
+use Twig\Attribute\AsTwigFilter;
 use Twig\Environment;
-use Twig\Extension\AbstractExtension;
 use Twig\Extra\Intl\IntlExtension;
-use Twig\TwigFilter;
 
 /**
  * This class is introduced to handle BC twig changes in email templates used in the institution configuration.
@@ -30,7 +29,7 @@ use Twig\TwigFilter;
  * * An idea was to move the email templates to disk but that would cost too much time and we still should support
  * * all historical events due to the nature of event sourcing.
  */
-class BackwardsCompatibleExtension extends AbstractExtension
+class BackwardsCompatibleExtension
 {
     private IntlExtension $intlExtension;
 
@@ -39,14 +38,8 @@ class BackwardsCompatibleExtension extends AbstractExtension
         $this->intlExtension = $intlExtension;
     }
 
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('localizeddate', $this->localizedDate(...), ['needs_environment' => true]),
-        ];
-    }
-
     // localizeddate('full', 'none', locale)
+    #[AsTwigFilter('localizeddate', needsEnvironment: true)]
     public function localizedDate(
         Environment $env,
         DateTimeInterface|string|null $date,

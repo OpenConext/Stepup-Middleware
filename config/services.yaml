@@ -14,10 +14,6 @@ services:
       - "@surfnet_stepup.service.second_factor_type"
       - '%skip_prove_possession_second_factors%'
 
-  Surfnet\StepupMiddleware\CommandHandlingBundle\Twig\BackwardsCompatibleExtension:
-    arguments: [ "@twig.extension.intl"]
-    tags: [{ name: twig.extension }]
-
   twig.extension.stringloader:
     class: Twig\Extension\StringLoaderExtension
     tags: [{ name: twig.extension }]

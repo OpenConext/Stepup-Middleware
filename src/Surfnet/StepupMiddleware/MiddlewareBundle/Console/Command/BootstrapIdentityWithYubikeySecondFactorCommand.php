@@ -26,10 +26,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -39,34 +37,29 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'middleware:bootstrap:identity-with-yubikey',
     description: 'Creates an identity with a vetted Yubikey second factor',
 )]
-final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
+final class BootstrapIdentityWithYubikeySecondFactorCommand
 {
-    protected function configure(): void
+    public function __construct(private readonly IdentityRepository $projectionRepository, private readonly TransactionHelper $transactionHelper)
     {
-        $this
-            ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
-            ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
-            ->addArgument('common-name', InputArgument::REQUIRED, 'The Common Name of the identity to create')
-            ->addArgument('email', InputArgument::REQUIRED, 'The e-mail address of the identity to create')
-            ->addArgument('preferred-locale', InputArgument::REQUIRED, 'The preferred locale of the identity to create')
-            ->addArgument(
-                'yubikey',
-                InputArgument::REQUIRED,
-                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.',
-            );
     }
 
-    public function __construct(
-        private readonly IdentityRepository $projectionRepository,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $nameId = new NameId($input->getArgument('name-id'));
-        $institution = new Institution($input->getArgument('institution'));
+    public function __invoke(
+        #[Argument(description: 'The NameID of the identity to create', name: 'name-id')]
+        string $nameId,
+        #[Argument(description: 'The institution of the identity to create', name: 'institution')]
+        string $institution,
+        #[Argument(description: 'The Common Name of the identity to create', name: 'common-name')]
+        string $commonName,
+        #[Argument(description: 'The e-mail address of the identity to create', name: 'email')]
+        string $email,
+        #[Argument(description: 'The preferred locale of the identity to create', name: 'preferred-locale')]
+        string $preferredLocale,
+        #[Argument(description: 'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.', name: 'yubikey')]
+        string $yubikey,
+        OutputInterface $output
+    ): int {
+        $nameId = new NameId($nameId);
+        $institution = new Institution($institution);
 
         if ($this->projectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
@@ -83,14 +76,14 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->identityId = (string)Uuid::uuid4();
-        $command->nameId = $input->getArgument('name-id');
-        $command->institution = $input->getArgument('institution');
-        $command->commonName = $input->getArgument('common-name');
-        $command->email = $input->getArgument('email');
-        $command->preferredLocale = $input->getArgument('preferred-locale');
+        $command->nameId = $nameId;
+        $command->institution = $institution;
+        $command->commonName = $commonName;
+        $command->email = $email;
+        $command->preferredLocale = $preferredLocale;
         $secondFactorId = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
-        $command->yubikeyPublicId = $input->getArgument('yubikey');
+        $command->yubikeyPublicId = $yubikey;
 
         $this->transactionHelper->beginTransaction();
 

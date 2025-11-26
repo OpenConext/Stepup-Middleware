@@ -24,55 +24,40 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'middleware:bootstrap:yubikey',
     description: 'Creates a Yubikey second factor for a specified user'
 )]
-final class BootstrapYubikeySecondFactorCommand extends Command
+final class BootstrapYubikeySecondFactorCommand
 {
-    public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
+    public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)
+    {
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
-            ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
-            ->addArgument(
-                'yubikey',
-                InputArgument::REQUIRED,
-                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.',
-            )
-            ->addArgument(
-                'registration-status',
-                InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted',
-            )
-            ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $registrationStatus = $input->getArgument('registration-status');
+    public function __invoke(
+        #[Argument(description: 'The NameID of the identity to create', name: 'name-id')]
+        string $nameId,
+        #[Argument(description: 'The institution of the identity to create', name: 'institution')]
+        string $institution,
+        #[Argument(description: 'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.', name: 'yubikey')]
+        string $yubikey,
+        #[Argument(description: 'Valid arguments: unverified, verified, vetted', name: 'registration-status')]
+        string $registrationStatus,
+        #[Argument(description: 'The id of the vetting actor', name: 'actor-id')]
+        string $actorId,
+        OutputInterface $output
+    ): int {
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $nameId = new NameId($input->getArgument('name-id'));
-        $institutionText = $input->getArgument('institution');
+        $nameId = new NameId($nameId);
+        $institutionText = $institution;
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->bootstrapService->requiresMailVerification($institutionText);
-        $registrationStatus = $input->getArgument('registration-status');
-        $yubikey = $input->getArgument('yubikey');
-        $actorId = $input->getArgument('actor-id');
+
         $this->bootstrapService->enrichEventMetadata($actorId);
         if (!$this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(

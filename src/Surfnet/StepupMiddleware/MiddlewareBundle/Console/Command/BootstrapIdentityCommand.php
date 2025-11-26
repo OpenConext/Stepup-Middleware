@@ -23,42 +23,35 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'middleware:bootstrap:identity', description: 'Creates an identity')]
-final class BootstrapIdentityCommand extends Command
+final class BootstrapIdentityCommand
 {
-    public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
+    public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)
+    {
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
-            ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
-            ->addArgument('common-name', InputArgument::REQUIRED, 'The Common Name of the identity to create')
-            ->addArgument('email', InputArgument::REQUIRED, 'The e-mail address of the identity to create')
-            ->addArgument('preferred-locale', InputArgument::REQUIRED, 'The preferred locale of the identity to create')
-            ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $nameId = new NameId($input->getArgument('name-id'));
-        $institutionText = $input->getArgument('institution');
+    public function __invoke(
+        #[Argument(description: 'The NameID of the identity to create', name: 'name-id')]
+        string $nameId,
+        #[Argument(description: 'The institution of the identity to create', name: 'institution')]
+        string $institution,
+        #[Argument(description: 'The Common Name of the identity to create', name: 'common-name')]
+        string $commonName,
+        #[Argument(description: 'The e-mail address of the identity to create', name: 'email')]
+        string $email,
+        #[Argument(description: 'The preferred locale of the identity to create', name: 'preferred-locale')]
+        string $preferredLocale,
+        #[Argument(description: 'The id of the vetting actor', name: 'actor-id')]
+        string $actorId,
+        OutputInterface $output
+    ): int {
+        $nameId = new NameId($nameId);
+        $institutionText = $institution;
         $institution = new Institution($institutionText);
-        $commonName = $input->getArgument('common-name');
-        $email = $input->getArgument('email');
-        $preferredLocale = $input->getArgument('preferred-locale');
-        $actorId = $input->getArgument('actor-id');
 
         $this->bootstrapService->enrichEventMetadata($actorId);
 

@@ -24,8 +24,10 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Twig\BackwardsCompatibleExtension;
 use Twig\Environment;
+use Twig\Extension\AttributeExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\ArrayLoader;
+use Twig\RuntimeLoader\FactoryRuntimeLoader;
 
 #[RequiresPhpExtension('intl')]
 class BackwardsCompatibleExtensionTest extends TestCase
@@ -36,7 +38,11 @@ class BackwardsCompatibleExtensionTest extends TestCase
         $dateString = "2024-12-05 13:12:10";
         $date = new DateTime($dateString);
         $twig = new Environment(new ArrayLoader(['template' => $template]), ['debug' => true, 'cache' => false, 'autoescape' => 'html', 'optimizations' => 0]);
-        $twig->addExtension(new BackwardsCompatibleExtension(new IntlExtension()));
+
+        $twig->addExtension(new AttributeExtension(BackwardsCompatibleExtension::class));
+        $twig->addRuntimeLoader(new FactoryRuntimeLoader([
+            BackwardsCompatibleExtension::class => static fn(): BackwardsCompatibleExtension => new BackwardsCompatibleExtension(new IntlExtension()),
+        ]));
 
         $output = $twig->render('template', ['date' => $date, 'locale' => $locale]);
         $this->assertEquals($expected, $output);

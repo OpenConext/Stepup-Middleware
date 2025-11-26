@@ -26,10 +26,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
@@ -37,39 +35,33 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'Migrates the tokens of an identity to a new institution while preserving the old tokens'
 )
 ]
-final class MigrateSecondFactorCommand extends Command
+final class MigrateSecondFactorCommand
 {
-    public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
+    public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)
+    {
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument(
-                'old-name-id',
-                InputArgument::REQUIRED,
-                'The old NameID of the identity used as the source of the tokens to move',
-            )
-            ->addArgument(
-                'new-name-id',
-                InputArgument::REQUIRED,
-                'The new NameID of the identity to move the tokens to',
-            )
-            ->addArgument('target-institution', InputArgument::OPTIONAL, 'The institution of the target identity')
-            ->addArgument('email', InputArgument::OPTIONAL, 'The e-mail address of the identity to create');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $sourceNameId = new NameId($input->getArgument('old-name-id'));
-        $targetNameId = new NameId($input->getArgument('new-name-id'));
+    public function __invoke(
+        #[Argument(description: 'The old NameID of the identity used as the source of the tokens to move', name: 'old-name-id')]
+        string $oldNameId,
+        #[Argument(description: 'The new NameID of the identity to move the tokens to', name: 'new-name-id')]
+        string $newNameId,
+        #[Argument(description: 'The institution of the target identity', name: 'target-institution')]
+        ?string $targetInstitution,
+        #[Argument(description: 'The e-mail address of the identity to create', name: 'email')]
+        ?string $email,
+        OutputInterface $output
+    ): int {
+        $sourceNameId = new NameId($oldNameId);
+        $targetNameId = new NameId($newNameId);
 
         $output->writeln(sprintf('<comment>Starting token migration for %s</comment>', $sourceNameId));
         $sourceIdentity = $this->bootstrapService->getIdentityByNameId($sourceNameId);
+
+        if ($sourceIdentity === null) {
+            throw new InvalidArgumentException("oldNameId could net be resolved to a Identity.");
+        }
+
         $targetIdentity = $this->bootstrapService->getIdentityByNameId($targetNameId);
 
         try {
@@ -81,7 +73,7 @@ final class MigrateSecondFactorCommand extends Command
                     sprintf('<info>Target with NameID %s does not exist, creating new identity</info>', $targetNameId),
                 );
 
-                $identityId = $this->createIdentity($targetNameId, $sourceIdentity, $input);
+                $identityId = $this->createIdentity($targetNameId, $sourceIdentity, $targetInstitution, $email);
 
                 $output->writeln(
                     sprintf('<info>Successfully created identity with UUID %s</info>', $identityId),
@@ -129,10 +121,8 @@ final class MigrateSecondFactorCommand extends Command
     /**
      * @return string
      */
-    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, InputInterface $input): string
+    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, ?string $newInstitution, ?string $newEmail): string
     {
-        $newInstitution = $input->getArgument('target-institution');
-        $newEmail = $input->getArgument('email');
         if (!$newInstitution || !$newEmail) {
             throw new InvalidArgumentException("Missing email and institution");
         }

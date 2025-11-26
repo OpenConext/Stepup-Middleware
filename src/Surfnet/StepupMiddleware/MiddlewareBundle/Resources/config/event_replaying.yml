@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   middleware.event_replay.event_collection:
     class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection
     arguments:

@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   surfnet_stepup_middleware_gateway.projector.institution_configuration:
     class: Surfnet\StepupMiddleware\GatewayBundle\Projector\InstitutionConfigurationProjector
     arguments:

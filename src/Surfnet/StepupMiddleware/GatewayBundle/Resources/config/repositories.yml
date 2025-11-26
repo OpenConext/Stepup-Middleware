@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   middleware.gateway_repository.saml_entities:
     class: Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository
     factory: [ "@doctrine.orm.gateway_entity_manager", getRepository ]

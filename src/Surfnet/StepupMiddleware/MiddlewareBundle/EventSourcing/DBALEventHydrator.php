@@ -24,8 +24,8 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Statement;
-use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
@@ -63,8 +63,8 @@ class DBALEventHydrator
     public function getFromTill(int $limit, int $offset): DomainEventStream
     {
         $statement = $this->prepareLoadStatement();
-        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
-        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->bindValue('limit', $limit, ParameterType::INTEGER);
+        $statement->bindValue('offset', $offset, ParameterType::INTEGER);
 
         $result = $statement->executeQuery();
 
@@ -98,7 +98,10 @@ class DBALEventHydrator
         );
 
         $statement = $this->connection->prepare($query);
-        $results = $statement->executeQuery($eventTypes);
+        foreach ($eventTypes as $position => $parameter) {
+            $statement->bindValue($position + 1, $parameter);
+        }
+        $results = $statement->executeQuery();
 
         $events = [];
         foreach ($results->fetchAllAssociative() as $row) {

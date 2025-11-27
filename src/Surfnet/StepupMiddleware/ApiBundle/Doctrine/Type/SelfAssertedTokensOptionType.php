@@ -18,16 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
+use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use TypeError;
 
 /**
  * Custom Type for the SelfAssertedTokens options Value Object
  */
-class SelfAssertedTokensOptionType extends IntegerType
+class SelfAssertedTokensOptionType extends Type
 {
     public const NAME = 'stepup_self_asserted_tokens_option';
 
@@ -56,7 +58,7 @@ class SelfAssertedTokensOptionType extends IntegerType
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfAssertedTokensOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?SelfAssertedTokensOption
     {
         if (is_null($value)) {
             return null;
@@ -65,13 +67,12 @@ class SelfAssertedTokensOptionType extends IntegerType
         try {
             $selfAssertedTokensOption = new SelfAssertedTokensOption((bool)$value);
         } catch (TypeError $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $selfAssertedTokensOption;
@@ -80,5 +81,10 @@ class SelfAssertedTokensOptionType extends IntegerType
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function getBindingType(): ParameterType
+    {
+        return ParameterType::INTEGER;
     }
 }

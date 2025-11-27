@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6400ab9c8bde2340c2bdda954f98b18d",
+    "content-hash": "e4754e4505fea59dd4a964609ffa69a2",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -224,28 +224,30 @@
         },
         {
             "name": "broadway/event-store-dbal",
-            "version": "0.6.0",
+            "version": "dev-feature/dbal4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/broadway/event-store-dbal.git",
-                "reference": "7cc0b51cdd8312c4f8919d3b2f6688d85b65cc58"
+                "url": "https://github.com/johanib/event-store-dbal.git",
+                "reference": "35c9fa7d938cccb874f53042b5a1aca9f67dba96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/broadway/event-store-dbal/zipball/7cc0b51cdd8312c4f8919d3b2f6688d85b65cc58",
-                "reference": "7cc0b51cdd8312c4f8919d3b2f6688d85b65cc58",
+                "url": "https://api.github.com/repos/johanib/event-store-dbal/zipball/35c9fa7d938cccb874f53042b5a1aca9f67dba96",
+                "reference": "35c9fa7d938cccb874f53042b5a1aca9f67dba96",
                 "shasum": ""
             },
             "require": {
-                "broadway/broadway": "^2.3.1",
-                "doctrine/dbal": "^3.1",
-                "php": ">=7.2"
+                "broadway/broadway": "^2.5",
+                "doctrine/dbal": "^4.3",
+                "php": "^8.1"
             },
             "require-dev": {
                 "broadway/coding-standard": "^1.2",
                 "ext-pdo_sqlite": "*",
+                "phpspec/prophecy": "^1.15",
+                "phpspec/prophecy-phpunit": "^2.2",
                 "phpstan/phpstan": "@stable",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^10.5",
                 "ramsey/uuid": "^4.0"
             },
             "type": "library",
@@ -259,7 +261,11 @@
                     "Broadway\\EventStore\\Dbal\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Broadway\\EventStore\\Dbal\\": "test/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -291,10 +297,9 @@
             ],
             "description": "Event store implementation using doctrine/dbal",
             "support": {
-                "issues": "https://github.com/broadway/event-store-dbal/issues",
-                "source": "https://github.com/broadway/event-store-dbal/tree/0.6.0"
+                "source": "https://github.com/johanib/event-store-dbal/tree/feature/dbal4"
             },
-            "time": "2021-06-24T09:42:53+00:00"
+            "time": "2025-11-27T13:46:13+00:00"
         },
         {
             "name": "broadway/uuid-generator",
@@ -581,48 +586,40 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.10.3",
+            "version": "4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "65edaca19a752730f290ec2fb89d593cb40afb43"
+                "reference": "1a2fbd0e93b8dec7c3d1ac2b6396a7b929b130dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/65edaca19a752730f290ec2fb89d593cb40afb43",
-                "reference": "65edaca19a752730f290ec2fb89d593cb40afb43",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/1a2fbd0e93b8dec7c3d1ac2b6396a7b929b130dc",
+                "reference": "1a2fbd0e93b8dec7c3d1ac2b6396a7b929b130dc",
                 "shasum": ""
             },
             "require": {
-                "composer-runtime-api": "^2",
-                "doctrine/deprecations": "^0.5.3|^1",
-                "doctrine/event-manager": "^1|^2",
-                "php": "^7.4 || ^8.0",
+                "doctrine/deprecations": "^1.1.5",
+                "php": "^8.2",
                 "psr/cache": "^1|^2|^3",
                 "psr/log": "^1|^2|^3"
             },
-            "conflict": {
-                "doctrine/cache": "< 1.11"
-            },
             "require-dev": {
-                "doctrine/cache": "^1.11|^2.0",
                 "doctrine/coding-standard": "14.0.0",
                 "fig/log-test": "^1",
-                "jetbrains/phpstorm-stubs": "2023.1",
+                "jetbrains/phpstorm-stubs": "2023.2",
                 "phpstan/phpstan": "2.1.30",
+                "phpstan/phpstan-phpunit": "2.0.7",
                 "phpstan/phpstan-strict-rules": "^2",
-                "phpunit/phpunit": "9.6.29",
+                "phpunit/phpunit": "11.5.23",
                 "slevomat/coding-standard": "8.24.0",
                 "squizlabs/php_codesniffer": "4.0.0",
-                "symfony/cache": "^5.4|^6.0|^7.0",
-                "symfony/console": "^4.4|^5.4|^6.0|^7.0"
+                "symfony/cache": "^6.3.8|^7.0",
+                "symfony/console": "^5.4|^6.3|^7.0"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
             },
-            "bin": [
-                "bin/doctrine-dbal"
-            ],
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -675,7 +672,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.10.3"
+                "source": "https://github.com/doctrine/dbal/tree/4.3.4"
             },
             "funding": [
                 {
@@ -691,7 +688,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-09T09:05:12+00:00"
+            "time": "2025-10-09T09:11:36+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -12139,11 +12136,12 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
+        "broadway/event-store-dbal": 20,
         "mockery/mockery": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2",

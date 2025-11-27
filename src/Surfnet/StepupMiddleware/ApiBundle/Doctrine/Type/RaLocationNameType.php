@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -33,7 +34,8 @@ class RaLocationNameType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getStringTypeDeclarationSQL([]);
+        $column['length'] = $column['length'] ?? 255;
+        return $platform->getStringTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
@@ -55,7 +57,7 @@ class RaLocationNameType extends Type
         return $value->getRaLocationName();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?RaLocationName
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?RaLocationName
     {
         if (is_null($value)) {
             return null;
@@ -64,13 +66,12 @@ class RaLocationNameType extends Type
         try {
             $raLocationName = new RaLocationName($value);
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $raLocationName;

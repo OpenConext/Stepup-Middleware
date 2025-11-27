@@ -2851,12 +2851,6 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/DateTimeType.php
 
 		-
-			message: '#^Parameter \#2 \$datetime of static method DateTime\:\:createFromFormat\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/DateTimeType.php
-
-		-
 			message: '#^Parameter \#1 \$documentNumber of class Surfnet\\Stepup\\Identity\\Value\\DocumentNumber constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2927,12 +2921,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/NameIdType.php
-
-		-
-			message: '#^Cannot cast T of mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/NumberOfTokensPerIdentityType.php
 
 		-
 			message: '#^Parameter \#1 \$raLocationName of class Surfnet\\Stepup\\Configuration\\Value\\RaLocationName constructor expects string, mixed given\.$#'

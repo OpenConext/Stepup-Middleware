@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Location;
@@ -48,7 +48,7 @@ class LocationType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?Location
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?Location
     {
         if (is_null($value)) {
             return null;
@@ -57,13 +57,12 @@ class LocationType extends Type
         try {
             $location = new Location($value);
         } catch (InvalidArgumentException|TypeError $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $location;

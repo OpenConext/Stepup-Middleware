@@ -18,16 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
+use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use TypeError;
 
 /**
  * Custom Type for the SelfVetOption Value Object
  */
-class SelfVetOptionType extends IntegerType
+class SelfVetOptionType extends Type
 {
     public const NAME = 'stepup_self_vet_option';
 
@@ -56,7 +58,7 @@ class SelfVetOptionType extends IntegerType
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfVetOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?SelfVetOption
     {
         if (is_null($value)) {
             return null;
@@ -65,13 +67,12 @@ class SelfVetOptionType extends IntegerType
         try {
             $selfVetOption = new SelfVetOption((bool)$value);
         } catch (TypeError $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $selfVetOption;
@@ -80,5 +81,10 @@ class SelfVetOptionType extends IntegerType
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function getBindingType(): ParameterType
+    {
+        return ParameterType::INTEGER;
     }
 }

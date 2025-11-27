@@ -18,16 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
+use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * Custom Type for the NumberOfTokensPerIdentityOption Value Object
  */
-class NumberOfTokensPerIdentityType extends IntegerType
+class NumberOfTokensPerIdentityType extends Type
 {
     public const NAME = 'stepup_number_of_tokens_per_identity_option';
 
@@ -56,22 +58,28 @@ class NumberOfTokensPerIdentityType extends IntegerType
         return $value->getNumberOfTokensPerIdentity();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?NumberOfTokensPerIdentityOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?NumberOfTokensPerIdentityOption
     {
         if (is_null($value)) {
             return null;
         }
 
+        if (!is_numeric($value)) {
+            throw ValueNotConvertible::new(
+                $value,
+                $this->getName(),
+            );
+        }
+
         try {
             $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int)$value);
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $numberOfTokensPerIdentityOption;
@@ -80,5 +88,10 @@ class NumberOfTokensPerIdentityType extends IntegerType
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function getBindingType(): ParameterType
+    {
+        return ParameterType::INTEGER;
     }
 }

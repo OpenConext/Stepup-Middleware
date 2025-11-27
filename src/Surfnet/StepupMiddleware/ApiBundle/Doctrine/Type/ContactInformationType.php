@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -48,7 +48,7 @@ class ContactInformationType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?ContactInformation
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?ContactInformation
     {
         if (is_null($value)) {
             return null;
@@ -57,13 +57,12 @@ class ContactInformationType extends Type
         try {
             $contactInformation = new ContactInformation($value);
         } catch (InvalidArgumentException|TypeError $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $contactInformation;

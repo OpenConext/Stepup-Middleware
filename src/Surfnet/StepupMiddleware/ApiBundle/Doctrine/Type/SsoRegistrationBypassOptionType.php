@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
+use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use TypeError;
 
@@ -31,7 +33,7 @@ use TypeError;
  * "GSSP fallback" forwards the second factor authentications at LoA 1.5 to the fallback GSSP when a user does not have
  * any active tokens
  */
-class SsoRegistrationBypassOptionType extends IntegerType
+class SsoRegistrationBypassOptionType extends Type
 {
     public const NAME = 'stepup_sso_registration_bypass_option';
 
@@ -60,7 +62,7 @@ class SsoRegistrationBypassOptionType extends IntegerType
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?SsoRegistrationBypassOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?SsoRegistrationBypassOption
     {
         if (is_null($value)) {
             return null;
@@ -69,13 +71,12 @@ class SsoRegistrationBypassOptionType extends IntegerType
         try {
             $ssoRegistrationBypassOption = new SsoRegistrationBypassOption((bool)$value);
         } catch (TypeError $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $ssoRegistrationBypassOption;
@@ -84,5 +85,10 @@ class SsoRegistrationBypassOptionType extends IntegerType
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function getBindingType(): ParameterType
+    {
+        return ParameterType::INTEGER;
     }
 }

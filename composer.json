@@ -16,7 +16,14 @@
             "src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"
         ]
     },
-    "minimum-stability": "stable",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/johanib/event-store-dbal"
+    }
+  ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "^8.2",
         "ext-gmp": "*",
@@ -24,8 +31,9 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "broadway/broadway": "^2.5",
-        "broadway/event-store-dbal": "^0.6",
+        "broadway/event-store-dbal": "dev-feature/dbal4#35c9fa7d938cccb874f53042b5a1aca9f67dba96",
         "doctrine/annotations": "^2.0",
+        "doctrine/dbal": "^4",
         "doctrine/doctrine-bundle": "^2.13.2",
         "doctrine/doctrine-migrations-bundle": "^3.4.1",
         "doctrine/orm": "^3.3.2",

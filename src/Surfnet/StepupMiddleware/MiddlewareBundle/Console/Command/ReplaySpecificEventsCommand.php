@@ -23,10 +23,9 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\PastEventsService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionAwareEventDispatcher;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
@@ -34,50 +33,38 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
     name: 'stepup:event:replay',
     description: 'replay specified events for specified projectors'
 )]
-class ReplaySpecificEventsCommand extends Command
+class ReplaySpecificEventsCommand
 {
     public const OPTION_LIST_EVENTS = 'list-events';
     public const OPTION_LIST_PROJECTORS = 'list-projectors';
-
-    protected function configure(): void
-    {
-        $this
-            ->addOption(
-                self::OPTION_LIST_EVENTS,
-                null,
-                InputOption::VALUE_NONE,
-                'List all events available to replay',
-            )
-            ->addOption(
-                self::OPTION_LIST_PROJECTORS,
-                null,
-                InputOption::VALUE_NONE,
-                'List all projectors available for which events can be replayed',
-            );
-    }
 
     public function __construct(
         private readonly EventCollection $collection,
         private readonly ProjectorCollection $projectorCollection,
         private readonly PastEventsService $pastEventsService,
-        private readonly TransactionAwareEventDispatcher $eventDispatcher,
+        private readonly TransactionAwareEventDispatcher $eventDispatcher
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        #[Option(description: 'List all events available to replay', name: self::OPTION_LIST_EVENTS)]
+        bool $listEvents = false,
+        #[Option(description: 'List all projectors available for which events can be replayed', name: self::OPTION_LIST_PROJECTORS)]
+        bool $listProjectors = false,
+    ): int {
         $availableEvents = $this->collection->getEventNames();
         $availableProjectors = $this->projectorCollection->getProjectorNames();
 
-        if ($input->getOption(self::OPTION_LIST_EVENTS)) {
+        if ($listEvents) {
             $output->writeln('<info>The following events can be replayed:</info>');
             $output->writeln($availableEvents === [] ? 'None.' : $availableEvents);
 
             return 0;
         }
 
-        if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
+        if ($listProjectors) {
             $output->writeln('<info>Events can be replayed for the following projectors:</info>');
             $output->writeln($availableProjectors === [] ? 'None.' : $availableProjectors);
 
@@ -90,8 +77,7 @@ class ReplaySpecificEventsCommand extends Command
             return 1;
         }
 
-        /** @var QuestionHelper $questionHelper */
-        $questionHelper = $this->getHelper('question');
+        $questionHelper = new QuestionHelper();
 
         $selectEventsQuestion = new ChoiceQuestion(
             'Which events would you like to replay? Please supply a comma-separated list of numbers.',

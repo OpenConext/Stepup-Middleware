@@ -7,19 +7,19 @@ This component is part of "Step-up Authentication as-a Service". See [Stepup-Dep
 
 ## Requirements
 
- * PHP 5.6+ or PHP7
+ * PHP 8.2
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
- * MariaDB 10
+ * MariaDB 10.6
  * A working [Gateway](https://github.com/OpenConext/Stepup-Gateway)
 
 ## Installation
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
 
-Make sure to run database migrations using `bin/console middleware:migrations:migrate`.
+Make sure to run database migrations using `bin/console doctrine:migrations:migrate`.
 
-When using 'Stepup-Deploy' the 'deploy' entity manager should be used in order to use the correct credentials e.g. `bin/console middleware:migrations:migrate --em=deploy`
+When using 'Stepup-Deploy' the 'deploy' entity manager should be used in order to use the correct credentials e.g. `bin/console doctrine:migrations:migrate --em=deploy`
 
 ## Management API
 

@@ -9,12 +9,6 @@ services:
     alias: 'monolog.logger'
     public: true
 
-  # Load services from src/ directory
-  Surfnet\StepupMiddleware\MiddlewareBundle\:
-    resource: '../../'
-    exclude:
-      - '../../Tests'
-
   surfnet_stepup_middleware_middleware.dbal_connection_helper:
     class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper
     arguments:

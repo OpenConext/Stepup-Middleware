@@ -20,11 +20,10 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -33,34 +32,26 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
     description: 'Wipes all read models and repopulates the tables from the event store. Use the 
                 --no-interaction option to perform the event replay without the additional confirmation question.'
 )]
-class ReplayEventsCommand extends Command
+class ReplayEventsCommand
 {
-    public function __construct(
-        private readonly EventStreamReplayer $replayer,
-        private readonly string $environment,
-    ) {
-        parent::__construct();
+    public function __construct(private readonly EventStreamReplayer $replayer, private readonly string $environment)
+    {
     }
 
-    protected function configure(): void
-    {
-        $this
-             ->addOption(
-                 'increments',
-                 'i',
-                 InputOption::VALUE_REQUIRED,
-                 'The amount of events that are replayed at once (repeated until all events are replayed)',
-                 1000,
-             );
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        /** @var FormatterHelper $formatter */
-        $formatter = $this->getHelper('formatter');
+    public function __invoke(
+        OutputInterface $output,
+        InputInterface $input,
+        #[Option(
+            description: 'The amount of events that are replayed at once (repeated until all events are replayed)',
+            name: 'increments',
+            shortcut: 'i'
+        )
+        ]
+        int $increments = 1000,
+    ): int {
+        $formatter = new FormatterHelper();
 
         // Be careful, when using the no-interaction option you will not get the confirmation question
-        $noInteraction = $input->getOption('no-interaction');
 
         if (!in_array($this->environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
             $output->writeln(
@@ -78,8 +69,7 @@ class ReplayEventsCommand extends Command
             return 1;
         }
 
-        /** @var QuestionHelper $interrogator */
-        $interrogator = $this->getHelper('question');
+        $interrogator = new QuestionHelper();
         if ($this->environment === 'prod_event_replay') {
             $wantToRunOnProd = new ConfirmationQuestion(
                 '<question>You have selected to run this on production. Have you disabled all access to the production '
@@ -93,12 +83,10 @@ class ReplayEventsCommand extends Command
                 return 1;
             }
         }
-
-        $increments = (int)$input->getOption('increments');
         if ($increments < 1) {
             $output->writeln(
                 $formatter->formatBlock(
-                    sprintf('Increments must be a positive integer, "%s" given', $input->getOption('increments')),
+                    sprintf('Increments must be a positive integer, "%s" given', $increments),
                     'error',
                 ),
             );
@@ -106,7 +94,7 @@ class ReplayEventsCommand extends Command
             return 1;
         }
 
-        if (!$noInteraction) {
+        if ($input->isInteractive()) {
             $output->writeln(['', $formatter->formatBlock(['', 'WARNING!!!!', ''], 'error'), '']);
 
             $question = <<<QUESTION

@@ -4567,30 +4567,6 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ManagementBundle/Validator/ServiceProviderConfigurationValidator.php
 
 		-
-			message: '#^Parameter \#1 \$value of static method Assert\\Assertion\:\:nullOrDate\(\) expects string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/EmailVerifiedSecondFactorRemindersCommand.php
-
-		-
-			message: '#^Parameter \#2 \$datetime of static method DateTime\:\:createFromFormat\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/EmailVerifiedSecondFactorRemindersCommand.php
-
-		-
-			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/EmailVerifiedSecondFactorRemindersCommand.php
-
-		-
-			message: '#^Property Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand\:\:\$dryRun \(bool\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/EmailVerifiedSecondFactorRemindersCommand.php
-
-		-
 			message: '#^Cannot access property \$id on Surfnet\\StepupMiddleware\\ApiBundle\\Identity\\Entity\\Identity\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -4613,18 +4589,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/MigrateSecondFactorCommand.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/ReplayEventsCommand.php
-
-		-
-			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/MiddlewareBundle/Console/Command/ReplayEventsCommand.php
 
 		-
 			message: '#^Parameter \#1 \$projector of method Surfnet\\StepupMiddleware\\MiddlewareBundle\\Service\\TransactionAwareEventDispatcher\:\:registerProjector\(\) expects Broadway\\EventHandling\\EventListener, mixed given\.$#'

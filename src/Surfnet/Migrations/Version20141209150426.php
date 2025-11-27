@@ -38,7 +38,7 @@ class Version20141209150426 extends AbstractMigration implements ConfigurationAw
         $middlewareUser = $this->getMiddlewareUser();
 
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
 
@@ -63,7 +63,7 @@ class Version20141209150426 extends AbstractMigration implements ConfigurationAw
         $middlewareUser = $this->getMiddlewareUser();
 
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
 

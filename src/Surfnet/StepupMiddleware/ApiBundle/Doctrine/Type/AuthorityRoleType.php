@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
@@ -49,7 +49,7 @@ class AuthorityRoleType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?AuthorityRole
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?AuthorityRole
     {
         if (is_null($value)) {
             return null;
@@ -58,13 +58,12 @@ class AuthorityRoleType extends Type
         try {
             $authorityRole = new AuthorityRole($value);
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $authorityRole;

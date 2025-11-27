@@ -36,20 +36,20 @@
         "pagerfanta/pagerfanta": "^4.7.1",
         "ramsey/uuid": "^4.7.6",
         "surfnet/stepup-bundle": "^7.0",
-        "symfony/asset": "7.3.*",
-        "symfony/expression-language": "7.3.*",
+        "symfony/asset": "7.4.*",
+        "symfony/expression-language": "7.4.*",
         "symfony/flex": "^2.4.7",
-        "symfony/form": "7.3.*",
-        "symfony/framework-bundle": "7.3.*",
-        "symfony/intl": "7.3.*",
-        "symfony/mailer": "7.3.*",
+        "symfony/form": "7.4.*",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/intl": "7.4.*",
+        "symfony/mailer": "7.4.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/password-hasher": "7.3.*",
-        "symfony/runtime": "7.3.*",
-        "symfony/security-bundle": "7.3.*",
-        "symfony/translation": "7.3.*",
-        "symfony/twig-bundle": "7.3.*",
-        "symfony/validator": "7.3.*",
+        "symfony/password-hasher": "7.4.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
+        "symfony/translation": "7.4.*",
+        "symfony/twig-bundle": "7.4.*",
+        "symfony/validator": "7.4.*",
         "twig/extra-bundle": "^3.20",
         "twig/intl-extra": "^3.20",
         "twig/twig": "^3.20"
@@ -71,10 +71,10 @@
         "rector/rector": "^2.2",
         "slevomat/coding-standard": "^8.25",
         "squizlabs/php_codesniffer": "^4",
-        "symfony/browser-kit": "7.3.*",
-        "symfony/phpunit-bridge": "7.3.*",
-        "symfony/stopwatch": "7.3.*",
-        "symfony/web-profiler-bundle": "7.3.*"
+        "symfony/browser-kit": "7.4.*",
+        "symfony/phpunit-bridge": "7.4.*",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*"
     },
     "scripts": {
         "auto-scripts": {
@@ -152,7 +152,7 @@
         },
         "symfony": {
             "allow-contrib": false,
-            "require": "7.3.*"
+            "require": "7.4.*"
         },
         "runtime": {
             "disable_dotenv": true

@@ -31,7 +31,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipe
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -40,16 +39,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  * The command utilizes a specific service for this task (VerifiedSecondFactorReminderService). Input validation is
  * performed on the incoming request parameters.
  *
- * @TODO Once on Symfony 7.4, remove the `extends Command` and the parent constructor call
- * @see https://github.com/symfony/symfony/commit/1886c105df2772c0a1a17fa739318c3bfb731ce9
- *
  * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 #[AsCommand(
     name: 'middleware:cron:email-reminder',
     description: 'Sends email reminders to identities with verified tokens more than 7 days old.'
 )]
-final class EmailVerifiedSecondFactorRemindersCommand extends Command
+final class EmailVerifiedSecondFactorRemindersCommand
 {
     public function __construct(
         private readonly TransactionAwarePipeline $pipeline,
@@ -57,7 +53,6 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
         private readonly DBALConnectionHelper $connection,
         private readonly LoggerInterface $logger
     ) {
-        parent::__construct();
     }
 
     public function __invoke(
@@ -75,7 +70,7 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             );
         } catch (InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            $this->logger->error(sprintf('Invalid arguments passed to the %s', $this->getName()), [$e->getMessage()]);
+            $this->logger->error(sprintf('Invalid arguments passed to the %s', 'middleware:cron:email-reminder'), [$e->getMessage()]);
             return 1;
         }
 

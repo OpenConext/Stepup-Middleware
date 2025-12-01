@@ -12,6 +12,7 @@ doctrine:
                 password: "%database_middleware_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                use_savepoints: true
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -21,6 +22,7 @@ doctrine:
                 password: "%database_gateway_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                use_savepoints: true
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -30,6 +32,7 @@ doctrine:
                 password: "%database_deploy_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                use_savepoints: true
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType

@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService;
@@ -38,7 +37,7 @@ final class AuditLogController extends AbstractController
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
-        $identityId = $request->get('identityId');
+        $identityId = $request->query->get('identityId');
         if (empty($identityId)) {
             throw new BadApiRequestException(['This API-call MUST include the identityId as get parameter']);
         }
@@ -46,9 +45,9 @@ final class AuditLogController extends AbstractController
         $query = new SecondFactorAuditLogQuery();
         $query->identityInstitution = $institution;
         $query->identityId = new IdentityId($identityId);
-        $query->orderBy = $request->get('orderBy', $query->orderBy);
-        $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
-        $query->pageNumber = $request->get('p', 1);
+        $query->orderBy = $request->query->get('orderBy', $query->orderBy);
+        $query->orderDirection = $request->query->get('orderDirection', $query->orderDirection);
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $paginator = $this->auditLogService->searchSecondFactorAuditLog($query);
 

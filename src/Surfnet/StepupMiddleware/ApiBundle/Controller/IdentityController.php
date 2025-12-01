@@ -55,10 +55,10 @@ class IdentityController extends AbstractController
 
         $query = new IdentityQuery();
         $query->institution = $institution;
-        $query->nameId = $request->get('NameID');
-        $query->commonName = $request->get('commonName');
-        $query->email = $request->get('email');
-        $query->pageNumber = (int)$request->get('p', 1);
+        $query->nameId = $request->query->get('NameID');
+        $query->commonName = $request->query->get('commonName');
+        $query->email = $request->query->get('email');
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $paginator = $this->identityService->search($query);
 

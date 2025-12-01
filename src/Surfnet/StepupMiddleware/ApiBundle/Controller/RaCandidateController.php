@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use function sprintf;
 
@@ -45,15 +46,27 @@ class RaCandidateController extends AbstractController
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
-        $actorId = new IdentityId($request->get('actorId'));
+        $actorIdString = $request->query->get('actorId');
+        if (!is_string($actorIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid actorId "%s"', $actorIdString));
+        }
+        $actorId = new IdentityId($actorIdString);
+
+        $secondFactorTypes = $request->query->all('secondFactorTypes');
+        foreach ($secondFactorTypes as $type) {
+            if (!is_string($type)) {
+                throw new BadRequestHttpException(sprintf('Invalid secondFactorType "%s", string expected.', $type));
+            }
+        }
+        /** @var array<string> $secondFactorTypes */
 
         $query = new RaCandidateQuery();
-        $query->institution = $request->get('institution');
-        $query->commonName = $request->get('commonName');
-        $query->email = $request->get('email');
-        $query->secondFactorTypes = $request->get('secondFactorTypes');
-        $query->raInstitution = $request->get('raInstitution');
-        $query->pageNumber = (int)$request->get('p', 1);
+        $query->institution = $request->query->get('institution');
+        $query->commonName = $request->query->get('commonName');
+        $query->email = $request->query->get('email');
+        $query->secondFactorTypes = $secondFactorTypes;
+        $query->raInstitution = $request->query->get('raInstitution');
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $query->authorizationContext = $this->authorizationService->buildSelectRaaInstitutionAuthorizationContext(
             $actorId,
@@ -69,13 +82,17 @@ class RaCandidateController extends AbstractController
     /**
      * @return JsonResponse
      */
-    public function get(Request $request): JsonResponse
+    public function get(Request $request, string $identityId): JsonResponse
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
-        $actorId = new IdentityId($request->get('actorId'));
+        $actorIdString = $request->query->get('actorId');
+        if (!is_string($actorIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid actorId "%s"', $actorIdString));
+        }
 
-        $identityId = $request->get('identityId');
+        $actorId = new IdentityId($actorIdString);
+
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,

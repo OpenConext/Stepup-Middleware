@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VettedSecondFactorController extends AbstractController
@@ -54,8 +55,14 @@ class VettedSecondFactorController extends AbstractController
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new VettedSecondFactorQuery();
-        $query->identityId = new IdentityId($request->get('identityId'));
-        $query->pageNumber = (int)$request->get('p', 1);
+
+        $identityIdString = $request->query->get('identityId');
+        if (!is_string($identityIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid identityId "%s"', $identityIdString));
+        }
+
+        $query->identityId = new IdentityId($identityIdString);
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $paginator = $this->secondFactorService->searchVettedSecondFactors($query);
 

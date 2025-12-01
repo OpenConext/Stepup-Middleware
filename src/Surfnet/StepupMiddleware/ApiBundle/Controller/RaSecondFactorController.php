@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class RaSecondFactorController extends AbstractController
 {
@@ -65,18 +66,23 @@ final class RaSecondFactorController extends AbstractController
      */
     private function buildRaSecondFactorQuery(Request $request): RaSecondFactorQuery
     {
-        $actorId = new IdentityId($request->get('actorId'));
+        $actorIdString = $request->query->get('actorId');
+        if (!is_string($actorIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid actorId "%s"', $actorIdString));
+        }
+
+        $actorId = new IdentityId($actorIdString);
 
         $query = new RaSecondFactorQuery();
-        $query->pageNumber = (int)$request->get('p', 1);
-        $query->name = $request->get('name');
-        $query->type = $request->get('type');
-        $query->secondFactorId = $request->get('secondFactorId');
-        $query->email = $request->get('email');
-        $query->institution = $request->get('institution');
-        $query->status = $request->get('status');
-        $query->orderBy = $request->get('orderBy');
-        $query->orderDirection = $request->get('orderDirection');
+        $query->pageNumber = $request->query->getInt('p', 1);
+        $query->name = $request->query->get('name');
+        $query->type = $request->query->get('type');
+        $query->secondFactorId = $request->query->get('secondFactorId');
+        $query->email = $request->query->get('email');
+        $query->institution = $request->query->get('institution');
+        $query->status = $request->query->get('status');
+        $query->orderBy = $request->query->get('orderBy');
+        $query->orderDirection = $request->query->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
             RegistrationAuthorityRole::ra(),

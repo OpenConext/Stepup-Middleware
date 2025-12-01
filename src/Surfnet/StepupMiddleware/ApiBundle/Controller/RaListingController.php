@@ -22,13 +22,13 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RaListingController extends AbstractController
@@ -39,12 +39,17 @@ class RaListingController extends AbstractController
     ) {
     }
 
-    public function get(Request $request, string $identityId): JsonResponse
+    public function get(Request $request, string $identityId, string $institution): JsonResponse
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
-        $actorId = new IdentityId($request->get('actorId'));
-        $institution = new Institution($request->get('institution'));
+        $actorIdString = $request->query->get('actorId');
+        if (!is_string($actorIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid actorId "%s"', $actorIdString));
+        }
+        $actorId = new IdentityId($actorIdString);
+
+        $institutionObject = new Institution($institution);
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
@@ -53,7 +58,7 @@ class RaListingController extends AbstractController
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
             new IdentityId($identityId),
-            $institution,
+            $institutionObject,
             $authorizationContext,
         );
 
@@ -71,37 +76,41 @@ class RaListingController extends AbstractController
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
-        $actorId = new IdentityId($request->get('actorId'));
+        $actorIdString = $request->query->get('actorId');
+        if (!is_string($actorIdString)) {
+            throw new BadRequestHttpException(sprintf('Invalid actorId "%s"', $actorIdString));
+        }
+        $actorId = new IdentityId($actorIdString);
 
         $query = new RaListingQuery();
 
-        if ($request->get('identityId')) {
-            $query->identityId = new IdentityId($request->get('identityId'));
+        if ($request->query->get('identityId')) {
+            $query->identityId = new IdentityId($request->query->get('identityId'));
         }
 
-        if ($request->get('institution')) {
-            $query->institution = $request->get('institution');
+        if ($request->query->get('institution')) {
+            $query->institution = $request->query->get('institution');
         }
 
-        if ($request->get('name')) {
-            $query->name = $request->get('name');
+        if ($request->query->get('name')) {
+            $query->name = $request->query->get('name');
         }
 
-        if ($request->get('email')) {
-            $query->email = $request->get('email');
+        if ($request->query->get('email')) {
+            $query->email = $request->query->get('email');
         }
 
-        if ($request->get('role')) {
-            $query->role = $request->get('role');
+        if ($request->query->get('role')) {
+            $query->role = $request->query->get('role');
         }
 
-        if ($request->get('raInstitution')) {
-            $query->raInstitution = $request->get('raInstitution');
+        if ($request->query->get('raInstitution')) {
+            $query->raInstitution = $request->query->get('raInstitution');
         }
 
-        $query->pageNumber = (int)$request->get('p', 1);
-        $query->orderBy = $request->get('orderBy');
-        $query->orderDirection = $request->get('orderDirection');
+        $query->pageNumber = $request->query->getInt('p', 1);
+        $query->orderBy = $request->query->getString('orderBy');
+        $query->orderDirection = $request->query->getString('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
             RegistrationAuthorityRole::raa(),

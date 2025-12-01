@@ -28,6 +28,7 @@ when@smoketest: &testOverride
         test: true
         profiler:
             collect: false
+            collect_serializer_data: true
         php_errors:
             log: false # prevents user deprecated warnings
         session:

@@ -35,6 +35,10 @@ class DocumentNumberType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        if (!isset($column['length'])) {
+            $column['length'] = 255;
+        }
+
         return $platform->getStringTypeDeclarationSQL($column);
     }
 

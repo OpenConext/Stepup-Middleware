@@ -80,4 +80,9 @@ class VerifyEmailOptionType extends BooleanType
     {
         return self::NAME;
     }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return false;
+    }
 }

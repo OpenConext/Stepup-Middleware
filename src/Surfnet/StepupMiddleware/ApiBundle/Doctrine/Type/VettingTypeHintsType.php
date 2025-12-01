@@ -62,4 +62,9 @@ class VettingTypeHintsType extends JsonType
     {
         return self::NAME;
     }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return false;
+    }
 }

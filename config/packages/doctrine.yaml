@@ -33,85 +33,58 @@ doctrine:
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
-                commented: false
             institution:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
-                commented: false
             stepup_contact_information:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
-                commented: false
             stepup_common_name:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType
-                commented: false
             stepup_datetime:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
-                commented: false
             stepup_document_number:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType
-                commented: false
             stepup_email:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType
-                commented: false
             stepup_name_id:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
-                commented: false
             stepup_locale:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
-                commented: false
             stepup_location:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
-                commented: false
             stepup_second_factor_status:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
-                commented: false
             stepup_recovery_token_status:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType
-                commented: false
             stepup_ra_location_name:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType
-                commented: false
             stepup_configuration_institution:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType
-                commented: false
             stepup_configuration_contact_information:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationContactInformationType
-                commented: false
             stepup_configuration_location:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType
-                commented: false
             stepup_use_ra_locations_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType
-                commented: false
             stepup_show_raa_contact_information_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType
-                commented: false
             stepup_second_factor_type:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorTypeType
-                commented: false
             stepup_verify_email_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VerifyEmailOptionType
-                commented: false
             stepup_number_of_tokens_per_identity_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType
-                commented: false
             stepup_self_vet_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType
-                commented: false
             stepup_self_asserted_tokens_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfAssertedTokensOptionType
-                commented: false
             stepup_sso_on_2fa_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SsoOn2faOptionType
-                commented: false
             stepup_sso_registration_bypass_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SsoRegistrationBypassOptionType
-                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
-                commented: false
             stepup_vetting_type_hints:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VettingTypeHintsType
-                commented: false
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

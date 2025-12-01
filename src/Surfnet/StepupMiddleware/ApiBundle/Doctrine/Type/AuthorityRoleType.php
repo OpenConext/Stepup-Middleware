@@ -74,4 +74,9 @@ class AuthorityRoleType extends Type
     {
         return self::NAME;
     }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return false;
+    }
 }

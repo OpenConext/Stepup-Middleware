@@ -102,14 +102,7 @@ class AllowedSecondFactorListTest extends TestCase
             new SecondFactorType('yubikey'),
         ];
 
-        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes($secondFactorTypes);
-
-        $builtList = [];
-        foreach ($allowedSecondFactorList as $item) {
-            $builtList[] = $item;
-        }
-
-        foreach ($builtList as $index => $actualSecondFactorType) {
+        foreach (iterator_to_array(AllowedSecondFactorList::ofTypes($secondFactorTypes)) as $index => $actualSecondFactorType) {
             $this->assertTrue($secondFactorTypes[$index]->equals($actualSecondFactorType));
         }
     }

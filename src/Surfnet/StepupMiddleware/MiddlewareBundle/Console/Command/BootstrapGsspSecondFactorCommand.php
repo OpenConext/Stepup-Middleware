@@ -31,8 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(
     name: 'middleware:bootstrap:gssp',
     description: 'Creates a Generic SAML Second Factor (GSSF) second factor for a specified user'
-)
-]
+)]
 final class BootstrapGsspSecondFactorCommand
 {
     public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)

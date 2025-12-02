@@ -33,8 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(
     name: 'middleware:migrate:vetted-tokens',
     description: 'Migrates the tokens of an identity to a new institution while preserving the old tokens'
-)
-]
+)]
 final class MigrateSecondFactorCommand
 {
     public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)

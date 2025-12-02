@@ -32,7 +32,7 @@ Some of the configuration of the components is static (i.e. stored in parametere
 ## Development Notes
 
 ### Technical debt
- * https://github.com/broadway/event-store-dbal is blocks upgrade to `doctrine/dbal:^4.0`
+ * https://github.com/broadway/event-store-dbal blocks upgrade to `doctrine/dbal:^4.0`
 
 ### Adding new events
 

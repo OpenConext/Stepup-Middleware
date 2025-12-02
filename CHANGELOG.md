@@ -1,5 +1,23 @@
 # Changelog
 
+# 7.0.0 - unreleased
+**Notable Changes**
+- Upgrade to Symfony 7.4 (from 6.4)
+- Upgrade to PHPUnit 10 (from 9.x)
+- Upgrade to PHPStan 2.0 (from 1.x)
+- Migrate from annotations to attributes (PHP 8 attributes)
+
+**Important for System Administrators**
+Ensure the `database_server_version` parameter contains the correct MariaDB version. e.g. `10.6.23-MariaDB`
+
+
+**Improvements**
+- Upgrade all Symfony components to 7.4
+- Upgrade Stepup-Bundle to 7.0
+- Modernize codebase with PHP 8+ features
+- Fix various Symfony and Doctrine deprecations
+- Improved code quality with updated tooling
+
 # 6.0.2
 - Repair deprovisioning API calls
 - Restore deprovisioned user on new login (returing users)

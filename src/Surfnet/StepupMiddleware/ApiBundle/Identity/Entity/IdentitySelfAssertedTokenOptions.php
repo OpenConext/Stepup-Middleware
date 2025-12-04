@@ -72,7 +72,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'identity_id' => (string)$this->identityId,
+            'identity_id' => $this->identityId,
             'possessed_self_asserted_token' => $this->possessedSelfAssertedToken,
             'possessed_token' => $this->possessedToken,
         ];

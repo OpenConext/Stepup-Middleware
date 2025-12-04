@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Tests\Identity\Collection;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -28,11 +30,9 @@ class InstitutionCollectionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function it_can_be_constructed_with_or_without_institutions(): void
     {
         $collection1 = new InstitutionCollection($this->getInstitutions());
@@ -42,11 +42,9 @@ class InstitutionCollectionTest extends UnitTest
         $this->assertInstanceOf(InstitutionCollection::class, $collection2);
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function it_correctly_asserts_whether_or_not_it_contains_an_institution(): void
     {
         $institutions = $this->getInstitutions();
@@ -60,11 +58,9 @@ class InstitutionCollectionTest extends UnitTest
         $this->assertFalse($institutionCollection->contains(new Institution('not listed')));
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function it_allows_to_add_an_institution_that_it_does_not_already_contain(): void
     {
         $toAdd = new Institution('to be added');
@@ -75,11 +71,9 @@ class InstitutionCollectionTest extends UnitTest
         $this->assertTrue($institutionCollection->contains($toAdd));
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function an_institution_already_in_the_collection_cannot_be_added(): void
     {
         $this->expectException(RuntimeException::class);
@@ -92,11 +86,9 @@ class InstitutionCollectionTest extends UnitTest
         $institutionCollection->add($alreadyExists);
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function an_institution_in_the_collection_can_be_removed(): void
     {
         $institutions = $this->getInstitutions();
@@ -109,12 +101,9 @@ class InstitutionCollectionTest extends UnitTest
         $this->assertFalse($institutionCollection->contains($inCollection));
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     *
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function an_institution_not_in_the_collection_cannot_be_removed(): void
     {
         $this->expectException(RuntimeException::class);
@@ -128,11 +117,9 @@ class InstitutionCollectionTest extends UnitTest
         $institutionCollection->remove($notInCollection);
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function multiple_institutions_can_be_added_from_another_collection(): void
     {
         $institutions = $this->getInstitutions();
@@ -149,11 +136,9 @@ class InstitutionCollectionTest extends UnitTest
         }
     }
 
-    /**
-     * @test
-     * @group        domain
-     * @group        whitelist
-     */
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
     public function multiple_institutions_can_be_removed(): void
     {
         $collectionOneElements = $this->getInstitutions();
@@ -170,7 +155,7 @@ class InstitutionCollectionTest extends UnitTest
     }
 
     /**
-     * @return array
+     * @return list<Institution>
      */
     private function getInstitutions(): array
     {

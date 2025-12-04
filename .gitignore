@@ -1,4 +1,5 @@
 .idea
+.github/*.md
 /web/bundles/
 /web/app_dev.php
 /web/app_test.php

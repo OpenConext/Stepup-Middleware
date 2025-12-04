@@ -28,7 +28,6 @@ use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
 {

@@ -20,13 +20,14 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnverifiedSecondFactorController extends AbstractController
@@ -54,9 +55,16 @@ class UnverifiedSecondFactorController extends AbstractController
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new UnverifiedSecondFactorQuery();
-        $query->identityId = new IdentityId($request->get('identityId'));
-        $query->verificationNonce = $request->get('verificationNonce');
-        $query->pageNumber = (int)$request->get('p', 1);
+
+        $identityIdString = $request->query->get('identityId');
+        if (!is_string($identityIdString)) {
+            throw new BadRequestHttpException((sprintf('Invalid identityId "%s"', $identityIdString)));
+        }
+
+        $query->identityId = new IdentityId($identityIdString);
+
+        $query->verificationNonce = $request->query->get('verificationNonce');
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $paginator = $this->secondFactorService->searchUnverifiedSecondFactors($query);
 

@@ -22,9 +22,13 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType;
+use Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider;
 
 class RaLocationNameTypeTest extends UnitTest
 {
@@ -48,10 +52,8 @@ class RaLocationNameTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
@@ -61,10 +63,8 @@ class RaLocationNameTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
@@ -77,12 +77,9 @@ class RaLocationNameTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     *
-     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     */
+    #[Test]
+    #[DataProviderExternal(TestDataProvider::class, 'notNull')]
+    #[Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_ra_location_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
@@ -91,10 +88,8 @@ class RaLocationNameTypeTest extends UnitTest
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
@@ -104,10 +99,8 @@ class RaLocationNameTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_a_ra_location_name_value_object(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
@@ -120,10 +113,8 @@ class RaLocationNameTypeTest extends UnitTest
         $this->assertEquals(new RaLocationName($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

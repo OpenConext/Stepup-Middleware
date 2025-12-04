@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector;
 
+use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Projector\Projector;
-use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 

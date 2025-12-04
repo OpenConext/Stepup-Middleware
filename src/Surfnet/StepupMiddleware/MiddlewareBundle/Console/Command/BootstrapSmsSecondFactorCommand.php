@@ -24,50 +24,34 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class BootstrapSmsSecondFactorCommand extends Command
+#[AsCommand(
+    name: 'middleware:bootstrap:sms',
+    description: 'Creates a SMS second factor for a specified user'
+)]
+final class BootstrapSmsSecondFactorCommand
 {
-    public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
+    public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)
+    {
     }
 
-    protected function configure(): void
+    public function __invoke(#[Argument(description: 'The NameID of the identity to create', name: 'name-id')]
+    string $nameId, #[Argument(description: 'The institution of the identity to create', name: 'institution')]
+    string $institution, #[Argument(description: 'The phone number of the user should be formatted like "+31 (0) 612345678"', name: 'phone-number')]
+    string $phoneNumber, #[Argument(description: 'Valid arguments: unverified, verified, vetted', name: 'registration-status')]
+    string $registrationStatus, #[Argument(description: 'The id of the vetting actor', name: 'actor-id')]
+    string $actorId, OutputInterface $output): int
     {
-        $this
-            ->setDescription('Creates a SMS second factor for a specified user')
-            ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
-            ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
-            ->addArgument(
-                'phone-number',
-                InputArgument::REQUIRED,
-                'The phone number of the user should be formatted like "+31 (0) 612345678"',
-            )
-            ->addArgument(
-                'registration-status',
-                InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted',
-            )
-            ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $registrationStatus = $input->getArgument('registration-status');
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $nameId = new NameId($input->getArgument('name-id'));
-        $institutionText = $input->getArgument('institution');
+        $nameId = new NameId($nameId);
+        $institutionText = $institution;
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->bootstrapService->requiresMailVerification($institutionText);
-        $phoneNumber = $input->getArgument('phone-number');
-        $actorId = $input->getArgument('actor-id');
+
         $this->bootstrapService->enrichEventMetadata($actorId);
         if (!$this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(

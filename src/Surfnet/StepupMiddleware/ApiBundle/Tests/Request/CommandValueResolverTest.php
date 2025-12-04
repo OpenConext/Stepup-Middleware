@@ -20,13 +20,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\Matcher\MatcherAbstract;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandValueResolver;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,11 +38,9 @@ class CommandValueResolverTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group api-bundle
-     * @dataProvider invalidCommandJsonStructures
-     */
+    #[Test]
+    #[DataProvider('invalidCommandJsonStructures')]
+    #[Group('api-bundle')]
     public function it_validates_the_command_structure(string $commandJson): void
     {
         $this->expectException(BadCommandRequestException::class);
@@ -63,11 +63,9 @@ class CommandValueResolverTest extends TestCase
         $this->assertInstanceOf(Command::class, $result[0]);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     * @dataProvider convertibleCommandNames
-     */
+    #[Test]
+    #[DataProvider('convertibleCommandNames')]
+    #[Group('api-bundle')]
     public function it_can_convert_command_name_notation(string $expectedCommandClass, string $commandName): void
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
@@ -90,11 +88,9 @@ class CommandValueResolverTest extends TestCase
         $this->assertInstanceOf($expectedCommandClass, $result[0]);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     * @dataProvider invalidCommandNames
-     */
+    #[Test]
+    #[DataProvider('invalidCommandNames')]
+    #[Group('api-bundle')]
     public function it_fails_converting_invalid_command_name_notation(string $expectedCommandClass, string $commandName): void
     {
         $this->expectException(BadCommandRequestException::class);
@@ -117,10 +113,8 @@ class CommandValueResolverTest extends TestCase
         $converter->resolve($request, $argument);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[Test]
+    #[Group('api-bundle')]
     public function it_sets_uuid(): void
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
@@ -143,10 +137,8 @@ class CommandValueResolverTest extends TestCase
         $this->assertEquals('abcdef', $result[0]->UUID, 'UUID mismatch');
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[Test]
+    #[Group('api-bundle')]
     public function it_sets_payload(): void
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
@@ -173,7 +165,7 @@ class CommandValueResolverTest extends TestCase
         $this->assertSame(['snakeCase' => true], $spiedPayload, 'Payload mismatch');
     }
 
-    public function invalidCommandJsonStructures(): array
+    public static function invalidCommandJsonStructures(): array
     {
         return array_map(
             fn($command): array => [json_encode($command)],
@@ -198,7 +190,7 @@ class CommandValueResolverTest extends TestCase
         );
     }
 
-    public function convertibleCommandNames(): array
+    public static function convertibleCommandNames(): array
     {
         return [
             'It can convert simple command notation with a namespace' => [
@@ -216,7 +208,7 @@ class CommandValueResolverTest extends TestCase
         ];
     }
 
-    public function invalidCommandNames(): array
+    public static function invalidCommandNames(): array
     {
         return [
             'It can not convert simple command notation with only a namespace' => [

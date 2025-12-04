@@ -20,8 +20,10 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
-use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,10 +71,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function authorization_is_required_for_reconfiguring_institution_configuration_options(): void
     {
         $this->client->request(
@@ -90,10 +90,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function readonly_user_cannot_reconfigure_institution_configuration_options(): void
     {
         $this->client->request(
@@ -113,10 +111,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function authorization_is_required_for_querying_institution_configuration_options(): void
     {
         $this->client->request(
@@ -134,10 +130,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function requests_with_invalid_content_are_bad_requests(): void
     {
         $content = json_encode(['non-existing.organisation.test' => []]);
@@ -161,12 +155,9 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     *
-     * @dataProvider invalidHttpMethodProvider
-     */
+    #[Test]
+    #[DataProvider('invalidHttpMethodProvider')]
+    #[Group('management')]
     public function only_post_and_get_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
@@ -184,10 +175,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function a_get_request_without_content_is_valid(): void
     {
         $this->client->request(
@@ -207,10 +196,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function json_is_returned_from_the_institution_configuration_api(): void
     {
         $this->client->request(
@@ -238,7 +225,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
     /**
      * Dataprovider for only_post_and_get_requests_are_accepted
      */
-    public function invalidHttpMethodProvider(): array
+    public static function invalidHttpMethodProvider(): array
     {
         return [
             'DELETE' => ['DELETE'],

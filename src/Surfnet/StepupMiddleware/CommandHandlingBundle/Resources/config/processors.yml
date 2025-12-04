@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   surfnet_stepup_middleware_command_handling.processor.email_verification_email:
     class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\EmailVerificationEmailProcessor
     arguments:

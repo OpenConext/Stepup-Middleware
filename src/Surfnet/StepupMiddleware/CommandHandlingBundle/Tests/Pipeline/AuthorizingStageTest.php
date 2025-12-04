@@ -21,6 +21,9 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
@@ -47,10 +50,8 @@ class AuthorizingStageTest extends UnitTest
         );
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[Test]
+    #[Group('pipeline')]
     public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -63,11 +64,9 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     * @dataProvider interfaceToRoleMappingProvider
-     */
+    #[Test]
+    #[DataProvider('interfaceToRoleMappingProvider')]
+    #[Group('pipeline')]
     public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role(
         string $interface,
         string $role,
@@ -87,10 +86,8 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[Test]
+    #[Group('pipeline')]
     public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required(): void
     {
         /** @var AbstractCommand&SelfServiceExecutable&RaExecutable&ManagementExecutable&MockInterface $command */
@@ -126,10 +123,8 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[Test]
+    #[Group('pipeline')]
     public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown(): void
     {
         $this->expectException(ForbiddenException::class);
@@ -156,7 +151,7 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
-    public function interfaceToRoleMappingProvider(): array
+    public static function interfaceToRoleMappingProvider(): array
     {
         return [
             'SelfServiceExecutable => ROLE_SS' => [

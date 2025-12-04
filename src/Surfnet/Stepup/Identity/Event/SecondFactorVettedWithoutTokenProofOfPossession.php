@@ -37,7 +37,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent implements
     Forgettable,
@@ -65,7 +65,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     public DocumentNumber $documentNumber;
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId $identityId,

@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   pipeline:
     alias: surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline
     public: true

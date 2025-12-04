@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  * @extends ServiceEntityRepository<RaSecondFactor>
  */
 class RaSecondFactorRepository extends ServiceEntityRepository
@@ -72,9 +72,9 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity") The amount of if statements do not necessarily make the method
      *                                               below complex or hard to maintain.
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function createSearchQuery(RaSecondFactorQuery $query): Query
     {

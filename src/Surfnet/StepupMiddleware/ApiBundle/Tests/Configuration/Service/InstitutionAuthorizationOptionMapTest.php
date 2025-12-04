@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -38,10 +40,8 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
         $this->institution = new Institution('inst');
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_array_initialized_with_authorizations_should_return_valid_institutions_per_role(): void
     {
         $testData = [
@@ -90,10 +90,8 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_array_initialized_with_no_authorizations_should_return_valid_institutions_per_role(): void
     {
         $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations(

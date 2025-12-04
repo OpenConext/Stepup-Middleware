@@ -50,7 +50,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId              $identityId,

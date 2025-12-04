@@ -62,7 +62,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 /**
- * @SuppressWarnings(PHPMD.UnusedPrivateField)
+ * @SuppressWarnings("PHPMD.UnusedPrivateField")
  */
 #[ORM\Table(name: 'audit_log')]
 #[ORM\Index(name: 'idx_auditlog_actorid', columns: ['actor_id'])]
@@ -174,7 +174,7 @@ class AuditLogEntry implements JsonSerializable
             'identity_institution' => (string)$this->identityInstitution,
             'ra_institution' => (string)$this->raInstitution,
             'second_factor_id' => $this->secondFactorId,
-            'second_factor_type' => $this->secondFactorType ? (string)$this->secondFactorType : null,
+            'second_factor_type' => $this->secondFactorType ?: null,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'recovery_token_type' => $this->recoveryTokenType,
             'recovery_token_identifier' => $this->recoveryTokenIdentifier,

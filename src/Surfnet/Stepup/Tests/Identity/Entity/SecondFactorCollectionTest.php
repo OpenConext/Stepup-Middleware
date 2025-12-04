@@ -20,6 +20,8 @@ namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
@@ -33,10 +35,8 @@ class SecondFactorCollectionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function collection_can_return_second_factor_with_highest_loa(): void
     {
         $collection = new SecondFactorCollection([

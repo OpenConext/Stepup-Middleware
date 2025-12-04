@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Location;
 
@@ -28,10 +30,8 @@ class LocationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_locations_with_the_same_value_are_equal(): void
     {
         $location = new Location('a');

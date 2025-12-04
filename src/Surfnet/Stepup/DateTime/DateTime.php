@@ -22,11 +22,12 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Do not confuse with \Surfnet\StepupBundle\DateTime\DateTime
+ *
+ * @SuppressWarnings("PHPMD.TooManyMethods")
+ * @SuppressWarnings("PHPMD.TooManyPublicMethods")
  */
 class DateTime implements Stringable
 {

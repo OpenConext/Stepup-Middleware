@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -29,20 +32,17 @@ class InstitutionTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidValueProviderInvalidString
-     */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(string $invalidValue): void {
+    #[Test]
+    #[DataProvider('invalidValueProviderInvalidString')]
+    #[Group('domain')]
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(string $invalidValue): void
+    {
         $this->expectException(InvalidArgumentException::class);
         new Institution($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_institutions_with_the_same_value_are_equal(): void
     {
         $institution = new Institution('a');
@@ -58,7 +58,7 @@ class InstitutionTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProviderInvalidString(): array
+    public static function invalidValueProviderInvalidString(): array
     {
         return [
             'empty string' => [''],

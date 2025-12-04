@@ -23,6 +23,9 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
@@ -67,12 +70,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSec
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-/**
- * @runTestsInSeparateProcesses
- */
-class SecondFactorRevocationTest extends CommandHandlerTest
+#[RunTestsInSeparateProcesses]
+class SecondFactorRevocationTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 
@@ -104,10 +105,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function an_identity_can_revoke_its_own_unverified_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -160,10 +159,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function an_identity_can_revoke_its_own_verified_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -228,10 +225,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function an_identity_can_revoke_its_own_vetted_second_factor(): void
     {
         $command = new RevokeOwnSecondFactorCommand();
@@ -314,10 +309,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function a_registration_authority_can_revoke_an_unverified_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -400,10 +393,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function a_registration_authority_can_revoke_a_verified_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -499,10 +490,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function a_registration_authority_can_revoke_a_vetted_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -615,10 +604,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function a_registration_authority_can_revoke_a_possession_proved_skipped_vetted_second_factor(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();
@@ -732,9 +719,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 
     /**
      * Test if the VettedSecondFactorsAllRevokedEvent is not triggered with multiple 2fa's
-     * @test
-     * @group command-handler
      */
+    #[Test]
+    #[Group('command-handler')]
     public function a_registration_authority_can_revoke_one_of_multiple_vetted_second_factors(): void
     {
         $command = new RevokeRegistrantsSecondFactorCommand();

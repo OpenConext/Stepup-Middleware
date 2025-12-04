@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Helper;
 
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Exception\JsonException;
 
 final class JsonHelper

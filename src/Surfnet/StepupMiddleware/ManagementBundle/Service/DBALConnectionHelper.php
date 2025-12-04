@@ -78,10 +78,6 @@ class DBALConnectionHelper
      */
     public function getConnection(string $connectionName): Connection
     {
-        if (!is_string($connectionName)) {
-            throw InvalidArgumentException::invalidType('string', 'connectionName', $connectionName);
-        }
-
         if (!array_key_exists($connectionName, $this->connections)) {
             throw new UnknownDBALConnectionException($connectionName);
         }

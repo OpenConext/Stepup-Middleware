@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
@@ -52,7 +53,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
  * 1. A SRAA user may always execute the command
  * 2. Certain commands are actionable with a RA role. When the identity is RAA, the identity is also allowed to run
  *    the command.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class CommandAuthorizationService
 {
@@ -74,7 +75,7 @@ class CommandAuthorizationService
         if (!is_null($actorId) && $this->isSraa($actorId)) {
             return true;
         }
-        return (bool)$this->whitelistService->isWhitelisted($institution->getInstitution());
+        return $this->whitelistService->isWhitelisted($institution->getInstitution());
     }
 
     public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool
@@ -133,9 +134,9 @@ class CommandAuthorizationService
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity) - To keep the method readable, increased CC is allowed
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity") - To keep the method readable, increased CC is allowed
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function mayRaCommandBeExecutedOnBehalfOf(
         Command $command,
@@ -264,7 +265,7 @@ class CommandAuthorizationService
         $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf(
             $actorId->getIdentityId(),
         );
-        if (!$registrationAuthorityCredentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
+        if (!$registrationAuthorityCredentials instanceof RegistrationAuthorityCredentials) {
             return false;
         }
         return $registrationAuthorityCredentials->isSraa();

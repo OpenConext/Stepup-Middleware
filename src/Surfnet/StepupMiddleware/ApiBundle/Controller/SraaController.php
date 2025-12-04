@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SraaController extends AbstractController
@@ -40,7 +41,7 @@ class SraaController extends AbstractController
 
         $sraa = $this->sraaService->findByNameId(new NameId($nameId));
 
-        if (!$sraa instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa) {
+        if (!$sraa instanceof Sraa) {
             return new JsonNotFoundResponse();
         }
 

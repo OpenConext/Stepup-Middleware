@@ -22,6 +22,8 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -35,9 +37,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhiteli
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\WhitelistCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-class WhitelistCommandHandlerTest extends CommandHandlerTest
+class WhitelistCommandHandlerTest extends CommandHandlerTestBase
 {
     /**
      * Shorthand for fixed Whitelist ID.
@@ -53,11 +55,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
         return new WhitelistCommandHandler(new WhitelistRepository($eventStore, $eventBus, $aggregateFactory));
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function when_the_whitelist_does_not_exist_yet_it_is_created(): void
     {
         $command = new ReplaceWhitelistCommand();
@@ -72,11 +72,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function the_whitelist_can_be_fully_replaced(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
@@ -96,11 +94,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
@@ -119,11 +115,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function an_institution_on_the_whitelist_may_not_be_added_again(): void
     {
         $this->expectExceptionMessage("Cannot add institution \"already exists\" as it is already whitelisted");
@@ -140,11 +134,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'On the whitelist']);
@@ -163,11 +155,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group command-handler
-     * @group whitelist
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed(): void
     {
         $this->expectExceptionMessage("Cannot remove institution \"not on the whitelist\" as it is not whitelisted");
@@ -185,10 +175,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
 
     /**
      * Helper function to quickly map String[] to Institution[]
-     * @return array
+     * @return list<Institution> $institutions
      */
     private function mapStringValuesToInstitutions(array $institutions): array
     {
-        return array_map(fn($institution): Institution => new Institution($institution), $institutions);
+        return array_values(array_map(static fn($institution): Institution => new Institution($institution), $institutions));
     }
 }

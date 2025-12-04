@@ -21,8 +21,10 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
-use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,12 +77,9 @@ class SraaControllerTest extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    /**
-     * @test
-     * @group api
-     *
-     * @dataProvider invalidHttpMethodProvider
-     */
+    #[Test]
+    #[DataProvider('invalidHttpMethodProvider')]
+    #[Group('api')]
     public function only_get_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
@@ -98,11 +97,9 @@ class SraaControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group api
-     * @dataProvider notAllowedAccountsProvider
-     */
+    #[Test]
+    #[DataProvider('notAllowedAccountsProvider')]
+    #[Group('api')]
     public function no_access_for_not_allowed_account(string $account): void
     {
         $this->client->request(
@@ -122,10 +119,8 @@ class SraaControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group api
-     */
+    #[Test]
+    #[Group('api')]
     public function json_is_returned_from_the_api(): void
     {
         $this->client->request(
@@ -150,11 +145,9 @@ class SraaControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @test
-     * @group api
-     * @dataProvider allowedAccountsProvider
-     */
+    #[Test]
+    #[DataProvider('allowedAccountsProvider')]
+    #[Group('api')]
     public function correct_institutions_are_returned(string $account): void
     {
         $this->client->request(
@@ -181,7 +174,7 @@ class SraaControllerTest extends WebTestCase
     /**
      * Dataprovider for only_get_requests_are_accepted
      */
-    public function invalidHttpMethodProvider(): array
+    public static function invalidHttpMethodProvider(): array
     {
         return [
             'POST' => ['POST'],
@@ -191,13 +184,13 @@ class SraaControllerTest extends WebTestCase
         ];
     }
 
-    public function allowedAccountsProvider(): Generator
+    public static function allowedAccountsProvider(): Generator
     {
         yield ['ra'];
         yield ['apireader'];
     }
 
-    public function notAllowedAccountsProvider(): Generator
+    public static function notAllowedAccountsProvider(): Generator
     {
         yield ['ss'];
     }

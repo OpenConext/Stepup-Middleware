@@ -21,11 +21,13 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionValueResolver;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
@@ -46,10 +48,8 @@ class InstitutionValueResolverTest extends UnitTest
             ->andReturn(Institution::class);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[Test]
+    #[Group('api-bundle')]
     public function an_exception_is_thrown_when_the_parameter_is_missing(): void
     {
         $this->expectException(BadApiRequestException::class);
@@ -60,15 +60,11 @@ class InstitutionValueResolverTest extends UnitTest
         $converter->resolve($this->request, $this->argument);
     }
 
-    /**
-     * @test
-     * @group api-bundle
-     */
+    #[Test]
+    #[Group('api-bundle')]
     public function an_institution_is_resolved(): void
     {
-        $query = $this->mockQuery('ABC');
-
-        $this->request->query = $query;
+        $this->request->query =  $this->mockQuery('ABC');
 
         $equal = new Institution('ABC');
 
@@ -79,15 +75,8 @@ class InstitutionValueResolverTest extends UnitTest
         $this->assertEquals($equal, $result[0]);
     }
 
-    private function mockQuery(bool|string $returnValue): ParameterBag&MockInterface
+    private function mockQuery(string|bool $returnValue): InputBag
     {
-        $query = m::mock(ParameterBag::class);
-        $query
-            ->shouldReceive('get')
-            ->once()
-            ->with('institution')
-            ->andReturn($returnValue);
-
-        return $query;
+        return new InputBag(['institution' => $returnValue]);
     }
 }

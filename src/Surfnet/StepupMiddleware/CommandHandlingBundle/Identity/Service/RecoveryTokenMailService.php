@@ -34,7 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use function str_replace;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class RecoveryTokenMailService
 {

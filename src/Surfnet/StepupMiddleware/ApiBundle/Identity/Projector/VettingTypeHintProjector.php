@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettingTypeHint;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
 

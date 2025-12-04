@@ -22,6 +22,9 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Exception;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
@@ -32,12 +35,9 @@ class EmailVerificationWindowTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @runInSeparateProcess
-     */
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('domain')]
     public function window_is_open_for_instructed_timeframe_after_given_time(): void
     {
         $startTime = new DateTime(new CoreDateTime('@1'));
@@ -62,12 +62,9 @@ class EmailVerificationWindowTest extends TestCase
         $this->assertFalse($window->isOpen(), 'The window should be closed after the end time');
     }
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @runInSeparateProcess
-     */
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('domain')]
     public function a_window_is_considered_equal_when_the_start_and_end_are_the_same(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
@@ -91,12 +88,9 @@ class EmailVerificationWindowTest extends TestCase
         $this->assertFalse($base->equals($startsEarlierEndsAtSameTime));
     }
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @runInSeparateProcess
-     */
+    #[Test]
+    #[RunInSeparateProcess]
+    #[Group('domain')]
     public function the_window_correctly_calculates_the_end_datetime(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time

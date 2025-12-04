@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
@@ -50,7 +51,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
             ->allowedSecondFactorListService
             ->getAllowedSecondFactorListFor($institution);
 
-        if (!$institutionConfigurationOptions instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
+        if (!$institutionConfigurationOptions instanceof InstitutionConfigurationOptions) {
             throw new NotFoundHttpException(
                 sprintf('No institution configuration options found for institution "%s"', $institution),
             );

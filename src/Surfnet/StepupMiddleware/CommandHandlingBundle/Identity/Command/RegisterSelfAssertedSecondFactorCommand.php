@@ -18,11 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
+use AllowDynamicProperties;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[AllowDynamicProperties]
 class RegisterSelfAssertedSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
 {
     /**

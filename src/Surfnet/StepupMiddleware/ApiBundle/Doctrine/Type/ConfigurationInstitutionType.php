@@ -33,7 +33,11 @@ class ConfigurationInstitutionType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($column);
+        if (!isset($column['length'])) {
+            $column['length'] = 255;
+        }
+
+        return $platform->getStringTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
@@ -79,5 +83,10 @@ class ConfigurationInstitutionType extends Type
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return false;
     }
 }

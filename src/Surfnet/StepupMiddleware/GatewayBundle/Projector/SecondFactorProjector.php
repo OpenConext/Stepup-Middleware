@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
-use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
@@ -28,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossessio
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;

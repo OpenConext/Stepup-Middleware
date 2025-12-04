@@ -27,14 +27,15 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RecoveryTokenService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Exposes the Recovery Tokens projection through the
  * Middleware Identity (read) API
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class RecoveryTokenController extends AbstractController
 {
@@ -65,21 +66,24 @@ class RecoveryTokenController extends AbstractController
             sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()),
         );
         $query = new RecoveryTokenQuery();
-        $query->identityId = $request->get('identityId') ? new IdentityId($request->get('identityId')) : null;
-        $query->type = $request->get('type');
-        $query->status = $request->get('status');
-        $query->institution = $request->get('institution');
-        $query->email = $request->get('email');
-        $query->name = $request->get('name');
-        $query->pageNumber = (int)$request->get('p', 1);
-        $query->orderBy = $request->get('orderBy');
-        $query->orderDirection = $request->get('orderDirection');
+        $query->identityId = $request->query->get('identityId') ? new IdentityId($request->query->get('identityId')) : null;
+        $query->type = $request->query->get('type');
+        $query->status = $request->query->get('status');
+        $query->institution = $request->query->get('institution');
+        $query->email = $request->query->get('email');
+        $query->name = $request->query->get('name');
+        $query->pageNumber = $request->query->getInt('p', 1);
+        $query->orderBy = $request->query->get('orderBy');
+        $query->orderDirection = $request->query->get('orderDirection');
 
         $roles = $this->getUser()->getRoles();
         // Only apply the authorization context on non selfservice requests
         if (!in_array('ROLE_SS', $roles)) {
-            $actorId = $request->get('actorId', $request->get('identityId'));
+            $actorId = $request->query->get('actorId', $request->query->get('identityId'));
             $this->logger->info(sprintf('Executing query on behalf of %s', $actorId));
+            if (!is_string($actorId)) {
+                throw new BadRequestHttpException('Invalid actorId or identityId, string expected.');
+            }
             $actorId = new IdentityId($actorId);
             $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
                 $actorId,

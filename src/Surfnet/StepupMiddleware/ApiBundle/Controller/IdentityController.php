@@ -22,6 +22,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,10 +55,10 @@ class IdentityController extends AbstractController
 
         $query = new IdentityQuery();
         $query->institution = $institution;
-        $query->nameId = $request->get('NameID');
-        $query->commonName = $request->get('commonName');
-        $query->email = $request->get('email');
-        $query->pageNumber = (int)$request->get('p', 1);
+        $query->nameId = $request->query->get('NameID');
+        $query->commonName = $request->query->get('commonName');
+        $query->email = $request->query->get('email');
+        $query->pageNumber = $request->query->getInt('p', 1);
 
         $paginator = $this->identityService->search($query);
 
@@ -72,7 +73,7 @@ class IdentityController extends AbstractController
 
         $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
 
-        if (!$credentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
+        if (!$credentials instanceof RegistrationAuthorityCredentials) {
             return new JsonNotFoundResponse();
         }
 

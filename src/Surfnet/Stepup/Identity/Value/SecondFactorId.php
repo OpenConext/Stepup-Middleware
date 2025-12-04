@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
 final class SecondFactorId implements Id

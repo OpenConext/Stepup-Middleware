@@ -25,7 +25,10 @@ use Broadway\Domain\Metadata;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -41,21 +44,16 @@ final class SensitiveDataMessageStreamTest extends TestCase
     public const EVENT_STREAM_A = 'A';
     public const EVENT_STREAM_B = 'B';
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[DoesNotPerformAssertions]
+    #[Group('sensitive-data')]
     public function it_can_work_with_zero_sensitive_data_messages_and_zero_events(): void
     {
         $this->apply([], []);
-
-        $this->assertTrue(true);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_can_apply_one_sensitive_data_message_to_one_matching_event(): void
     {
         $sensitiveDataMessages = [
@@ -79,10 +77,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->assertSensitiveDataEquals($sensitiveDataMessages[0], $domainMessages[0]);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_can_apply_two_sensitive_data_message_to_two_matching_events(): void
     {
         $sensitiveDataMessages = [
@@ -119,10 +115,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->assertSensitiveDataEquals($sensitiveDataMessages[1], $domainMessages[1]);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_can_apply_one_sensitive_data_message_to_one_regular_event_and_one_matching_forgettable_event(): void
     {
         $sensitiveDataMessages = [
@@ -153,10 +147,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->assertSensitiveDataEquals($sensitiveDataMessages[0], $domainMessages[1]);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_fails_when_sensitive_data_is_missing_for_an_event(): void
     {
         $this->expectExceptionMessage("Sensitive data is missing for event with UUID A, playhead 0");
@@ -176,10 +168,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->apply($sensitiveDataMessages, $domainMessages);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_fails_when_not_all_sensitive_data_could_be_matched_to_an_event(): void
     {
         $this->expectExceptionMessage("1 sensitive data messages are still to be matched to events");
@@ -204,10 +194,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->apply($sensitiveDataMessages, $domainMessages);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_fails_when_sensitive_data_matches_a_regular_event(): void
     {
         $this->expectExceptionMessage(
@@ -235,10 +223,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->apply($sensitiveDataMessages, $domainMessages);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_fails_when_stream_ids_dont_match(): void
     {
         $this->expectExceptionMessage("Encountered sensitive data from stream A for event from stream B");
@@ -264,10 +250,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
         $this->apply($sensitiveDataMessages, $domainMessages);
     }
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_can_forget_all_sensitive_data(): void
     {
         /** @var MockInterface&SensitiveDataMessage $command */

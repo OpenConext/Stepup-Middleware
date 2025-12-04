@@ -22,9 +22,13 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType;
+use Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider;
 
 class NumberOfTokensPerIdentityTypeTest extends UnitTest
 {
@@ -49,10 +53,8 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $numberOfTokensPerIdentity = Type::getType(NumberOfTokensPerIdentityType::NAME);
@@ -62,12 +64,9 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     *
-     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     */
+    #[Test]
+    #[DataProviderExternal(TestDataProvider::class, 'notNull')]
+    #[Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_option_type_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
@@ -76,10 +75,8 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $numberOfTokensPerIdentity->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $numberOfTokensPerIdentity = Type::getType(NumberOfTokensPerIdentityType::NAME);
@@ -92,10 +89,8 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $numberOfTokensPerIdentity = Type::getType(NumberOfTokensPerIdentityType::NAME);
@@ -105,10 +100,8 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_an_option_value_object(): void
     {
         $numberOfTokensPerIdentity = Type::getType(NumberOfTokensPerIdentityType::NAME);

@@ -22,7 +22,8 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
@@ -34,10 +35,10 @@ use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 use function is_string;
 
-final class ConfigurationCommandHandlerTest extends CommandHandlerTest
+final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
 {
 
     /**
@@ -45,10 +46,8 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public const CID = Configuration::CONFIGURATION_ID;
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function configuration_can_be_initialised(): void
     {
         $configuration = [
@@ -70,10 +69,8 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
             ->then($this->createConfigurationUpdatedEvents($configuration, null));
     }
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function configuration_can_be_updated(): void
     {
         $configuration1 = [

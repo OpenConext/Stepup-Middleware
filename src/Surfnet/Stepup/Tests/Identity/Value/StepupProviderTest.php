@@ -19,8 +19,10 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 
@@ -28,11 +30,9 @@ class StepupProviderTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     */
+    #[Test]
+    #[DataProvider('invalidValueProvider')]
+    #[Group('domain')]
     public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string(
         string $invalidValue,
     ): void {
@@ -41,10 +41,8 @@ class StepupProviderTest extends UnitTest
         new StepupProvider($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_stepup_providers_with_the_same_value_are_equal(): void
     {
         $institution = new StepupProvider('a');
@@ -58,7 +56,7 @@ class StepupProviderTest extends UnitTest
     /**
      * DataProvider for {@see a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidValueProvider(): array
+    public static function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],

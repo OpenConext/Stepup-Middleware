@@ -29,9 +29,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -40,53 +39,45 @@ use Symfony\Component\Console\Output\OutputInterface;
  * The command utilizes a specific service for this task (VerifiedSecondFactorReminderService). Input validation is
  * performed on the incoming request parameters.
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
-final class EmailVerifiedSecondFactorRemindersCommand extends Command
+#[AsCommand(
+    name: 'middleware:cron:email-reminder',
+    description: 'Sends email reminders to identities with verified tokens more than 7 days old.'
+)]
+final class EmailVerifiedSecondFactorRemindersCommand
 {
-    protected static $defaultName = 'middleware:cron:email-reminder';
-
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Sends email reminders to identities with verified tokens more than 7 days old.')
-            ->addOption(
-                'dry-run',
-                null,
-                InputOption::VALUE_NONE,
-                'Run in dry mode, not sending any email',
-            )
-            ->addOption(
-                'date',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7',
-            );
-    }
-
     public function __construct(
         private readonly TransactionAwarePipeline $pipeline,
         private readonly BufferedEventBus $eventBus,
         private readonly DBALConnectionHelper $connection,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $logger
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        OutputInterface $output,
+        #[Option(description: 'Run in dry mode, not sending any email', name: 'dry-run')]
+        bool $dryRun = false,
+        #[Option(description: 'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7', name: 'date')]
+        ?string $date = null,
+    ): int {
         try {
-            $this->validateInput($input);
+            Assertion::nullOrDate(
+                $date,
+                'Y-m-d',
+                'Expected date to be a string and formatted in the Y-m-d date format',
+            );
         } catch (InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            $this->logger->error(sprintf('Invalid arguments passed to the %s', $this->getName()), [$e->getMessage()]);
+            $this->logger->error(sprintf('Invalid arguments passed to the %s', 'middleware:cron:email-reminder'), [$e->getMessage()]);
             return 1;
         }
 
-        $date = new DateTime();
-        $date->sub(new DateInterval('P7D'));
-        if ($input->hasOption('date') && !is_null($input->getOption('date'))) {
-            $receivedDate = $input->getOption('date');
+        $now = new DateTime();
+        $now->sub(new DateInterval('P7D'));
+        if ($date) {
+            $receivedDate = $date;
             $date = DateTime::createFromFormat('Y-m-d', $receivedDate);
             if ($date === false) {
                 $output->writeln(
@@ -99,13 +90,8 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             }
         }
 
-        $dryRun = false;
-        if ($input->hasOption('dry-run') && !is_null($input->getOption('dry-run'))) {
-            $dryRun = $input->getOption('dry-run');
-        }
-
         $command = new SendVerifiedSecondFactorRemindersCommand();
-        $command->requestedAt = $date;
+        $command->requestedAt = $date ?: $now;
         $command->dryRun = $dryRun;
         $command->UUID = Uuid::uuid4()->toString();
 
@@ -121,22 +107,5 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             throw $e;
         }
         return 0;
-    }
-
-    private function validateInput(InputInterface $input): void
-    {
-        if ($input->hasOption('date')) {
-            $date = $input->getOption('date');
-            Assertion::nullOrDate(
-                $date,
-                'Y-m-d',
-                'Expected date to be a string and formatted in the Y-m-d date format',
-            );
-        }
-
-        if ($input->hasOption('dry-run')) {
-            $dryRun = $input->getOption('dry-run');
-            Assertion::nullOrBoolean($dryRun, 'Expected dry-run parameter to be a boolean value.');
-        }
     }
 }

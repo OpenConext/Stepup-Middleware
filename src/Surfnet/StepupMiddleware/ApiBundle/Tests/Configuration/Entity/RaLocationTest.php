@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Entity;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -29,10 +31,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 class RaLocationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group entity
-     */
+    #[Test]
+    #[Group('entity')]
     public function an_ra_location_is_correctly_serialized_to_json(): void
     {
         $deserializedRaLocation = [

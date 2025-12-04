@@ -22,6 +22,8 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType;
@@ -45,10 +47,8 @@ class CommonNameTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $commonName = Type::getType(CommonNameType::NAME);
@@ -58,10 +58,8 @@ class CommonNameTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $commonName = Type::getType(CommonNameType::NAME);
@@ -73,10 +71,8 @@ class CommonNameTypeTest extends UnitTest
         $this->assertEquals('Arthur Dent', $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $commonName = Type::getType(CommonNameType::NAME);
@@ -86,10 +82,8 @@ class CommonNameTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_stepup_common_name_object(): void
     {
         $commonName = Type::getType(CommonNameType::NAME);
@@ -102,10 +96,8 @@ class CommonNameTypeTest extends UnitTest
         $this->assertEquals(new CommonName($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

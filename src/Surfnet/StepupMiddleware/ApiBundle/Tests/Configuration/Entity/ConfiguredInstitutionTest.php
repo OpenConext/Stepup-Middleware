@@ -19,17 +19,17 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Entity;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 
 class ConfiguredInstitutionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    /**
-     * @test
-     * @group entity
-     */
+    #[Test]
+    #[Group('entity')]
     public function a_configured_institution_is_correctly_serialized_to_json(): void
     {
         $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];

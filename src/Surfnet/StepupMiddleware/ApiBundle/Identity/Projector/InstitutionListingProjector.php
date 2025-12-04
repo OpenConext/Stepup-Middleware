@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
+use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Projector\Projector;
-use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 
 /**

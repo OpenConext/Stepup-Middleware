@@ -1,4 +1,6 @@
 services:
+  _defaults:
+    autoconfigure: true
 
   # BC aliases
   Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher: "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"

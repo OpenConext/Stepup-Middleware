@@ -20,14 +20,14 @@ declare(strict_types=1);
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
+use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SsoRegistrationBypassOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\SsoRegistrationBypassOption;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Projector\Projector;
-use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
-use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
-use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\InstitutionConfiguration;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository;
 

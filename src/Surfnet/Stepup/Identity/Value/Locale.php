@@ -20,7 +20,6 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
 use Stringable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final readonly class Locale implements JsonSerializable, Stringable
 {

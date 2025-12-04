@@ -36,7 +36,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  * A second factor whose possession has been proven by the registrant. The registrant must verify his/her e-mail
  * address to verify this second factor.
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class UnverifiedSecondFactor extends AbstractSecondFactor
 {

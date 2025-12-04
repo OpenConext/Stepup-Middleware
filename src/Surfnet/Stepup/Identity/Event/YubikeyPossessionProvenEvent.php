@@ -55,7 +55,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     public DateTime $emailVerificationRequestedAt;
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId              $identityId,

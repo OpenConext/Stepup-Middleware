@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\RuntimeException;
 
 /**

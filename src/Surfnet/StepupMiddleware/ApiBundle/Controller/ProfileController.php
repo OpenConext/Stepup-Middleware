@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\ProfileService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -38,7 +38,7 @@ class ProfileController extends AbstractController
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         // Is the actor allowed to view the profile page?
-        $actorId = $request->get('actorId');
+        $actorId = $request->query->get('actorId');
         if ($identityId !== $actorId) {
             throw new AccessDeniedHttpException(
                 "Identity and actor id should match. It is not yet allowed to view the profile of somebody else.",

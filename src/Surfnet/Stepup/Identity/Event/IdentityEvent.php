@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
- * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @SuppressWarnings("PHPMD.NumberOfChildren")
  */
 abstract class IdentityEvent implements AuditableEvent, SerializableInterface
 {

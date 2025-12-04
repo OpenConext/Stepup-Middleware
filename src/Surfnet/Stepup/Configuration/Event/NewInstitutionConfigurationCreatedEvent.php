@@ -38,7 +38,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         public InstitutionConfigurationId $institutionConfigurationId,

@@ -19,12 +19,13 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
@@ -58,9 +59,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleC
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 
-class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
+class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTestBase
 {
 
     private MockInterface&InstitutionConfigurationRepository $institutionConfigurationRepositoryMock;
@@ -104,11 +105,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_for_another_institution_than_configured(): void
     {
         $this->expectExceptionMessage("An Identity may only be accredited by configured institutions");
@@ -159,11 +158,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_when_it_does_not_have_a_vetted_second_factor(): void
     {
         $this->expectExceptionMessage(
@@ -204,11 +201,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     }
 
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_when_it_already_has_been_accredited(): void
     {
         $this->expectExceptionMessage("Cannot accredit Identity as it has already been accredited for institution");
@@ -268,11 +263,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_with_an_invalid_role(): void
     {
         $this->expectException(RuntimeException::class);
@@ -320,11 +313,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_can_be_accredited_with_ra_role(): void
     {
         $command = new AccreditIdentityCommand();
@@ -386,11 +377,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_can_be_accredited_with_raa_role(): void
     {
         $command = new AccreditIdentityCommand();
@@ -454,11 +443,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             );
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function a_registration_authoritys_information_can_be_amended(): void
     {
         $command = new AmendRegistrationAuthorityInformationCommand();
@@ -523,11 +510,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             );
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identitys_registration_authority_information_cannot_be_amended(): void
     {
         $this->expectExceptionMessage(
@@ -576,11 +561,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_without_vetted_second_factor_may_not_be_accredited_as_ra(): void
     {
         $this->expectExceptionMessage(
@@ -621,11 +604,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_with_a_vetted_second_factor_can_be_accredited_as_ra(): void
     {
         $command = new AccreditIdentityCommand();
@@ -687,11 +668,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_twice(): void
     {
         $this->expectExceptionMessage("Cannot accredit Identity as it has already been accredited for institution");
@@ -751,11 +730,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_cannot_be_accredited_as_sraa(): void
     {
         $this->expectException(RuntimeException::class);
@@ -802,11 +779,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_that_is_accredited_as_raa_can_be_appointed_as_ra(): void
     {
         $command = new AppointRoleCommand();
@@ -868,11 +843,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_identity_that_is_accredited_as_ra_can_be_appointed_as_raa(): void
     {
         $command = new AppointRoleCommand();
@@ -935,11 +908,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_unaccredited_identity_cannot_be_appointed_a_registration_authority_role(): void
     {
         $this->expectExceptionMessage(
@@ -989,11 +960,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('ra-command-handler')]
     public function an_unaccredited_identity_cannot_have_its_registration_authority_retracted(): void
     {
         $this->expectExceptionMessage(

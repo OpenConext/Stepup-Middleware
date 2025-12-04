@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 class AuthorizedInstitutionCollection
 {
@@ -42,12 +43,12 @@ class AuthorizedInstitutionCollection
     ): self {
         $collection = new self();
 
-        /** @var string $institution */
+        /** @var Institution $institution */
         foreach ($raInstitutions as $institution) {
             $collection->authorizations[(string)$institution][] = AuthorityRole::ROLE_RA;
         }
         if ($raaInstitutions instanceof InstitutionCollection) {
-            /** @var string $institution */
+            /** @var Institution $institution */
             foreach ($raaInstitutions as $institution) {
                 // Override existing lower role
                 if (isset($collection->authorizations[(string)$institution])

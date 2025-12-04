@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Broadway\Domain\DomainMessage;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Exception;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
 use Symfony\Component\Console\Helper\ProgressBar;

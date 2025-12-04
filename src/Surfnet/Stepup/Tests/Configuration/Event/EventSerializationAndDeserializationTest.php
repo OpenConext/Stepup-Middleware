@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
@@ -64,12 +67,9 @@ class EventSerializationAndDeserializationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     *
-     * @dataProvider institutionConfigurationEventsProvider
-     */
+    #[Test]
+    #[DataProvider('institutionConfigurationEventsProvider')]
+    #[Group('domain')]
     public function an_event_should_be_the_same_after_serialization_and_deserialization(
         SerializableInterface $unserializedEvent,
     ): void {
@@ -80,7 +80,7 @@ class EventSerializationAndDeserializationTest extends TestCase
         $this->assertEquals($unserializedEvent, $deserializedEvent);
     }
 
-    public function institutionConfigurationEventsProvider(): array
+    public static function institutionConfigurationEventsProvider(): array
     {
         $institution = new Institution('A test institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);

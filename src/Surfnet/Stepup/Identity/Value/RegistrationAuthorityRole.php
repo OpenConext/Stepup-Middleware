@@ -40,7 +40,7 @@ final readonly class RegistrationAuthorityRole implements SerializableInterface,
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ShortMethodName) no use in lengthening a domain term for the sake of shutting up PHPMD
+     * @SuppressWarnings("PHPMD.ShortMethodName") no use in lengthening a domain term for the sake of shutting up PHPMD
      */
     public static function ra(): self
     {

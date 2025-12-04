@@ -20,7 +20,9 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData\Ser
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
@@ -30,10 +32,8 @@ final class SensitiveDataServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group sensitive-data
-     */
+    #[Test]
+    #[Group('sensitive-data')]
     public function it_can_forget_sensitive_data_in_a_stream(): void
     {
         $identityId = new IdentityId('A');

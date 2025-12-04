@@ -22,6 +22,8 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
@@ -44,10 +46,8 @@ class AuthorityRoleTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
@@ -57,10 +57,8 @@ class AuthorityRoleTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
@@ -72,10 +70,8 @@ class AuthorityRoleTypeTest extends UnitTest
         $this->assertEquals(AuthorityRole::ROLE_RAA, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
@@ -85,10 +81,8 @@ class AuthorityRoleTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_an_authority_role_value_object(): void
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
@@ -101,10 +95,8 @@ class AuthorityRoleTypeTest extends UnitTest
         $this->assertEquals(new AuthorityRole($input), $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
         $this->expectException(ConversionException::class);

@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
-use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\VettingType;
@@ -35,7 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
  * Perform authorization checks
  * For example, test if an identity is allowed to register self-asserted tokens.
  *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings("PHPMD.CyclomaticComplexity")
  */
 class AuthorizationService
 {

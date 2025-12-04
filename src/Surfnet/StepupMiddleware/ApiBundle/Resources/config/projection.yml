@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    autoconfigure: true
+
   surfnet_stepup_middleware_api.projector.identity:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentityProjector
     arguments:

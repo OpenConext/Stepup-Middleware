@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
-use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Projector\Projector;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository;
 

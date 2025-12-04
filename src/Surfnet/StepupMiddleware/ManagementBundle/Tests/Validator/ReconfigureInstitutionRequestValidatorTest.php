@@ -22,6 +22,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -43,7 +46,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     /**
      * @return mixed[][]
      */
-    public function invalidReconfigureInstitutionRequests(): array
+    public static function invalidReconfigureInstitutionRequests(): array
     {
         $dataSet = [];
         $fixtureDir = __DIR__ . '/Fixtures/invalid_reconfigure_institution_request/*.php';
@@ -63,11 +66,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         return $dataSet;
     }
 
-    /**
-     * @test
-     * @group validator
-     * @dataProvider invalidReconfigureInstitutionRequests
-     */
+    #[Test]
+    #[DataProvider('invalidReconfigureInstitutionRequests')]
+    #[Group('validator')]
     public function it_rejects_invalid_configuration(
         array  $reconfigureRequest,
         string $expectedPropertyPath,
@@ -89,7 +90,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
+        $actualErrorMessage = '';
         $context->shouldReceive('buildViolation')->with($this->spy($actualErrorMessage))->once()->andReturn($builder);
+        assert(is_string($actualErrorMessage));
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
@@ -123,10 +126,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[Test]
+    #[Group('validator')]
     public function reconfigure_institution_request_cannot_contain_institutions_that_do_not_exist(): void
     {
         $existingInstitutions = [];
@@ -139,7 +140,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $builder->shouldReceive('addViolation')->with()->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
+        $errorMessage = '';
         $context->shouldReceive('buildViolation')->once()->with($this->spy($errorMessage))->andReturn($builder);
+        assert(is_string($errorMessage));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock
@@ -163,10 +166,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $this->assertStringContainsString($expectedErrorMessage, $errorMessage);
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[Test]
+    #[Group('validator')]
     public function validation_for_existing_institutions_is_done_case_insensitively(): void
     {
         $existingInstitutions = [ConfiguredInstitution::createFrom(new Institution('surfnet.nl'))];
@@ -212,10 +213,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $this->assertInstanceOf(ConfiguredInstitution::class, $existingInstitutions[0]);
     }
 
-    /**
-     * @test
-     * @group validator
-     */
+    #[Test]
+    #[Group('validator')]
     public function valid_reconfigure_institution_requests_do_not_cause_any_violations(): void
     {
         $institution = 'surfnet.nl';

@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
@@ -58,10 +60,8 @@ final class ForgettableEventsTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function certain_events_are_forgettable_events_and_others_are_not(): void
     {
         $forgettableEventFqcns = [
@@ -121,9 +121,15 @@ final class ForgettableEventsTest extends TestCase
      */
     private function getConcreteIdentityEventFqcns(): array
     {
+        $files = glob(__DIR__ . '/../../../Identity/Event/*Event.php');
+
+        if ($files === false) {
+            return [];
+        }
+
         return array_filter(
             array_map(
-                function ($file): ?string {
+                static function ($file): ?string {
                     $fqcn = sprintf(
                         'Surfnet\Stepup\Identity\Event\%s',
                         preg_replace('/\\..+?$/', '', basename($file)),
@@ -131,7 +137,7 @@ final class ForgettableEventsTest extends TestCase
                     $reflection = new ReflectionClass($fqcn);
                     return $reflection->isInstantiable() ? $fqcn : null;
                 },
-                glob(__DIR__ . '/../../../Identity/Event/*Event.php'),
+                $files,
             ),
         );
     }

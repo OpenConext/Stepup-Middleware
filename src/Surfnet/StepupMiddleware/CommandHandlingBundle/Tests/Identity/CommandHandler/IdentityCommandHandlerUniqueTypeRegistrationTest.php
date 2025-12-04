@@ -25,6 +25,9 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -66,14 +69,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevi
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTestBase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
 
-/**
- * @runTestsInSeparateProcesses
- */
-class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTest
+#[RunTestsInSeparateProcesses]
+class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTestBase
 {
     private static int $window = 3600;
 
@@ -134,9 +135,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
         );
     }
 
-    /**
-     * @group command-handler
-     */
+    #[Group('command-handler')]
     public function test_yubikey_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -194,9 +193,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
             ->when($command);
     }
 
-    /**
-     * @group command-handler
-     */
+    #[Group('command-handler')]
     public function test_phone_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -255,9 +252,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
     }
 
 
-    /**
-     * @group command-handler
-     */
+    #[Group('command-handler')]
     public function test_gssf_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -322,10 +317,8 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
     }
 
 
-    /**
-     * @test
-     * @group command-handler
-     */
+    #[Test]
+    #[Group('command-handler')]
     public function test_u2f_type_cannot_be_proven_if_type_already_exists(): void
     {
         $this->expectException(DomainException::class);
@@ -402,7 +395,7 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
         $command->sourceSecondFactorId = $this->uuid();
         $command->targetSecondFactorId = $this->uuid();
 
-        $secFacId = new SecondFactorId( $this->uuid());
+        $secFacId = new SecondFactorId($this->uuid());
         $yubikeySecFacId = new YubikeyPublicId('00000011');
 
         $sourceRegistrantId = new IdentityId($command->sourceIdentityId);
@@ -470,5 +463,4 @@ class IdentityCommandHandlerUniqueTypeRegistrationTest extends CommandHandlerTes
             ->when($command)
             ->then([]);
     }
-
 }

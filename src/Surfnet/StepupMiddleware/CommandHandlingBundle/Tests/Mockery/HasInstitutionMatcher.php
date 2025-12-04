@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
-use Mockery\Exception\RuntimeException;
 use Mockery\Matcher\MatcherAbstract;
 
 final class HasInstitutionMatcher extends MatcherAbstract

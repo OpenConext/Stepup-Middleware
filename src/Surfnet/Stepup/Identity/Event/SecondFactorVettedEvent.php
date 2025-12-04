@@ -36,7 +36,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
@@ -57,7 +57,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
     ];
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId $identityId,

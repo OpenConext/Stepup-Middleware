@@ -20,8 +20,10 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
-use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,7 +63,6 @@ class ConfigurationControllerTest extends WebTestCase
             $this->fail('Unable to grab the readonly_api_password parameter from the container');
         }
         $this->passwordRo = $readOnlyPassword;
-
     }
 
     public function tearDown(): void
@@ -69,10 +70,8 @@ class ConfigurationControllerTest extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function requests_with_invalid_content_are_bad_requests(): void
     {
         $this->client->request(
@@ -96,10 +95,8 @@ class ConfigurationControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function authorization_is_required(): void
     {
         $this->client->request(
@@ -117,10 +114,8 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function readonly_user_cannot_modify_configuration(): void
     {
         $this->client->request(
@@ -140,12 +135,9 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     *
-     * @dataProvider invalidHttpMethodProvider
-     */
+    #[Test]
+    #[DataProvider('invalidHttpMethodProvider')]
+    #[Group('management')]
     public function only_post_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
@@ -163,10 +155,8 @@ class ConfigurationControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @test
-     * @group management
-     */
+    #[Test]
+    #[Group('management')]
     public function json_is_returned_from_the_configuration_api(): void
     {
         $this->client->request(
@@ -194,7 +184,7 @@ class ConfigurationControllerTest extends WebTestCase
     /**
      * Dataprovider for only_post_requests_are_accepted
      */
-    public function invalidHttpMethodProvider(): array
+    public static function invalidHttpMethodProvider(): array
     {
         return [
             'GET' => ['GET'],

@@ -25,6 +25,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 
+/** @extends AbstractSearchService<Profile> */
 class ProfileService extends AbstractSearchService
 {
     public function __construct(

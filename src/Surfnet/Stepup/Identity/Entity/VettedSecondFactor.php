@@ -31,7 +31,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 /**
  * A second factor whose possession and its Registrant's identity has been vetted by a Registration Authority.
  *
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
+ * @SuppressWarnings("PHPMD.UnusedPrivateFields")
  */
 class VettedSecondFactor extends AbstractSecondFactor
 {

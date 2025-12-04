@@ -27,7 +27,7 @@ class UserDataFormatter implements UserDataFormatterInterface
     {
         $data = [];
         foreach ($userData as $name => $event) {
-            $name = explode('-', $name)[1];
+            $name = explode('-', (string) $name)[1];
             $data[] = [
                 'name' => $name,
                 'value' => $event,

@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class NumberOfTokensPerIdentityOption implements JsonSerializable
 {

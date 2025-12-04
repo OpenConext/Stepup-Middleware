@@ -42,7 +42,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 final class InstitutionConfigurationController extends AbstractController
 {
@@ -124,8 +124,10 @@ final class InstitutionConfigurationController extends AbstractController
             ]);
         }
 
+
         $commands = [];
         foreach ($configuration as $institution => $options) {
+            assert(is_array($options));
             $command = new ReconfigureInstitutionConfigurationOptionsCommand();
             $command->UUID = (string)Uuid::uuid4();
             $command->institution = $institution;

@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Exception;
 
+// phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly
 class DomainException extends \DomainException implements Exception
 {
 }

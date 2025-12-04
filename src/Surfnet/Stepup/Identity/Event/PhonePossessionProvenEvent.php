@@ -60,7 +60,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
      * @param Email $email
      * @param Locale $preferredLocale
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId              $identityId,

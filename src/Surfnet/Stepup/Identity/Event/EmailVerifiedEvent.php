@@ -65,7 +65,7 @@ class EmailVerifiedEvent extends IdentityEvent implements
      * @param Email $email
      * @param Locale $preferredLocale
      *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         IdentityId                     $identityId,

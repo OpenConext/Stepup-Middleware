@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
@@ -32,10 +34,8 @@ class EventDispatchingStageTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[Test]
+    #[Group('pipeline')]
     public function buffered_event_bus_flush_is_called_during_process(): void
     {
         $command = m::mock(AbstractCommand::class);
@@ -50,10 +50,8 @@ class EventDispatchingStageTest extends UnitTest
         $this->assertInstanceOf(EventDispatchingStage::class, $stage);
     }
 
-    /**
-     * @test
-     * @group pipeline
-     */
+    #[Test]
+    #[Group('pipeline')]
     public function it_returns_the_same_command_as_it_processes_unmodified(): void
     {
         $command = new FixedUuidStubCommand();

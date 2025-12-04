@@ -9,14 +9,22 @@ services:
     autoconfigure: true
     public: false
 
+#  # Load services from src/ directory
+#  Surfnet\:
+#    resource: '../src/Surfnet/'
+#    exclude:
+#      - '../src/Surfnet/DataFixtures/'
+#      - '../src/Surfnet/Migrations/'
+#      - '../src/Surfnet/**/Tests/'
+#      - '../src/Surfnet/*/Entity/'
+#      - '../src/Surfnet/*/Event/'
+#      - '../src/Surfnet/*/Value/'
+#      - '../src/Surfnet/StepupMiddleware/CommandHandlingBundle/*/Command/'
+
   Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper:
     arguments:
       - "@surfnet_stepup.service.second_factor_type"
       - '%skip_prove_possession_second_factors%'
-
-  Surfnet\StepupMiddleware\CommandHandlingBundle\Twig\BackwardsCompatibleExtension:
-    arguments: [ "@twig.extension.intl"]
-    tags: [{ name: twig.extension }]
 
   twig.extension.stringloader:
     class: Twig\Extension\StringLoaderExtension

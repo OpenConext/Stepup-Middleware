@@ -22,9 +22,13 @@ use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType;
+use Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider;
 
 class SelfVetOptionTypeTest extends UnitTest
 {
@@ -49,10 +53,8 @@ class SelfVetOptionTypeTest extends UnitTest
         $this->platform = new MariaDBPlatform();
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(SelfVetOptionType::NAME);
@@ -62,12 +64,9 @@ class SelfVetOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     *
-     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     */
+    #[Test]
+    #[DataProviderExternal(TestDataProvider::class, 'notNull')]
+    #[Group('doctrine')]
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_option_type_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
@@ -76,10 +75,8 @@ class SelfVetOptionTypeTest extends UnitTest
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(SelfVetOptionType::NAME);
@@ -92,10 +89,8 @@ class SelfVetOptionTypeTest extends UnitTest
         $this->assertEquals($expected, $output);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(SelfVetOptionType::NAME);
@@ -105,10 +100,8 @@ class SelfVetOptionTypeTest extends UnitTest
         $this->assertNull($value);
     }
 
-    /**
-     * @test
-     * @group doctrine
-     */
+    #[Test]
+    #[Group('doctrine')]
     public function a_non_null_value_is_converted_to_an_option_valu_object(): void
     {
         $configurationInstitution = Type::getType(SelfVetOptionType::NAME);
@@ -117,7 +110,7 @@ class SelfVetOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf(\Surfnet\Stepup\Configuration\Value\SelfVetOption::class, $output);
+        $this->assertInstanceOf(SelfVetOption::class, $output);
         $this->assertEquals(new SelfVetOption($input), $output);
     }
 }

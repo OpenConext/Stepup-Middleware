@@ -21,6 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -29,11 +32,9 @@ class CommonNameTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidArgumentProvider
-     */
+    #[Test]
+    #[DataProvider('invalidArgumentProvider')]
+    #[Group('domain')]
     public function the_common_name_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -41,10 +42,8 @@ class CommonNameTest extends UnitTest
         new CommonName($invalidValue);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_common_names_with_the_same_value_are_equal(): void
     {
         $commonName = new CommonName('John Doe');
@@ -57,7 +56,7 @@ class CommonNameTest extends UnitTest
         $this->assertFalse($commonName->equals($unknown));
     }
 
-    public function invalidArgumentProvider(): array
+    public static function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],

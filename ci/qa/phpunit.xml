@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="../../tests/bootstrap.php">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix="Test.php">../../src</directory>
-    </include>
-  </coverage>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+    backupGlobals="false"
+    colors="true"
+    bootstrap="../../tests/bootstrap.php"
+    cacheDirectory="../../var/qa/phpunit.cache"
+>
   <php>
     <ini name="error_reporting" value="-1"/>
     <ini name="memory_limit" value="256M"/>
     <server name="APP_ENV" value="test" force="true"/>
     <server name="SHELL_VERBOSITY" value="-1"/>
     <server name="KERNEL_CLASS" value="\Surfnet\StepupMiddleware\Kernel"/>
-    <env name="SYMFONY_DEPRECATIONS_HELPER" value="999999"/>
     <env name="APP_ENV" value="test" force="true"/>
   </php>
   <testsuites>
@@ -23,8 +24,4 @@
       <directory suffix="Test.php">../../tests/database</directory>
     </testsuite>
   </testsuites>
-  <listeners>
-    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
-  </listeners>
 </phpunit>

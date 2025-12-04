@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -138,10 +140,8 @@ class CommandAuthorizationServiceTest extends TestCase
         $this->assertTrue($this->service->mayRaCommandBeExecutedOnBehalfOf($command, $actorId, $actorInstitution));
     }
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function a_sraa_should_be_able_to_execute_all_commands(string $file, Command $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -164,10 +164,8 @@ class CommandAuthorizationServiceTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function an_identity_should_be_able_to_execute_own_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -197,10 +195,8 @@ class CommandAuthorizationServiceTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function an_identity_should_be_able_to_execute_configured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -261,10 +257,8 @@ class CommandAuthorizationServiceTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -318,10 +312,8 @@ class CommandAuthorizationServiceTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -359,10 +351,8 @@ class CommandAuthorizationServiceTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider availableCommands
-     */
+    #[Test]
+    #[DataProvider('availableCommands')]
     public function an_identity_should_be_able_to_execute_unconfigured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
@@ -422,9 +412,7 @@ class CommandAuthorizationServiceTest extends TestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function all_available_commands_should_be_tested(): void
     {
         $tested = [
@@ -482,7 +470,7 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @return string[][]|Command[][]
      */
-    public function availableCommands(): array
+    public static function availableCommands(): array
     {
         $rootPath = realpath(__DIR__ . '/../../../../../../../src');
         assert(is_string($rootPath), 'Root path could not be determined correctly');
@@ -499,10 +487,6 @@ class CommandAuthorizationServiceTest extends TestCase
             if ($files === false) {
                 continue;
             }
-            assert(
-                is_array($files),
-                sprintf('Unable to grab the files from %s with pattern %s', $folder , $commandPath)
-            );
 
             foreach ($files as $file) {
                 $className = str_replace($rootPath, '', $file);

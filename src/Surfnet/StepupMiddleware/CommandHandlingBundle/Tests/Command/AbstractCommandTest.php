@@ -19,16 +19,16 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase as UnitTest;
 
 class AbstractCommandTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group command
-     */
+    #[Test]
+    #[Group('command')]
     public function to_string_generates_command_identifiable_information(): void
     {
         $command = new FixedUuidStubCommand();

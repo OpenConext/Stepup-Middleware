@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
+/** @extends AbstractSearchService<RecoveryToken> */
 class RecoveryTokenService extends AbstractSearchService
 {
     public function __construct(private readonly RecoveryTokenRepository $recoveryTokenRepository)

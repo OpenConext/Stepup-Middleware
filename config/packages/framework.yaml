@@ -14,6 +14,8 @@ framework:
     fragments: false
     php_errors:
         log: true
+    http_method_override: true
+    handle_all_throwables: true
 
 when@dev:
     framework:
@@ -26,6 +28,7 @@ when@smoketest: &testOverride
         test: true
         profiler:
             collect: false
+            collect_serializer_data: true
         php_errors:
             log: false # prevents user deprecated warnings
         session:

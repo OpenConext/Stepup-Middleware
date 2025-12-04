@@ -48,7 +48,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveI
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Value objects
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects") Value objects
  */
 class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 {

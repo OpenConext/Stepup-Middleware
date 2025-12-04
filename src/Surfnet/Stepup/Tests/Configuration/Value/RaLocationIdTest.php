@@ -21,7 +21,10 @@ declare(strict_types=1);
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -30,11 +33,9 @@ class RaLocationIdTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider nonStringOrEmptyStringProvider
-     */
+    #[Test]
+    #[DataProvider('nonStringOrEmptyStringProvider')]
+    #[Group('domain')]
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string(
         string $nonStringOrEmptyString,
     ): void {
@@ -43,10 +44,8 @@ class RaLocationIdTest extends TestCase
         new RaLocationId($nonStringOrEmptyString);
     }
 
-    /**
-     * @test
-     * @group        domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -56,10 +55,8 @@ class RaLocationIdTest extends TestCase
         new RaLocationId($nonUuid);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_ra_location_ids_with_the_same_values_are_equal(): void
     {
         $uuid = $this->uuid();
@@ -70,10 +67,8 @@ class RaLocationIdTest extends TestCase
         $this->assertTrue($raLocationId->equals($theSame));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function two_ra_location_ids_with_different_values_are_not_equal(): void
     {
         $raLocationId = new RaLocationId($this->uuid());
@@ -82,7 +77,7 @@ class RaLocationIdTest extends TestCase
         $this->assertFalse($raLocationId->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider(): array
+    public static function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],

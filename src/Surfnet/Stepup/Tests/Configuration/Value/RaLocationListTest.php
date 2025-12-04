@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -33,10 +35,8 @@ class RaLocationListTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_list_does_not_allow_ra_locations_with_the_same_ra_location_id_upon_creation(): void
     {
         $this->expectException(LogicException::class);
@@ -49,10 +49,8 @@ class RaLocationListTest extends TestCase
         new RaLocationList($raLocations);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_list_does_not_allow_adding_ra_locations_with_an_ra_location_id_that_is_already_present(): void
     {
         $this->expectException(LogicException::class);
@@ -65,10 +63,8 @@ class RaLocationListTest extends TestCase
         $raLocationList->add($existingRaLocation);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_list_is_created_from_ra_locations(): void
     {
         $raLocations = $this->getRaLocationsArray();
@@ -79,10 +75,8 @@ class RaLocationListTest extends TestCase
         $this->assertEquals($raLocations, $raLocationListAsArray);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_list_has_an_ra_location_with_a_given_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
@@ -93,10 +87,8 @@ class RaLocationListTest extends TestCase
         $this->assertTrue($raLocationList->containsWithId($expectedRaLocationIdToBePresent));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_list_does_not_have_ra_locations_with_a_non_present_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
@@ -107,10 +99,8 @@ class RaLocationListTest extends TestCase
         $this->assertFalse($raLocationList->containsWithId($expectedRaLocationIdNotToBePresent));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_is_added_to_an_ra_location_list(): void
     {
         $raLocations = $this->getRaLocationsArray();
@@ -123,10 +113,8 @@ class RaLocationListTest extends TestCase
         $this->assertEquals($raLocations[0], $raLocationListAsArray[0]);
     }
 
-    /**
-     * @test
-     * @group domain
-     */
+    #[Test]
+    #[Group('domain')]
     public function an_ra_location_is_removed_from_an_ra_location_list_by_its_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();

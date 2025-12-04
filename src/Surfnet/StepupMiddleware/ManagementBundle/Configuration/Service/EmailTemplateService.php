@@ -22,6 +22,7 @@ use Exception;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Dto\EmailTemplate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService as CommandHandlingEmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate as EmailTemplateEntity;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
 final readonly class EmailTemplateService implements CommandHandlingEmailTemplateService
@@ -45,7 +46,7 @@ final readonly class EmailTemplateService implements CommandHandlingEmailTemplat
             throw new RuntimeException($e->getMessage(), 0, $e);
         }
 
-        if (!$emailTemplateEntity instanceof \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate) {
+        if (!$emailTemplateEntity instanceof EmailTemplateEntity) {
             return null;
         }
 

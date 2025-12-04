@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use function sprintf;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class DeprovisionService implements DeprovisionServiceInterface
 {

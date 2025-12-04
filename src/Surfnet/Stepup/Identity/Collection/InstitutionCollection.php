@@ -28,11 +28,15 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
  * @implements IteratorAggregate<Institution>
+ * @phpstan-type InstitutionArray array<int, Institution>
  */
 final class InstitutionCollection implements IteratorAggregate, JsonSerializable, SerializableInterface
 {
     private array $elements = [];
 
+    /**
+     * @param list<Institution> $institutions
+     */
     public function __construct(array $institutions = [])
     {
         foreach ($institutions as $institution) {
@@ -111,7 +115,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
 
     public static function deserialize(array $data): self
     {
-        $institutions = array_map(fn($institution): Institution => new Institution($institution), $data);
+        $institutions = array_values(array_map(static fn($institution): Institution => new Institution($institution), $data));
 
         return new self($institutions);
     }
@@ -121,6 +125,9 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
         return array_map(fn(Institution $institution): string => (string)$institution, $this->elements);
     }
 
+    /**
+     * @return Iterator<int, Institution>
+     */
     public function getIterator(): Iterator
     {
         return new ArrayIterator($this->elements);

@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as SymfonyAbstractController;
 
 /**
- * @SuppressWarnings(PHPMD.NumberOfChildren) we simply have a lot of commands
+ * @SuppressWarnings("PHPMD.NumberOfChildren") we simply have a lot of commands
  */
 class AbstractController extends SymfonyAbstractController
 {

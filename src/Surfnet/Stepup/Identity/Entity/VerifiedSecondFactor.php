@@ -20,7 +20,6 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use DateInterval;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
@@ -39,8 +38,8 @@ use Surfnet\StepupBundle\Value\VettingType as StepupVettingType;
  * A second factor whose possession has been proven by the registrant and the registrant's e-mail address has been
  * verified. The registrant must visit a registration authority next.
  *
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.UnusedPrivateFields")
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class VerifiedSecondFactor extends AbstractSecondFactor
 {

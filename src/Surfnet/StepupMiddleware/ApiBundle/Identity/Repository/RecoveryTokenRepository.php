@@ -57,8 +57,8 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function createSearchQuery(RecoveryTokenQuery $query): Query
     {

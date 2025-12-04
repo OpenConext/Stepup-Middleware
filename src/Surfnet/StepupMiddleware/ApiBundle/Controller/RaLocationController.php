@@ -22,8 +22,8 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
-use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,8 +40,8 @@ final class RaLocationController extends AbstractController
 
         $query = new RaLocationQuery();
         $query->institution = $institution;
-        $query->orderBy = $request->get('orderBy', $query->orderBy);
-        $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
+        $query->orderBy = $request->query->get('orderBy', $query->orderBy);
+        $query->orderDirection = $request->query->get('orderDirection', $query->orderDirection);
 
         $raLocations = $this->raLocationService->search($query);
         $count = count($raLocations);
@@ -49,12 +49,11 @@ final class RaLocationController extends AbstractController
         return new JsonCollectionResponse($count, 1, $count, $raLocations);
     }
 
-    public function get(Request $request): JsonResponse
+    public function get(string $raLocationId): JsonResponse
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
-        $raLocationId = new RaLocationId($request->get('raLocationId'));
-        $raLocation = $this->raLocationService->findByRaLocationId($raLocationId);
+        $raLocation = $this->raLocationService->findByRaLocationId(new RaLocationId($raLocationId));
 
         return new JsonResponse($raLocation);
     }

@@ -24,60 +24,48 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class BootstrapGsspSecondFactorCommand extends Command
+#[AsCommand(
+    name: 'middleware:bootstrap:gssp',
+    description: 'Creates a Generic SAML Second Factor (GSSF) second factor for a specified user'
+)]
+final class BootstrapGsspSecondFactorCommand
 {
-    public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly TransactionHelper $transactionHelper,
-    ) {
-        parent::__construct();
-    }
-
-    protected function configure(): void
+    public function __construct(private readonly BootstrapCommandService $bootstrapService, private readonly TransactionHelper $transactionHelper)
     {
-        $this
-            ->setDescription('Creates a Generic SAML Second Factor (GSSF) second factor for a specified user')
-            ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
-            ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
-            ->addArgument(
-                'gssp-token-type',
-                InputArgument::REQUIRED,
-                'The GSSP token type as defined in the GSSP config, for example tiqr or webauthn',
-            )
-            ->addArgument(
-                'gssp-token-identifier',
-                InputArgument::REQUIRED,
-                'The identifier of the token as registered at the GSSP',
-            )
-            ->addArgument(
-                'registration-status',
-                InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted',
-            )
-            ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Method length could be reduced by deconstructing the bootstrapping
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength") Method length could be reduced by deconstructing the bootstrapping
      * of the required data and the vetting of the GSSP
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $registrationStatus = $input->getArgument('registration-status');
+    public function __invoke(
+        #[Argument(description: 'The NameID of the identity to create', name: 'name-id')]
+        string $nameId,
+        #[Argument(description: 'The institution of the identity to create', name: 'institution')]
+        string $institution,
+        #[Argument(description: 'The GSSP token type as defined in the GSSP config, for example tiqr or webauthn', name: 'gssp-token-type')]
+        string $gsspTokenType,
+        #[Argument(description: 'The identifier of the token as registered at the GSSP', name: 'gssp-token-identifier')]
+        string $gsspTokenIdentifier,
+        #[Argument(description: 'Valid arguments: unverified, verified, vetted', name: 'registration-status')]
+        string $registrationStatus,
+        #[Argument(description: 'The id of the vetting actor', name: 'actor-id')]
+        string $actorId,
+        OutputInterface $output
+    ): int {
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $nameId = new NameId($input->getArgument('name-id'));
-        $institutionText = $input->getArgument('institution');
+        $nameId = new NameId($nameId);
+        $institutionText = $institution;
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->bootstrapService->requiresMailVerification($institutionText);
-        $tokenType = $input->getArgument('gssp-token-type');
-        $tokenIdentifier = $input->getArgument('gssp-token-identifier');
-        $actorId = $input->getArgument('actor-id');
+        $tokenType = $gsspTokenType;
+        $tokenIdentifier = $gsspTokenIdentifier;
+
         $this->bootstrapService->enrichEventMetadata($actorId);
         if (!$this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(

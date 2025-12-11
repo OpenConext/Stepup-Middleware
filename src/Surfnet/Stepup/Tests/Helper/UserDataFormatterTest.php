@@ -57,9 +57,7 @@ class UserDataFormatterTest extends TestCase
                 ['name' => 'name1', 'value' => 'some-value-1'],
             ],
             'name' => 'Stepup-Middleware',
-            'message' => [
-                'The application is teetering on the edge of catastrophe!',
-            ],
+            'message' => ['The application is teetering on the edge of catastrophe!'],
         ];
 
         $inputData = [
@@ -71,6 +69,31 @@ class UserDataFormatterTest extends TestCase
             $formatter->format(
                 $inputData,
                 ['The application is teetering on the edge of catastrophe!'],
+            ),
+        );
+    }
+
+    public function test_multiple_errors_result_in_one_errormessage(): void
+    {
+        $formatter = new UserDataFormatter('Stepup-Middleware');
+        $expected = [
+            'status' => 'FAILED',
+            'data' => [
+                ['name' => 'name1', 'value' => 'some-value-1'],
+            ],
+            'name' => 'Stepup-Middleware',
+            'message' => ['The application is teetering on the edge of catastrophe!', 'This and that is wrong.']
+        ];
+
+        $inputData = [
+            'foobar-name1' => 'some-value-1',
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $formatter->format(
+                $inputData,
+                ['The application is teetering on the edge of catastrophe!', 'This and that is wrong.'],
             ),
         );
     }

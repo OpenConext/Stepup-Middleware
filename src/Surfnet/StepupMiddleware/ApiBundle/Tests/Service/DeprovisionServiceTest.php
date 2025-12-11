@@ -62,7 +62,7 @@ class DeprovisionServiceTest extends TestCase
 
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing(); // Not going to verify every log message at this point
-        $this->deprovisionService = new DeprovisionService($this->pipeline, $this->eventRepo, $this->apiRepo, $logger, $this->sraaRepo, $this->raListingRepo);
+        $this->deprovisionService = $this->buildDeprovisionService($logger);
     }
 
     public function test_it_can_be_created(): void
@@ -110,6 +110,50 @@ class DeprovisionServiceTest extends TestCase
         $this->pipeline
             ->shouldNotHaveReceived('process');
         $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
+    }
+
+    #[Group('api-bundle')]
+    public function test_deprovision_logs_unknown_identity_when_not_found(): void
+    {
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldReceive('debug')->once();
+        $logger->shouldReceive('notice')
+            ->once()
+            ->with(m::on(static fn(string $message): bool => str_contains($message, 'was not found')));
+
+        $deprovisionService = $this->buildDeprovisionService($logger);
+
+        $this->apiRepo
+            ->shouldReceive('findOneByNameId')
+            ->with('urn:collab:person:example.com:unknown_user')
+            ->once()
+            ->andReturnNull();
+
+        $this->pipeline->shouldNotReceive('process');
+
+        $deprovisionService->deprovision('urn:collab:person:example.com:unknown_user');
+    }
+
+    #[Group('api-bundle')]
+    public function test_read_user_data_returns_empty_array_for_unknown_identity(): void
+    {
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldReceive('debug')->once();
+        $logger->shouldReceive('notice')
+            ->once()
+            ->with(m::on(static fn(string $message): bool => str_contains($message, 'was not found')));
+
+        $deprovisionService = $this->buildDeprovisionService($logger);
+
+        $this->apiRepo
+            ->shouldReceive('findOneByNameId')
+            ->with('urn:collab:person:example.com:unknown_user')
+            ->once()
+            ->andReturnNull();
+
+        $result = $deprovisionService->readUserData('urn:collab:person:example.com:unknown_user');
+
+        $this->assertEmpty($result);
     }
 
     public function test_deprovision_method_performs_the_right_to_be_forgotten_command(): void
@@ -161,5 +205,17 @@ class DeprovisionServiceTest extends TestCase
             ->andReturn(false);
 
         $this->deprovisionService->assertIsAllowed($nameId);
+    }
+
+    private function buildDeprovisionService(LoggerInterface $logger): DeprovisionService
+    {
+        return new DeprovisionService(
+            $this->pipeline,
+            $this->eventRepo,
+            $this->apiRepo,
+            $logger,
+            $this->sraaRepo,
+            $this->raListingRepo
+        );
     }
 }

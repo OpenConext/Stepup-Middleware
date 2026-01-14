@@ -43,7 +43,7 @@ deprovision:
   defaults:
     _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\DeprovisionController::deprovision
     _format: json
-  methods: [ DELETE ]
+  methods: [ DELETE, GET ]
 
 identity:
   path: /identity/{id}

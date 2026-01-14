@@ -117,8 +117,8 @@ Example of possible error messages. These may differ in the real world, but give
 
 ### Allowed to self-vet using an existing self-asserted token?
 
-Is the Identity allowed to self-vet a token using a self-asserted token (SAT). This is only allowed when the only token(s) 
-possessed by the identity are of the self-asserted token vetting type. If another token type is registered, the 
+Is the Identity allowed to self-vet a token using a self-asserted token (SAT). This is only allowed when the only token(s)
+possessed by the identity are of the self-asserted token vetting type. If another token type is registered, the
 middleware will nudge the user to use that token. As using a SAT token will result in a token with a lowered LoA. As the
 identity of the user is not verified by a RA(A).
 
@@ -193,7 +193,7 @@ Basic Command Structure
 
 ### Request
 URL: `http://middleware.tld/deprovision/{collabPersonId}
-Method: DELETE
+Method: DELETE or GET
 Request parameters:
 - collabPersonId: collabPersonId of the identity
 
@@ -314,7 +314,7 @@ Request parameters:
 In order to inform RA(A) users about which institutions they are authorized to manage we need profile information.
 The profile endpoint aggregates the identity of the user with the FGA configuration of the institution he/she hails from.
 
-### Request 
+### Request
 URL: `http://middleware.tld/profile/{identityId}`
 Method: GET
 Request parameters:
@@ -334,7 +334,7 @@ Request parameters:
     "is_sraa": false,
     "authorizations": {
         "ra": ["institution-a", "institution-b"],
-        "raa": ["institution-a"] 
+        "raa": ["institution-a"]
     },
     "implicit_raa_at": ["institution-a", "institution-b"]
 }

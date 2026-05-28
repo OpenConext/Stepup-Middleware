@@ -1,19 +1,15 @@
 ---
 version: 2
 updates:
-  # Enable version updates for Docker
+  # Docker: Alleen security issues (door limit 0)
   - package-ecosystem: "docker"
-    # Look for a `Dockerfile` in the `root` directory
     directories:
       - "/docker/"
     schedule:
       interval: "daily"
-    groups:
-      docker:
-        applies-to: version-updates
-        patterns:
-          - "*"
-  # Maintain dependencies for GitHub Actions
+    open-pull-requests-limit: 0
+
+  # GitHub Actions: Gegroepeerde updates
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -23,50 +19,19 @@ updates:
         applies-to: version-updates
         patterns:
           - "*"
-  # Maintain dependencies for npm
+
+  # npm: Alleen security issues (door limit 0)
   - package-ecosystem: "npm"
     directories:
       - "/"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 25
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-    groups:
-      javascript-prod:
-        applies-to: version-updates
-        dependency-type: production
-        update-types:
-          - "minor"
-          - "patch"
-      javascript-dev:
-        applies-to: version-updates
-        dependency-type: development
-        update-types:
-          - "minor"
-          - "patch"
-  # Maintain dependencies for npm
+    open-pull-requests-limit: 0
+
+  # Composer: Alleen security issues (door limit 0)
   - package-ecosystem: "composer"
     directories:
       - "/"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 25
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "symfony/*"
-    groups:
-      php-prod:
-        applies-to: version-updates
-        dependency-type: production
-        update-types:
-          - "minor"
-          - "patch"
-      php-dev:
-        applies-to: version-updates
-        dependency-type: development
-        update-types:
-          - "minor"
-          - "patch"
+    open-pull-requests-limit: 0

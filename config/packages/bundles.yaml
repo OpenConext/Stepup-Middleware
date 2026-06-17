@@ -22,5 +22,4 @@ surfnet_stepup_middleware_middleware:
   enabled_generic_second_factors: "%enabled_generic_second_factors%"
   second_factors_display_name: "%second_factors_display_name%"
 
-surfnet_stepup_middleware_management:
-  email_required_locale: "%default_locale%"
+surfnet_stepup_middleware_management: ~

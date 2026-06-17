@@ -27,14 +27,7 @@ class SurfnetStepupMiddlewareManagementExtension extends Extension
 {
     public function load(array $config, ContainerBuilder $container): void
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $config);
-
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
-
-        $container
-            ->getDefinition('surfnet_stepup_middleware_management.validator.email_templates_configuration')
-            ->replaceArgument(0, $config['email_required_locale']);
     }
 }

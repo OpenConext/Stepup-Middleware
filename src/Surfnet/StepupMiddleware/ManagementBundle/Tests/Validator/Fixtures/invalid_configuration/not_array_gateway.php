@@ -20,7 +20,5 @@ return [
     'expectedPropertyPath' => 'gateway',
     'configuration' => [
         'gateway' => null,
-        'sraa' => [],
-        'email_templates' => [],
     ],
 ];

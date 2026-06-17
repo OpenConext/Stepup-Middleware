@@ -98,3 +98,11 @@ parameters:
     # This is the global, application wide default. The configuration consists of an array with second factors types
     # that will skip the prove possession step in RA.
     skip_prove_possession_second_factors: []
+
+    # List of name_ids for Super Registration Authority Administrators (SRAA).
+    # Replaces the sraa field previously pushed via the management API.
+    sraa: [urn:collab:person:dev.openconext.local:admin]
+
+    # Directory containing email templates (one .html.twig file per template name and locale).
+    # Structure: <dir>/<locale>/<template_name>.html.twig
+    email_templates_dir: '%kernel.project_dir%/config/openconext/email_templates'

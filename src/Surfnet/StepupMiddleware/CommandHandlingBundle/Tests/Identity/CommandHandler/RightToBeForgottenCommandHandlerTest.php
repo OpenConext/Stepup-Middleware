@@ -50,7 +50,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ConcreteIdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
@@ -79,7 +79,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTestBase
             ConcreteIdentityRepository::class,
         );
         $this->sensitiveDataService = m::mock(SensitiveDataService::class);
-        $this->sraaRepository = m::mock(SraaRepository::class);
+        $this->sraaRepository = m::mock(SraaService::class);
 
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();

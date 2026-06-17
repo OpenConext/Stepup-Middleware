@@ -30,7 +30,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedTokenOptionsRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 /**
@@ -42,7 +41,7 @@ class IdentityService extends AbstractSearchService
         private readonly IdentityRepository $repository,
         private readonly IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokensOptionsRepository,
         private readonly RaListingRepository $raListingRepository,
-        private readonly SraaRepository $sraaRepository,
+        private readonly SraaService $sraaService,
     ) {
     }
 
@@ -111,7 +110,7 @@ class IdentityService extends AbstractSearchService
     private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity): ?RegistrationAuthorityCredentials
     {
         $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
-        $sraa = $this->sraaRepository->findByNameId($identity->nameId);
+        $sraa = $this->sraaService->findByNameId($identity->nameId);
 
         if ($raListing !== []) {
             $credentials = RegistrationAuthorityCredentials::fromRaListings($raListing);

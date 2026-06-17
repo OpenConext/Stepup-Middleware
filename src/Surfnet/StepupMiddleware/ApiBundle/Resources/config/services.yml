@@ -105,17 +105,18 @@ services:
       - "@surfnet_stepup_middleware_api.repository.identity"
       - "@surfnet_stepup_middleware_api.repository.identity_self_asserted_token_options"
       - "@surfnet_stepup_middleware_api.repository.ra_listing"
-      - "@surfnet_stepup_middleware_api.repository.sraa"
+      - "@surfnet_stepup_middleware_api.service.sraa"
 
   surfnet_stepup_middleware_api.service.ra_listing:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
     arguments:
       - "@surfnet_stepup_middleware_api.repository.ra_listing"
 
-  surfnet_stepup_middleware_api.service.sraa:
-    class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService
+  Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService:
     arguments:
-      - "@surfnet_stepup_middleware_api.repository.sraa"
+      - "%sraa%"
+
+  surfnet_stepup_middleware_api.service.sraa: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService'
 
   surfnet_stepup_middleware_api.service.audit_log:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService
@@ -156,7 +157,7 @@ services:
       $eventSourcingRepository: '@surfnet_stepup.repository.identity'
       $apiRepository: '@surfnet_stepup_middleware_api.repository.identity'
       $logger: '@logger'
-      $sraaRepository: '@surfnet_stepup_middleware_api.repository.sraa'
+      $sraaService: '@surfnet_stepup_middleware_api.service.sraa'
       $raListingRepository: '@surfnet_stepup_middleware_api.repository.ra_listing'
 
   Surfnet\Stepup\Helper\RecoveryTokenSecretHelper:

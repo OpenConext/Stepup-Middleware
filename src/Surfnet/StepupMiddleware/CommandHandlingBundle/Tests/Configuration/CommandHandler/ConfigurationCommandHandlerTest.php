@@ -27,11 +27,9 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler;
@@ -55,11 +53,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
                 'identity_providers' => [],
                 'service_providers' => [],
             ],
-            'sraa' => [],
-            'email_templates' => [
-                'confirm_email' => ['en_GB' => ''],
-                'registration_code' => ['en_GB' => ''],
-            ],
         ];
 
         $this->scenario
@@ -77,11 +70,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
             'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [],
-            ],
-            'sraa' => [],
-            'email_templates' => [
-                'confirm_email' => ['en_GB' => ''],
-                'registration_code' => ['en_GB' => ''],
             ],
         ];
 
@@ -107,18 +95,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
                         "blacklisted_encryption_algorithms" => [],
                     ],
                 ],
-            ],
-            'sraa' => [
-                'SURFnet bv' => [
-                    [
-                        'name_id' => 'ddfd',
-                    ],
-                ],
-            ],
-            'email_templates' => [
-                'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
-                'registration_code_with_ras' => ['en_GB' => 'Code {{ commonName }}'],
-                'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
             ],
         ];
 
@@ -173,8 +149,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),
             new ServiceProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['service_providers']),
             new IdentityProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['identity_providers']),
-            new SraaUpdatedEvent(self::CID, $newConfiguration['sraa']),
-            new EmailTemplatesUpdatedEvent(self::CID, $newConfiguration['email_templates']),
         ];
     }
 }

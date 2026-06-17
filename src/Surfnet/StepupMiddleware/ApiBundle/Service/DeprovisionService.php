@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\UserNotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use function sprintf;
@@ -43,7 +43,7 @@ class DeprovisionService implements DeprovisionServiceInterface
         private readonly IdentityRepository                                                                 $eventSourcingRepository,
         private readonly ApiIdentityRepository                                                              $apiRepository,
         private readonly LoggerInterface                                                                    $logger,
-        private readonly SraaRepository                                                                     $sraaRepository,
+        private readonly SraaService                                                                        $sraaService,
         private readonly RaListingRepository                                                                $raListingRepository,
     ) {
     }
@@ -104,7 +104,7 @@ class DeprovisionService implements DeprovisionServiceInterface
             throw new RuntimeException('Cannot forget an identity that does not exist.');
         }
 
-        if ($this->sraaRepository->contains($identity->nameId)) {
+        if ($this->sraaService->contains($identity->nameId)) {
             throw new RuntimeException('Cannot forget an identity that is currently accredited as an SRAA');
         }
 

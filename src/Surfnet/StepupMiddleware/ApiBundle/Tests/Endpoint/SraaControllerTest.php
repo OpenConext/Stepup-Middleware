@@ -168,7 +168,9 @@ class SraaControllerTest extends WebTestCase
         $content = $this->client->getResponse()->getContent();
         assert(is_string($content), 'Response content must be of type string');
         $response = json_decode($content);
-        $this->assertEquals([], $response);
+        $this->assertIsArray($response);
+        $this->assertCount(1, $response);
+        $this->assertEquals('urn:collab:person:dev.openconext.local:admin', $response[0]->nameId);
     }
 
     /**

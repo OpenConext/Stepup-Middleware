@@ -28,7 +28,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator;
@@ -81,7 +80,6 @@ final class ConfigurationValidationTest extends TestCase
                 new IdentityProviderConfigurationValidator(),
                 new ServiceProviderConfigurationValidator(),
             ),
-            new EmailTemplatesConfigurationValidator('en_GB'),
         );
         $validator->initialize($context);
         $validator->validate(json_encode($configuration), new HasValidConfigurationStructure());

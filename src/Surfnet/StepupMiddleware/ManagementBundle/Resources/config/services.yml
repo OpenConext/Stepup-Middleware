@@ -16,13 +16,11 @@ services:
 
   # BC aliases
   Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper: "@surfnet_stepup_middleware_management.dbal_connection_helper"
-  Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator: "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
 
   surfnet_stepup_middleware_management.validator.configuration:
     class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
     arguments:
       - "@surfnet_stepup_middleware_management.validator.gateway_configuration"
-      - "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
     tags:
       - { name: validator.constraint_validator, alias: configuration_structure_validator }
 
@@ -37,11 +35,6 @@ services:
 
   surfnet_stepup_middleware_management.validator.identity_provider_configuration:
     class: Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
-
-  surfnet_stepup_middleware_management.validator.email_templates_configuration:
-    class: Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator
-    arguments:
-      - '' # Default locale
 
   surfnet_stepup_middleware_management.validator.reconfigure_institution_request:
     class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator
@@ -61,8 +54,17 @@ services:
   surfnet_stepup_middleware_management.repository.email_template: '@Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository'
 
   surfnet_stepup_middleware_management.service.email_template:
-    class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
-    arguments: [ "@surfnet_stepup_middleware_management.repository.email_template" ]
+    class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\DiskEmailTemplateService
+    arguments:
+      - '%email_templates_dir%'
+
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Cache\EmailTemplatesWarmer:
+    arguments:
+      - '@twig'
+      - '%email_templates_dir%'
+      - '%locales%'
+    tags:
+      - { name: kernel.cache_warmer }
 
   surfnet_stepup_middleware_management.dbal_connection_helper:
     class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper

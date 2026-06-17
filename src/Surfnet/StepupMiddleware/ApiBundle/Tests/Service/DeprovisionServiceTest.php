@@ -31,7 +31,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
@@ -48,7 +48,7 @@ class DeprovisionServiceTest extends TestCase
 
     private MockInterface&IdentityRepository $eventRepo;
 
-    private MockInterface&SraaRepository $sraaRepo;
+    private MockInterface&SraaService $sraaRepo;
 
     private MockInterface&RaListingRepository $raListingRepo;
 
@@ -57,7 +57,7 @@ class DeprovisionServiceTest extends TestCase
         $this->pipeline = m::mock(Pipeline::class);
         $this->apiRepo = m::mock(ApiIdentityRepository::class);
         $this->eventRepo = m::mock(IdentityRepository::class);
-        $this->sraaRepo = m::mock(SraaRepository::class);
+        $this->sraaRepo = m::mock(SraaService::class);
         $this->raListingRepo = m::mock(RaListingRepository::class);
 
         $logger = m::mock(LoggerInterface::class);

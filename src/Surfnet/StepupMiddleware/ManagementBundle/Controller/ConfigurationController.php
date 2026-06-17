@@ -42,13 +42,21 @@ class ConfigurationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
-        $violations = $this->validator->validate($request->getContent(), new HasValidConfigurationStructure());
+        // Strip deprecated fields before validation — accepted from old API clients but silently ignored
+        $content = $request->getContent();
+        $decoded = json_decode($content, true);
+        if (is_array($decoded)) {
+            unset($decoded['sraa'], $decoded['email_templates']);
+            $content = (string) json_encode($decoded);
+        }
+
+        $violations = $this->validator->validate($content, new HasValidConfigurationStructure());
         if ($violations->count() > 0) {
             throw BadCommandRequestException::withViolations('Invalid configure institutions request', $violations);
         }
 
         $command = new UpdateConfigurationCommand();
-        $command->configuration = $request->getContent();
+        $command->configuration = $content;
         $command->UUID = (string)Uuid::uuid4();
 
         return $this->handleCommand($request, $command);

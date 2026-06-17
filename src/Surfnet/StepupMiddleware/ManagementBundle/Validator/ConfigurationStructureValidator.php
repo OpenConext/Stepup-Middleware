@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
-use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\Stepup\Helper\JsonHelper;
@@ -37,7 +36,6 @@ class ConfigurationStructureValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly GatewayConfigurationValidator $gatewayConfigurationValidator,
-        private readonly EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator,
     ) {
     }
 
@@ -70,17 +68,15 @@ class ConfigurationStructureValidator extends ConstraintValidator
 
     public function validateRoot(array $configuration): void
     {
-        $acceptedProperties = ['gateway', 'sraa', 'email_templates'];
-        StepupAssert::keysMatch(
+        StepupAssert::requiredAndOptionalOptions(
             $configuration,
-            $acceptedProperties,
-            sprintf("Expected only properties '%s'", implode(',', $acceptedProperties)),
+            ['gateway'],
+            [],
+            "Expected only property 'gateway'",
             '(root)',
         );
 
         $this->validateGatewayConfiguration($configuration, 'gateway');
-        $this->validateSraaConfiguration($configuration, 'sraa');
-        $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
     }
 
     private function validateGatewayConfiguration(array $configuration, string $propertyPath): void
@@ -88,37 +84,5 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assertion::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
 
         $this->gatewayConfigurationValidator->validate($configuration['gateway'], $propertyPath);
-    }
-
-    private function validateSraaConfiguration(array $configuration, string $propertyPath): void
-    {
-        Assertion::isArray(
-            $configuration['sraa'],
-            'Property sraa must have an array of name_ids (string) as value',
-            $propertyPath,
-        );
-
-        foreach ($configuration['sraa'] as $index => $value) {
-            Assertion::string(
-                $value,
-                'value must be a string (the name_id of the SRAA)',
-                $propertyPath . '[' . $index . ']',
-            );
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $configuration
-     * @throws AssertionFailedException
-     */
-    private function validateEmailTemplatesConfiguration(array $configuration, string $propertyPath): void
-    {
-        Assertion::isArray(
-            $configuration['email_templates'],
-            'Property "email_templates" must have an object as value',
-            $propertyPath,
-        );
-
-        $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);
     }
 }

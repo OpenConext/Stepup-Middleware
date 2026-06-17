@@ -20,17 +20,23 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
 class SraaService
 {
-    public function __construct(private readonly SraaRepository $sraaRepository)
+    /**
+     * @param string[] $sraaNameIds list of name_id strings from parameters.yaml
+     */
+    public function __construct(private readonly array $sraaNameIds)
     {
     }
 
     public function findByNameId(NameId $nameId): ?Sraa
     {
-        return $this->sraaRepository->findByNameId($nameId);
+        if (!in_array((string) $nameId, $this->sraaNameIds, true)) {
+            return null;
+        }
+
+        return new Sraa($nameId);
     }
 
     /**
@@ -38,11 +44,14 @@ class SraaService
      */
     public function findAll(): array
     {
-        return $this->sraaRepository->findAll();
+        return array_map(
+            static fn(string $nameId): Sraa => new Sraa(new NameId($nameId)),
+            $this->sraaNameIds,
+        );
     }
 
     public function contains(NameId $nameId): bool
     {
-        return $this->sraaRepository->contains($nameId);
+        return in_array((string) $nameId, $this->sraaNameIds, true);
     }
 }

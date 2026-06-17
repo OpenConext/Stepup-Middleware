@@ -18,6 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
+use Broadway\EventStore\Dbal\DBALEventStore;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -51,6 +55,23 @@ class ConfigurationControllerTest extends WebTestCase
         // Initialises schema.
         $this->databaseTool->setExcludedDoctrineTables(['ra_candidate']);
         $this->databaseTool->loadFixtures([]);
+
+        // Broadway event store table is not managed by Doctrine ORM; create it manually for the test DB.
+        $eventStore = $this->client->getContainer()->get('surfnet_stepup.event_store.dbal');
+        assert($eventStore instanceof DBALEventStore);
+        $connection = $this->client->getContainer()->get('doctrine.dbal.middleware_connection');
+        assert($connection instanceof Connection);
+        $schemaManager = $connection->createSchemaManager();
+        $table = $eventStore->configureTable();
+        if (!$schemaManager->tablesExist(['event_stream'])) {
+            $schemaManager->createTable($table);
+        }
+
+        // Gateway entity manager schema (saml_entity etc.) is a separate SQLite DB in test env.
+        $gatewayEm = $this->client->getContainer()->get('doctrine.orm.gateway_entity_manager');
+        assert($gatewayEm instanceof EntityManagerInterface);
+        $schemaTool = new SchemaTool($gatewayEm);
+        $schemaTool->updateSchema($gatewayEm->getMetadataFactory()->getAllMetadata());
 
         $managementPassword = $this->client->getKernel()->getContainer()->getParameter('management_password');
         if (!is_string($managementPassword)) {
@@ -179,6 +200,97 @@ class ConfigurationControllerTest extends WebTestCase
                 'application/json',
             ),
         );
+    }
+
+    #[Test]
+    #[Group('management')]
+    public function validPushWithOnlyGatewayIsAccepted(): void
+    {
+        $configuration = json_encode([
+            'gateway' => [
+                'identity_providers' => [],
+                'service_providers' => [self::minimalServiceProvider()],
+            ],
+        ]);
+        assert(is_string($configuration));
+
+        $this->client->request(
+            'POST',
+            '/management/configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
+                'PHP_AUTH_USER' => 'management',
+                'PHP_AUTH_PW' => $this->password,
+            ],
+            $configuration,
+        );
+
+        $this->assertSame(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode(),
+            (string) $this->client->getResponse()->getContent(),
+        );
+    }
+
+    #[Test]
+    #[Group('management')]
+    public function pushWithSraaAndEmailTemplatesIsSilentlyAccepted(): void
+    {
+        $configuration = json_encode([
+            'gateway' => [
+                'identity_providers' => [],
+                'service_providers' => [self::minimalServiceProvider()],
+            ],
+            'sraa' => ['urn:collab:person:example.com:admin'],
+            'email_templates' => [
+                'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
+            ],
+        ]);
+        assert(is_string($configuration));
+
+        $this->client->request(
+            'POST',
+            '/management/configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
+                'PHP_AUTH_USER' => 'management',
+                'PHP_AUTH_PW' => $this->password,
+            ],
+            $configuration,
+        );
+
+        $this->assertSame(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode(),
+            (string) $this->client->getResponse()->getContent(),
+        );
+
+        $content = $this->client->getResponse()->getContent();
+        assert(is_string($content));
+        $response = json_decode($content, true);
+        assert(is_array($response));
+        $this->assertEquals('OK', $response['status']);
+    }
+
+    /** @return array<string, mixed> */
+    private static function minimalServiceProvider(): array
+    {
+        return [
+            'entity_id' => 'https://sp.example.com/metadata',
+            'public_key' => 'MIIE...',
+            'acs' => ['https://sp.example.com/acs'],
+            'loa' => ['__default__' => 'https://gateway.example.com/authentication/loa2'],
+            'second_factor_only' => false,
+            'second_factor_only_nameid_patterns' => [],
+            'assertion_encryption_enabled' => false,
+            'blacklisted_encryption_algorithms' => [],
+        ];
     }
 
     /**

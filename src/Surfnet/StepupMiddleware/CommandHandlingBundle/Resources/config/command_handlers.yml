@@ -49,7 +49,7 @@ services:
       - "@surfnet_stepup.repository.identity"
       - "@surfnet_stepup_middleware_api.repository.identity"
       - "@surfnet_stepup_middleware_command_handling.service.sensitive_data"
-      - "@surfnet_stepup_middleware_api.repository.sraa"
+      - "@surfnet_stepup_middleware_api.service.sraa"
     tags: [ { name: command_bus.command_handler } ]
 
   surfnet_stepup_middleware_command_handling.command_handler.reminder_email:

@@ -25,7 +25,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
@@ -36,7 +36,7 @@ final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
         private readonly IdentityRepository $repository,
         private readonly ApiIdentityRepository $apiIdentityRepository,
         private readonly SensitiveDataService $sensitiveDataService,
-        private readonly SraaRepository $sraaRepository,
+        private readonly SraaService $sraaService,
     ) {
     }
 
@@ -44,7 +44,7 @@ final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
     {
         $nameId = new NameId($command->nameId);
 
-        if ($this->sraaRepository->contains($nameId)) {
+        if ($this->sraaService->contains($nameId)) {
             throw new RuntimeException('Cannot forget an identity that is currently accredited as an SRAA');
         }
 

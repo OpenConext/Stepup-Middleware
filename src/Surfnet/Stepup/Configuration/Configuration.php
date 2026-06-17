@@ -21,11 +21,9 @@ namespace Surfnet\Stepup\Configuration;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Helper\JsonHelper;
 
 class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
@@ -72,8 +70,6 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
                 $decodedConfiguration['gateway']['identity_providers'],
             ),
         );
-        $this->apply(new SraaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['sraa']));
-        $this->apply(new EmailTemplatesUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['email_templates']));
     }
 
     public function getAggregateRootId(): string

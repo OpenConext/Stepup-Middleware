@@ -25,6 +25,10 @@ use Surfnet\Stepup\Projector\Projector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
+/**
+ * Keeps the sraa read-model table in sync during event replay.
+ * Live authorization reads from parameters.yaml via SraaService, not this table.
+ */
 class SraaProjector extends Projector
 {
     public function __construct(private readonly SraaRepository $sraaRepository)

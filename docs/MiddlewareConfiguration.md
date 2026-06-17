@@ -34,15 +34,16 @@ curl -XPOST -v \
 
 ## Configuration Structure
 
-The configuration must be a json object with the following keys:
-* sraa
-* email_templates
+The configuration must be a JSON object. The only required key is:
 * gateway
-Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is:
+
+The following keys are accepted for backward compatibility but are **silently ignored** — they are now read from `parameters.yaml` and disk respectively:
+* sraa *(ignored — configured via `parameters.yaml`)*
+* email_templates *(ignored — loaded from disk templates)*
+
+The minimum required structure is:
 ```json
 {
-    "sraa": [],
-    "email_templates": {},
     "gateway": {
         "identity_providers": [],
         "service_providers": []
@@ -51,29 +52,21 @@ Each of these keys will be described in detail in a section below. The minimum s
 ```
 
 ## SRAA
-### Specification
-The Super Registration Authority Administrator (SRAA) is configured by sending a list of NameIDs that should be granted SRAA rights when logged in to the RA application with a sufficient LOA.
-```json
-"sraa": [
-    "Subject NameID of the user as received by the Gateway from the remote IdP",
-    "Subject NameID of a different user as received by the Gateway from the remote IdP"
-]
-```
 
-### Processing
-The list of current SRAA's will be deleted and the supplied list of SRAAs will be stored.
+> **Note:** The `sraa` field is no longer read from the management API push. SRAA configuration is now managed via the `sraa` key in `parameters.yaml`. Any `sraa` value sent via the API is silently ignored.
 
-### Example
-```json
-"sraa": [
-   "39ba648867aa14a873339bb2a3031791ef319894"
-]
+SRAA NameIDs are configured in `parameters.yaml`:
+```yaml
+sraa:
+  - urn:collab:person:example.com:admin
 ```
 
 ## Email Templates
 
+> **Note:** The `email_templates` field is no longer read from the management API push. Email templates are now loaded from disk (`.html.twig` files). Any `email_templates` value sent via the API is silently ignored.
+
 ### Specification
-The `email_templates` key must contain an object.
+Email templates are `.html.twig` files on disk, one per template name and locale.
 Each property of this object denotes a specific type of email, the types available are:
 * `confirm_email`: **(required)** the email sent when the Registrant is asked prove the possession of his email address.
 * `registration_code_with_ras`: **(required)** the email sent when the Registrant has successfully registered a new Second Factor and is invited to visit an RA for institutions not using RA locations.

@@ -55,6 +55,10 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
 
     public function replaceAll(InstitutionCollection $institutionCollection): void
     {
+        if ($this->whitelist !== null && $this->whitelist->equals($institutionCollection)) {
+            return;
+        }
+
         $this->apply(new WhitelistReplacedEvent($institutionCollection));
     }
 

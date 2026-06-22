@@ -120,6 +120,15 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
         return new self($institutions);
     }
 
+    public function equals(self $other): bool
+    {
+        $a = $this->serialize();
+        $b = $other->serialize();
+        sort($a);
+        sort($b);
+        return $a === $b;
+    }
+
     public function serialize(): array
     {
         return array_map(fn(Institution $institution): string => (string)$institution, $this->elements);

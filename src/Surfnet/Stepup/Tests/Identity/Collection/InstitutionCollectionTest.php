@@ -154,6 +154,58 @@ class InstitutionCollectionTest extends UnitTest
         }
     }
 
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
+    public function two_empty_collections_are_equal(): void
+    {
+        $this->assertTrue((new InstitutionCollection())->equals(new InstitutionCollection()));
+    }
+
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
+    public function collections_with_same_institutions_are_equal(): void
+    {
+        $a = new InstitutionCollection([new Institution('surf.nl'), new Institution('example.com')]);
+        $b = new InstitutionCollection([new Institution('surf.nl'), new Institution('example.com')]);
+
+        $this->assertTrue($a->equals($b));
+    }
+
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
+    public function collections_with_same_institutions_in_different_order_are_equal(): void
+    {
+        $a = new InstitutionCollection([new Institution('surf.nl'), new Institution('example.com')]);
+        $b = new InstitutionCollection([new Institution('example.com'), new Institution('surf.nl')]);
+
+        $this->assertTrue($a->equals($b));
+    }
+
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
+    public function a_subset_is_not_equal_to_the_superset(): void
+    {
+        $a = new InstitutionCollection([new Institution('surf.nl')]);
+        $b = new InstitutionCollection([new Institution('surf.nl'), new Institution('example.com')]);
+
+        $this->assertFalse($a->equals($b));
+    }
+
+    #[Test]
+    #[Group('domain')]
+    #[Group('whitelist')]
+    public function collections_with_different_institutions_are_not_equal(): void
+    {
+        $a = new InstitutionCollection([new Institution('surf.nl')]);
+        $b = new InstitutionCollection([new Institution('example.com')]);
+
+        $this->assertFalse($a->equals($b));
+    }
+
     /**
      * @return list<Institution>
      */

@@ -170,9 +170,9 @@ final class AuditLogProjectorTest extends TestCase
     private function createAuditLogMetadata(
         IdentityId $identityId,
         Institution $institution,
-        SecondFactorId $secondFactorId = null,
-        SecondFactorType $secondFactorType = null,
-        SecondFactorIdentifier $secondFactorIdentifier = null,
+        ?SecondFactorId $secondFactorId = null,
+        ?SecondFactorType $secondFactorType = null,
+        ?SecondFactorIdentifier $secondFactorIdentifier = null,
     ): Metadata {
         $metadata = new Metadata();
         $metadata->identityId = $identityId;
@@ -189,10 +189,10 @@ final class AuditLogProjectorTest extends TestCase
         Institution $identityInstitution,
         string $event,
         StepupDateTime $recordedOn,
-        IdentityId $actorId = null,
-        Institution $actorInstitution = null,
-        SecondFactorId $secondFactorId = null,
-        SecondFactorType $secondFactorType = null,
+        ?IdentityId $actorId = null,
+        ?Institution $actorInstitution = null,
+        ?SecondFactorId $secondFactorId = null,
+        ?SecondFactorType $secondFactorType = null,
         ?YubikeyPublicId $secondFactorIdentifier = null,
         ?CommonName $actorCommonName = null,
     ): AuditLogEntry {

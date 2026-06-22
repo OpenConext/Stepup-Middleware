@@ -1,8 +1,12 @@
 build:
   image: default-jammy
   environment:
-    php: 8.2
-    node: 'v20'
+    php: 8.5
+    node: 'v24'
+  tests:
+    override:
+      - command: php vendor/bin/phpunit --configuration=ci/qa/phpunit.xml
+        idle_timeout: 300
 
 filter:
     excluded_paths:

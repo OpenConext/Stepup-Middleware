@@ -3769,12 +3769,6 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/Identity/CommandHandler/WhitelistCommandHandlerTest.php
 
 		-
-			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/Mockery/HasInstitutionMatcher.php
-
-		-
 			message: '#^Method Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Mockery\\HasInstitutionMatcherTest\:\:has_institution_matcher_only_matches_objects_against_a_given_institution\(\) has parameter \$nonObject with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1

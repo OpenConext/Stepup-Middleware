@@ -116,7 +116,7 @@ class EmailVerificationWindowTest extends TestCase
      * @throws Exception
      * @throws Exception
      */
-    private function newEmailVerificationWindow(int $timeFrameSeconds, string $startTimeOffset = null): EmailVerificationWindow
+    private function newEmailVerificationWindow(int $timeFrameSeconds, ?string $startTimeOffset = null): EmailVerificationWindow
     {
         $start = DateTime::now();
         if ($startTimeOffset) {

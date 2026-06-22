@@ -135,9 +135,6 @@
     "guzzlehttp/psr7": {
         "version": "1.6.1"
     },
-    "hamcrest/hamcrest-php": {
-        "version": "v2.0.0"
-    },
     "incenteev/composer-parameter-handler": {
         "version": "v2.1.4"
     },

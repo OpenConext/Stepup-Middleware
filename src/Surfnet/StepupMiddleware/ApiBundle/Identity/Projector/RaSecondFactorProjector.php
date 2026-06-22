@@ -229,8 +229,8 @@ class RaSecondFactorProjector extends Projector
         string             $secondFactorIdentifier,
         CommonName         $commonName,
         Email              $email,
-        SecondFactorStatus $status = null,
-        DocumentNumber     $documentNumber = null,
+        ?SecondFactorStatus $status = null,
+        ?DocumentNumber     $documentNumber = null,
     ): void {
         $identity = $this->identityRepository->find($identityId);
 

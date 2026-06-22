@@ -127,6 +127,8 @@ class BufferedEventBusTest extends TestCase
 
     private function getDummyEntityManager(): EntityManagerInterface&MockInterface
     {
-        return m::mock(EntityManagerInterface::class)->shouldIgnoreMissing(true);
+        $mock = m::mock(EntityManagerInterface::class);
+        $mock->shouldIgnoreMissing(true);
+        return $mock;
     }
 }

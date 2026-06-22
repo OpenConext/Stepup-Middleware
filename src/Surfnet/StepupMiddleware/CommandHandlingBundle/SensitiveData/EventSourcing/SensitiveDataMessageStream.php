@@ -74,7 +74,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
 
     private function setSensitiveData(
         DomainMessage $domainMessage,
-        SensitiveDataMessage $sensitiveDataMessage = null,
+        ?SensitiveDataMessage $sensitiveDataMessage = null,
     ): void {
         $event = $domainMessage->getPayload();
         $eventIsForgettable = $event instanceof Forgettable;

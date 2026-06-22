@@ -18,7 +18,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "ext-gmp": "*",
         "ext-json": "*",
         "ext-openssl": "*",
@@ -60,7 +60,7 @@
         "irstea/phpcpd-shim": "^6.0",
         "liip/test-fixtures-bundle": "^3.6",
         "malukenho/docheader": "^1.1",
-        "mockery/mockery": "1.7.x-dev",
+        "mockery/mockery": "^1.6.12",
         "overtrue/phplint": ">=9.5.6",
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.0",
@@ -141,7 +141,7 @@
             "symfony/runtime": true
         },
         "platform": {
-            "php": "8.2"
+            "php": "8.5"
         },
         "optimize-autoloader": true,
         "sort-packages": true

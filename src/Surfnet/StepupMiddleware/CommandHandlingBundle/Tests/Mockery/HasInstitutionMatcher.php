@@ -34,9 +34,12 @@ final class HasInstitutionMatcher extends MatcherAbstract
         }
 
         if (method_exists($actual, 'getInstitution')) {
-            return $this->_expected === $actual->getInstitution();
+            /** @var callable(): mixed $getInstitution */
+            $getInstitution = [$actual, 'getInstitution'];
+            return $this->_expected === $getInstitution();
         }
         if (property_exists($actual, 'institution')) {
+            /** @var object{institution: mixed} $actual */
             return $this->_expected === $actual->institution;
         }
 
@@ -45,6 +48,6 @@ final class HasInstitutionMatcher extends MatcherAbstract
 
     public function __toString(): string
     {
-        return sprintf('<HasInstitutionMatcher(%s)>', $this->_expected);
+        return sprintf('<HasInstitutionMatcher(%s)>', (string) $this->_expected);
     }
 }

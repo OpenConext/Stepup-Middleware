@@ -85,6 +85,13 @@ class SecondFactorRevocationTest extends CommandHandlerTestBase
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
 
+        $secondFactorTypeService = m::mock(SecondFactorTypeService::class);
+        $secondFactorTypeService->shouldIgnoreMissing();
+        $provePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
+        $provePossessionHelper->shouldIgnoreMissing();
+        $institutionConfigOptionsService = m::mock(InstitutionConfigurationOptionsService::class);
+        $institutionConfigOptionsService->shouldIgnoreMissing();
+
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
@@ -96,9 +103,9 @@ class SecondFactorRevocationTest extends CommandHandlerTestBase
             m::mock(IdentityProjectionRepository::class),
             ConfigurableSettings::create(self::$window, []),
             m::mock(AllowedSecondFactorListService::class),
-            m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
-            m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
-            m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
+            $secondFactorTypeService,
+            $provePossessionHelper,
+            $institutionConfigOptionsService,
             m::mock(LoaResolutionService::class),
             m::mock(RecoveryTokenSecretHelper::class),
             m::mock(RegistrationMailService::class),

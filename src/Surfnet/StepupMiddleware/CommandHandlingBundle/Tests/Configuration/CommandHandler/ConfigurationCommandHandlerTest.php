@@ -167,7 +167,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
     /**
      * @return array
      */
-    private function createConfigurationUpdatedEvents(array $newConfiguration, array $oldConfiguration = null): array
+    private function createConfigurationUpdatedEvents(array $newConfiguration, ?array $oldConfiguration = null): array
     {
         return [
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),

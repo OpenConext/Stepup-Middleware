@@ -7,6 +7,7 @@ use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
 use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
+use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -21,6 +22,9 @@ return RectorConfig::configure()
     ->withTypeCoverageLevel(10)
     ->withDeadCodeLevel(10)
     ->withCodeQualityLevel(10)
+    ->withRules([
+        ExplicitNullableParamTypeRector::class,
+    ])
     ->withSkip([
         ReadOnlyClassRector::class,
         ReadOnlyPropertyRector::class,

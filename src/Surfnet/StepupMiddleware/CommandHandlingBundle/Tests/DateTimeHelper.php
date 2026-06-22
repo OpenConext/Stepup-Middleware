@@ -28,7 +28,7 @@ class DateTimeHelper
      *
      * @param DateTime|null $now
      */
-    public static function setCurrentTime(DateTime $now = null): void
+    public static function setCurrentTime(?DateTime $now = null): void
     {
         $nowProperty = new ReflectionProperty(DateTime::class, 'now');
         $nowProperty->setValue($now);

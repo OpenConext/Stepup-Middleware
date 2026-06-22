@@ -45,7 +45,7 @@ class BackwardsCompatibleExtension
         DateTimeInterface|string|null $date,
         ?string $dateFormat = 'medium',
         ?string $timeFormat = 'medium',
-        string $locale = null
+        ?string $locale = null
     ): string {
         return $this->intlExtension->formatDateTime($env, $date, $dateFormat, $timeFormat, locale: $locale);
     }

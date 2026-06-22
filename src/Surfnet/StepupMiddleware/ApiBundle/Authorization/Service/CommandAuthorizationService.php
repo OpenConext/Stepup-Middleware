@@ -69,7 +69,7 @@ class CommandAuthorizationService
      * @param IdentityId|null $actorId
      * @return bool
      */
-    public function isInstitutionWhitelisted(Institution $institution, IdentityId $actorId = null): bool
+    public function isInstitutionWhitelisted(Institution $institution, ?IdentityId $actorId = null): bool
     {
         // If the actor is SRAA all actions should be allowed
         if (!is_null($actorId) && $this->isSraa($actorId)) {
@@ -78,7 +78,7 @@ class CommandAuthorizationService
         return $this->whitelistService->isWhitelisted($institution->getInstitution());
     }
 
-    public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool
+    public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, ?IdentityId $actorId = null): bool
     {
         $commandName = $command::class;
         $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
@@ -140,8 +140,8 @@ class CommandAuthorizationService
      */
     public function mayRaCommandBeExecutedOnBehalfOf(
         Command $command,
-        IdentityId $actorId = null,
-        Institution $actorInstitution = null,
+        ?IdentityId $actorId = null,
+        ?Institution $actorInstitution = null,
     ): bool {
         $commandName = $command::class;
         $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
@@ -256,7 +256,7 @@ class CommandAuthorizationService
         return true;
     }
 
-    private function isSraa(IdentityId $actorId = null): bool
+    private function isSraa(?IdentityId $actorId = null): bool
     {
         if (is_null($actorId)) {
             return false;

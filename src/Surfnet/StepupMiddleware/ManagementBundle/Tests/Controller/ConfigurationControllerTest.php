@@ -44,6 +44,8 @@ class ConfigurationControllerTest extends WebTestCase
 
     private AbstractDatabaseTool $databaseTool;
 
+    private Connection $connection;
+
     public function setUp(): void
     {
         $this->client = static::createClient();
@@ -56,12 +58,14 @@ class ConfigurationControllerTest extends WebTestCase
         $this->databaseTool->setExcludedDoctrineTables(['ra_candidate']);
         $this->databaseTool->loadFixtures([]);
 
+        $connection = $this->client->getContainer()->get('doctrine.dbal.middleware_connection');
+        assert($connection instanceof Connection);
+        $this->connection = $connection;
+
         // Broadway event store table is not managed by Doctrine ORM; create it manually for the test DB.
         $eventStore = $this->client->getContainer()->get('surfnet_stepup.event_store.dbal');
         assert($eventStore instanceof DBALEventStore);
-        $connection = $this->client->getContainer()->get('doctrine.dbal.middleware_connection');
-        assert($connection instanceof Connection);
-        $schemaManager = $connection->createSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $table = $eventStore->configureTable();
         if (!$schemaManager->tablesExist(['event_stream'])) {
             $schemaManager->createTable($table);
@@ -206,40 +210,19 @@ class ConfigurationControllerTest extends WebTestCase
     #[Group('management')]
     public function validPushWithOnlyGatewayIsAccepted(): void
     {
-        $configuration = json_encode([
+        $this->pushConfiguration([
             'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [self::minimalServiceProvider()],
             ],
         ]);
-        assert(is_string($configuration));
-
-        $this->client->request(
-            'POST',
-            '/management/configuration',
-            [],
-            [],
-            [
-                'HTTP_ACCEPT' => 'application/json',
-                'CONTENT_TYPE' => 'application/json',
-                'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW' => $this->password,
-            ],
-            $configuration,
-        );
-
-        $this->assertSame(
-            Response::HTTP_OK,
-            $this->client->getResponse()->getStatusCode(),
-            (string) $this->client->getResponse()->getContent(),
-        );
     }
 
     #[Test]
     #[Group('management')]
     public function pushWithSraaAndEmailTemplatesIsSilentlyAccepted(): void
     {
-        $configuration = json_encode([
+        $this->pushConfiguration([
             'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [self::minimalServiceProvider()],
@@ -249,33 +232,58 @@ class ConfigurationControllerTest extends WebTestCase
                 'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
             ],
         ]);
-        assert(is_string($configuration));
-
-        $this->client->request(
-            'POST',
-            '/management/configuration',
-            [],
-            [],
-            [
-                'HTTP_ACCEPT' => 'application/json',
-                'CONTENT_TYPE' => 'application/json',
-                'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW' => $this->password,
-            ],
-            $configuration,
-        );
-
-        $this->assertSame(
-            Response::HTTP_OK,
-            $this->client->getResponse()->getStatusCode(),
-            (string) $this->client->getResponse()->getContent(),
-        );
 
         $content = $this->client->getResponse()->getContent();
         assert(is_string($content));
         $response = json_decode($content, true);
         assert(is_array($response));
         $this->assertEquals('OK', $response['status']);
+    }
+
+    #[Test]
+    #[Group('management')]
+    public function pushing_configuration_with_reordered_service_providers_does_not_emit_new_events(): void
+    {
+        $spA = array_merge(self::minimalServiceProvider(), ['entity_id' => 'https://sp-a.example.com/metadata']);
+        $spB = array_merge(self::minimalServiceProvider(), ['entity_id' => 'https://sp-b.example.com/metadata']);
+
+        $this->pushConfiguration(['gateway' => ['identity_providers' => [], 'service_providers' => [$spA, $spB]]]);
+        $eventCountAfterFirstPush = $this->getEventStreamCount();
+
+        $this->pushConfiguration(['gateway' => ['identity_providers' => [], 'service_providers' => [$spB, $spA]]]);
+
+        $this->assertSame(
+            $eventCountAfterFirstPush,
+            $this->getEventStreamCount(),
+            'Reordering service providers should not emit new events',
+        );
+    }
+
+    /** @param array<mixed> $configuration */
+    private function pushConfiguration(array $configuration): void
+    {
+        $encoded = json_encode($configuration);
+        assert(is_string($encoded));
+
+        $this->client->request('POST', '/management/configuration', [], [], [
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+            'PHP_AUTH_USER' => 'management',
+            'PHP_AUTH_PW' => $this->password,
+        ], $encoded);
+
+        $this->assertSame(
+            Response::HTTP_OK,
+            $this->client->getResponse()->getStatusCode(),
+            (string) $this->client->getResponse()->getContent(),
+        );
+    }
+
+    private function getEventStreamCount(): int
+    {
+        $result = $this->connection->fetchOne('SELECT COUNT(*) FROM event_stream');
+        assert(is_string($result) || is_int($result));
+        return (int) $result;
     }
 
     /** @return array<string, mixed> */

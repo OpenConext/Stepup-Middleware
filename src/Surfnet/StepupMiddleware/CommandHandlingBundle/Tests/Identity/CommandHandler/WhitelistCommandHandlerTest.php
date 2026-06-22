@@ -97,6 +97,46 @@ class WhitelistCommandHandlerTest extends CommandHandlerTestBase
     #[Test]
     #[Group('command-handler')]
     #[Group('whitelist')]
+    public function replacing_whitelist_with_identical_institutions_does_not_add_an_event(): void
+    {
+        $institutions = $this->mapStringValuesToInstitutions(['Institution A', 'Institution B']);
+
+        $command = new ReplaceWhitelistCommand();
+        $command->institutions = ['Institution A', 'Institution B'];
+
+        $this->scenario
+            ->withAggregateId(self::WID)
+            ->given([
+                new WhitelistCreatedEvent(new InstitutionCollection()),
+                new WhitelistReplacedEvent(new InstitutionCollection($institutions)),
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
+    public function replacing_whitelist_with_same_institutions_in_different_order_does_not_add_an_event(): void
+    {
+        $institutions = $this->mapStringValuesToInstitutions(['Institution A', 'Institution B']);
+
+        $command = new ReplaceWhitelistCommand();
+        $command->institutions = ['Institution B', 'Institution A'];
+
+        $this->scenario
+            ->withAggregateId(self::WID)
+            ->given([
+                new WhitelistCreatedEvent(new InstitutionCollection()),
+                new WhitelistReplacedEvent(new InstitutionCollection($institutions)),
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('whitelist')]
     public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);

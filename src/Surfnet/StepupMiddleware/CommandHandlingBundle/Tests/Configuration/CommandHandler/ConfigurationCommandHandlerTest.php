@@ -110,6 +110,56 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
             ->then($this->createConfigurationUpdatedEvents($configuration2, $configuration1));
     }
 
+    #[Test]
+    #[Group('command-handler')]
+    public function pushing_configuration_with_different_key_order_does_not_add_events(): void
+    {
+        $configuration = [
+            'gateway' => [
+                'identity_providers' => [],
+                'service_providers' => [],
+            ],
+        ];
+
+        $command = new UpdateConfigurationCommand();
+        // Same content but JSON keys in reversed order
+        $command->configuration = '{"gateway":{"service_providers":[],"identity_providers":[]}}';
+
+        $this->scenario
+            ->withAggregateId(self::CID)
+            ->given(
+                array_merge(
+                    [$this->createNewConfigurationCreatedEvent()],
+                    $this->createConfigurationUpdatedEvents($configuration, null),
+                ),
+            )
+            ->when($command)
+            ->then([]);
+    }
+
+    #[Test]
+    #[Group('command-handler')]
+    public function pushing_the_same_configuration_again_does_not_add_events(): void
+    {
+        $configuration = [
+            'gateway' => [
+                'identity_providers' => [],
+                'service_providers' => [],
+            ],
+        ];
+
+        $this->scenario
+            ->withAggregateId(self::CID)
+            ->given(
+                array_merge(
+                    [$this->createNewConfigurationCreatedEvent()],
+                    $this->createConfigurationUpdatedEvents($configuration, null),
+                ),
+            )
+            ->when($this->createUpdateCommand($configuration))
+            ->then([]);
+    }
+
     protected function createCommandHandler(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
@@ -143,7 +193,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTestBase
     /**
      * @return array
      */
-    private function createConfigurationUpdatedEvents(array $newConfiguration, array $oldConfiguration = null): array
+    private function createConfigurationUpdatedEvents(array $newConfiguration, ?array $oldConfiguration = null): array
     {
         return [
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),

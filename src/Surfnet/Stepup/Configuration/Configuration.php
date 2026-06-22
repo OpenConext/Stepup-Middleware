@@ -50,6 +50,13 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     {
         $decodedConfiguration = JsonHelper::decode($newConfiguration);
 
+        if ($this->configuration !== null
+            && is_array($decodedConfiguration)
+            && $this->deepKsort($this->configuration) === $this->deepKsort($decodedConfiguration)
+        ) {
+            return;
+        }
+
         $this->apply(
             new ConfigurationUpdatedEvent(
                 self::CONFIGURATION_ID,
@@ -80,5 +87,23 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event): void
     {
         $this->configuration = $event->newConfiguration;
+    }
+
+    /**
+     * @param array<string|int, mixed> $array
+     * @return array<string|int, mixed>
+     */
+    private function deepKsort(array $array): array
+    {
+        ksort($array);
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->deepKsort($value);
+            }
+        }
+        if (array_is_list($array)) {
+            usort($array, fn($a, $b) => json_encode($a) <=> json_encode($b));
+        }
+        return $array;
     }
 }

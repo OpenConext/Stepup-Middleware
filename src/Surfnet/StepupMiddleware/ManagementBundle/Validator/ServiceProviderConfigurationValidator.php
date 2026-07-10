@@ -40,6 +40,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'use_pdp',
             'allow_sso_on_2fa',
             'set_sso_cookie_on_2fa',
+            'service_name',
         ];
 
         if (empty($configuration['use_pdp'])) {
@@ -52,6 +53,10 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
 
         if (empty($configuration['set_sso_cookie_on_2fa'])) {
             $configuration['set_sso_cookie_on_2fa'] = false;
+        }
+
+        if (!array_key_exists('service_name', $configuration)) {
+            $configuration['service_name'] = null;
         }
 
         StepupAssert::keysMatch(
@@ -91,11 +96,20 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
         $this->validateBooleanValue($configuration, 'allow_sso_on_2fa', $propertyPath);
         $this->validateBooleanValue($configuration, 'set_sso_cookie_on_2fa', $propertyPath);
+        $this->validateNullableStringValue($configuration, 'service_name', $propertyPath);
     }
 
     private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    private function validateNullableStringValue(array $configuration, string $name, string $propertyPath): void
+    {
+        Assertion::nullOrString($configuration[$name], 'value must be a string or null', $propertyPath . '.' . $name);
     }
 
     private function validateStringValues(array $configuration, string $name, string $propertyPath): void

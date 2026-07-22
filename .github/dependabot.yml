@@ -5,7 +5,6 @@ updates:
     directory: "/docker/"
     schedule:
       interval: "daily"
-    security-updates: true
     open-pull-requests-limit: 0
 
   # GitHub Actions (security updates only)
@@ -13,7 +12,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    security-updates: true
     open-pull-requests-limit: 0
 
   # npm (security updates only)
@@ -21,7 +19,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    security-updates: true
     open-pull-requests-limit: 0
 
   # Composer (security updates only)
@@ -29,5 +26,4 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    security-updates: true
     open-pull-requests-limit: 0

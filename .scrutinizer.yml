@@ -2,7 +2,7 @@ build:
   image: default-jammy
   environment:
     php: 8.5.8
-    node: 'v24'
+    node: 'v20'
   tests:
     override:
       - command: php vendor/bin/phpunit --configuration=ci/qa/phpunit.xml

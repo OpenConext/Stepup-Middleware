@@ -57,7 +57,6 @@
     "require-dev": {
         "doctrine/data-fixtures": "^2.2",
         "doctrine/doctrine-fixtures-bundle": "^4.3",
-        "irstea/phpcpd-shim": "^6.0",
         "liip/test-fixtures-bundle": "^3.6",
         "malukenho/docheader": "^1.1",
         "mockery/mockery": "^1.6.12",
@@ -91,7 +90,6 @@
             "@phpmd",
             "@phpcs",
             "@phpstan",
-            "@phpcpd",
             "@license-headers",
             "@phpunit"
         ],
@@ -103,7 +101,6 @@
         "phpstan": "./ci/qa/phpstan",
         "phpcs": "./ci/qa/phpcs",
         "phpcbf": "./ci/qa/phpcbf",
-        "phpcpd": "./ci/qa/phpcpd",
         "phpunit": "./ci/qa/phpunit",
 
         "post-install-cmd": [

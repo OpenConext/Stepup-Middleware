@@ -18,6 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Fix Git ownership
+        run: git config --global --add safe.directory /var/www/html
+
       - name: Composer install
         run: composer install
 

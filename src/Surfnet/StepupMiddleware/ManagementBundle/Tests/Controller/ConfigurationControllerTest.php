@@ -226,7 +226,9 @@ class ConfigurationControllerTest extends WebTestCase
             'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [
-                    array_merge(self::minimalServiceProvider(), ['service_name' => 'My Service']),
+                    array_merge(self::minimalServiceProvider(), [
+                        'service_name' => ['en_GB' => 'Test Service', 'nl_NL' => 'Test Dienst'],
+                    ]),
                 ],
             ],
         ]);

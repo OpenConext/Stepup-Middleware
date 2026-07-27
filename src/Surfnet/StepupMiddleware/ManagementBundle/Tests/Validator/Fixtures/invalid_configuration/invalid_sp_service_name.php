@@ -33,7 +33,10 @@ return [
                     "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled" => false,
                     "blacklisted_encryption_algorithms" => [],
-                    "service_name" => ['not', 'a', 'string'],
+                    // A well-formed locale map (e.g. ['en_GB' => 'Test Service']) is now
+                    // valid. This fixture demonstrates a malformed value is still
+                    // rejected: locale keys must be non-empty strings, not numeric.
+                    "service_name" => [0 => 'Some Name'],
                 ],
             ],
         ],

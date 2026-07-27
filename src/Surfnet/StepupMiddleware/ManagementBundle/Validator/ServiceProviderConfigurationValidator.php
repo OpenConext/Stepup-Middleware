@@ -96,20 +96,37 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
         $this->validateBooleanValue($configuration, 'allow_sso_on_2fa', $propertyPath);
         $this->validateBooleanValue($configuration, 'set_sso_cookie_on_2fa', $propertyPath);
-        $this->validateNullableStringValue($configuration, 'service_name', $propertyPath);
+
+        if (isset($configuration['service_name'])) {
+            $this->validateServiceNameLocaleMap($configuration, 'service_name', $propertyPath);
+        }
+    }
+
+    /**
+     * service_name is optional; when present it must be a map of locale code
+     * (e.g. "en_GB", "nl_NL") to a non-empty display name string for that
+     * locale. Per RFC OpenConext/Stepup-Gateway#587: "If set it must be a
+     * map of locale to service name."
+     *
+     * @param array<string, mixed> $configuration
+     */
+    private function validateServiceNameLocaleMap(array $configuration, string $name, string $propertyPath): void
+    {
+        $value = $configuration[$name];
+        $path = $propertyPath . '.' . $name;
+
+        Assertion::isArray($value, 'value must be a map of locale to service name', $path);
+        foreach ($value as $locale => $serviceName) {
+            Assertion::string($locale, 'locale keys must be strings', $path);
+            Assertion::notBlank($locale, 'locale keys must not be empty', $path);
+            Assertion::string($serviceName, 'service name values must be strings', $path . '.' . $locale);
+            Assertion::notBlank($serviceName, 'service name values must not be empty', $path . '.' . $locale);
+        }
     }
 
     private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
-    }
-
-    /**
-     * @param array<string, mixed> $configuration
-     */
-    private function validateNullableStringValue(array $configuration, string $name, string $propertyPath): void
-    {
-        Assertion::nullOrString($configuration[$name], 'value must be a string or null', $propertyPath . '.' . $name);
     }
 
     private function validateStringValues(array $configuration, string $name, string $propertyPath): void

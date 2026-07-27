@@ -1,11 +1,13 @@
 # Changelog
 
-# 7.0.0 - unreleased
+# 7.0.1
 **Notable Changes**
 - Upgrade to Symfony 7.4 (from 6.4)
 - Upgrade to PHPUnit 10 (from 9.x)
 - Upgrade to PHPStan 2.0 (from 1.x)
 - Migrate from annotations to attributes (PHP 8 attributes)
+- Move SRAA (Super-admins) config from database to paramaters.yml
+- Move email templates from config-push to disk
 
 **Important for System Administrators**
 Ensure the `database_server_version` parameter contains the correct MariaDB version. e.g. `10.6.23-MariaDB`

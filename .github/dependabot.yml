@@ -1,37 +1,29 @@
----
 version: 2
 updates:
-  # Docker: Alleen security issues (door limit 0)
+  # Docker (security updates only)
   - package-ecosystem: "docker"
-    directories:
-      - "/docker/"
+    directory: "/docker/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 0
 
-  # GitHub Actions: Gegroepeerde updates
+  # GitHub Actions (security updates only)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-    groups:
-      github-actions:
-        applies-to: version-updates
-        patterns:
-          - "*"
+    open-pull-requests-limit: 0
 
-  # npm: Alleen security issues (door limit 0)
+  # npm (security updates only)
   - package-ecosystem: "npm"
-    directories:
-      - "/"
+    directory: "/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 0
 
-  # Composer: Alleen security issues (door limit 0)
+  # Composer (security updates only)
   - package-ecosystem: "composer"
-    directories:
-      - "/"
+    directory: "/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 0

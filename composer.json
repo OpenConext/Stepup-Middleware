@@ -50,6 +50,7 @@
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/validator": "7.4.*",
+        "symfony/var-exporter": "7.4.*",
         "twig/extra-bundle": "^3.20",
         "twig/intl-extra": "^3.20",
         "twig/twig": "^3.20"
@@ -91,7 +92,6 @@
             "@phpmd",
             "@phpcs",
             "@phpstan",
-            "@phpcpd",
             "@license-headers",
             "@phpunit"
         ],
@@ -103,7 +103,6 @@
         "phpstan": "./ci/qa/phpstan",
         "phpcs": "./ci/qa/phpcs",
         "phpcbf": "./ci/qa/phpcbf",
-        "phpcpd": "./ci/qa/phpcpd",
         "phpunit": "./ci/qa/phpunit",
 
         "post-install-cmd": [

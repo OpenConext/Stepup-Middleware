@@ -21,6 +21,9 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 
 final readonly class TransactionHelper
 {
@@ -28,11 +31,25 @@ final readonly class TransactionHelper
         private Pipeline $pipeline,
         private BufferedEventBus $eventBus,
         private DBALConnectionHelper $connection,
+        private TokenStorageInterface $tokenStorage,
     ) {
     }
 
+    /**
+     * Console commands run without an authenticated security token. Commands processed through the
+     * pipeline (including ones triggered internally by event processors, e.g. institution
+     * configuration bootstrapping) are checked by the AuthorizingStage, so a console-context token
+     * granting every role is set here to authorize such internally-triggered commands.
+     */
     public function beginTransaction(): void
     {
+        if ($this->tokenStorage->getToken() === null) {
+            $roles = ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT', 'ROLE_DEPROVISION'];
+            $this->tokenStorage->setToken(
+                new UsernamePasswordToken(new InMemoryUser('console', null, $roles), 'api', $roles),
+            );
+        }
+
         $this->connection->beginTransaction();
     }
 

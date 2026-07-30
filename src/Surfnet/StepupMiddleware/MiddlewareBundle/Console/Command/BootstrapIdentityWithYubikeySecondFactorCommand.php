@@ -85,6 +85,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand
         $command->secondFactorId = $secondFactorId;
         $command->yubikeyPublicId = $yubikey;
 
+        $this->transactionHelper->authorizeConsoleContext();
         $this->transactionHelper->beginTransaction();
 
         try {

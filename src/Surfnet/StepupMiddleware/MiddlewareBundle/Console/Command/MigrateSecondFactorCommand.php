@@ -64,6 +64,7 @@ final class MigrateSecondFactorCommand
         $targetIdentity = $this->bootstrapService->getIdentityByNameId($targetNameId);
 
         try {
+            $this->transactionHelper->authorizeConsoleContext();
             $this->transactionHelper->beginTransaction();
 
             // Check if target identity should be created

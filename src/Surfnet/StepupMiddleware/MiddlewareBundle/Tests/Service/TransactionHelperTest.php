@@ -60,7 +60,7 @@ class TransactionHelperTest extends TestCase
     }
 
     #[Test]
-    public function begin_transaction_sets_a_fully_authorized_console_token_when_none_is_present(): void
+    public function authorize_console_context_sets_a_console_token_with_the_bootstrap_roles_when_none_is_present(): void
     {
         $this->tokenStorage->shouldReceive('getToken')->once()->andReturn(null);
         $this->tokenStorage->shouldReceive('setToken')
@@ -69,20 +69,27 @@ class TransactionHelperTest extends TestCase
                 $roles = $token->getRoleNames();
                 sort($roles);
 
-                return $roles === ['ROLE_DEPROVISION', 'ROLE_MANAGEMENT', 'ROLE_RA', 'ROLE_SS'];
+                return $roles === ['ROLE_MANAGEMENT', 'ROLE_RA', 'ROLE_SS'];
             }));
 
-        $this->connection->shouldReceive('beginTransaction')->once();
-
-        $this->transactionHelper->beginTransaction();
+        $this->transactionHelper->authorizeConsoleContext();
     }
 
     #[Test]
-    public function begin_transaction_does_not_overwrite_an_existing_token(): void
+    public function authorize_console_context_does_not_overwrite_an_existing_token(): void
     {
         $existingToken = m::mock(TokenInterface::class);
 
         $this->tokenStorage->shouldReceive('getToken')->once()->andReturn($existingToken);
+        $this->tokenStorage->shouldNotReceive('setToken');
+
+        $this->transactionHelper->authorizeConsoleContext();
+    }
+
+    #[Test]
+    public function begin_transaction_does_not_touch_the_token_storage(): void
+    {
+        $this->tokenStorage->shouldNotReceive('getToken');
         $this->tokenStorage->shouldNotReceive('setToken');
 
         $this->connection->shouldReceive('beginTransaction')->once();

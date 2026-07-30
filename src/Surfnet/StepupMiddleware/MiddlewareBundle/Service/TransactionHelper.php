@@ -38,18 +38,25 @@ final readonly class TransactionHelper
     /**
      * Console commands run without an authenticated security token. Commands processed through the
      * pipeline (including ones triggered internally by event processors, e.g. institution
-     * configuration bootstrapping) are checked by the AuthorizingStage, so a console-context token
-     * granting every role is set here to authorize such internally-triggered commands.
+     * configuration bootstrapping) are checked by the AuthorizingStage, so bootstrap console commands
+     * that need to authorize such internally-triggered commands must call this explicitly. Limited to
+     * ROLE_SS, ROLE_RA and ROLE_MANAGEMENT: the identity/vetting/configuration commands the bootstrap
+     * console commands dispatch through this pipeline. ROLE_DEPROVISION is deliberately excluded,
+     * nothing in these flows needs it. Guarded to CLI only, so this can never grant privileges to an
+     * HTTP request even if called from a context that shouldn't.
      */
-    public function beginTransaction(): void
+    public function authorizeConsoleContext(): void
     {
-        if ($this->tokenStorage->getToken() === null) {
-            $roles = ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT', 'ROLE_DEPROVISION'];
+        if (PHP_SAPI === 'cli' && $this->tokenStorage->getToken() === null) {
+            $roles = ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT'];
             $this->tokenStorage->setToken(
                 new UsernamePasswordToken(new InMemoryUser('console', null, $roles), 'api', $roles),
             );
         }
+    }
 
+    public function beginTransaction(): void
+    {
         $this->connection->beginTransaction();
     }
 

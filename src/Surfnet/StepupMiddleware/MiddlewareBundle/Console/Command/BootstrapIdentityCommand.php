@@ -67,6 +67,7 @@ final class BootstrapIdentityCommand
             return 1;
         }
         try {
+            $this->transactionHelper->authorizeConsoleContext();
             $this->transactionHelper->beginTransaction();
             $output->writeln('<info>Creating a new identity</info>');
             $identity = $this->bootstrapService->createIdentity(

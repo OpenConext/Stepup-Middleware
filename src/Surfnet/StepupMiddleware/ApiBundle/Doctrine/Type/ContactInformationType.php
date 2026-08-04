@@ -39,7 +39,7 @@ class ContactInformationType extends Type
         return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return null;

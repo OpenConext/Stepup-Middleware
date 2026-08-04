@@ -39,7 +39,7 @@ class LocationType extends Type
         return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return null;

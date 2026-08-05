@@ -64,10 +64,12 @@ class NumberOfTokensPerIdentityType extends Type
             return null;
         }
 
+        if (!is_scalar($value)) {
+            throw ValueNotConvertible::new($value, $this->getName());
+        }
+
         try {
-            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(
-                is_scalar($value) ? (int)$value : 0,
-            );
+            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int)$value);
         } catch (InvalidArgumentException $e) {
             throw ValueNotConvertible::new(
                 $value,

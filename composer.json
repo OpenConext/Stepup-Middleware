@@ -16,12 +16,12 @@
             "src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"
         ]
     },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/SURFnet/broadway-event-store-dbal"
-    }
-  ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/SURFnet/broadway-event-store-dbal"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {

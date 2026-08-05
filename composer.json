@@ -19,7 +19,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/johanib/event-store-dbal"
+      "url": "https://github.com/SURFnet/broadway-event-store-dbal"
     }
   ],
     "minimum-stability": "dev",
@@ -31,7 +31,7 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "broadway/broadway": "^2.5",
-        "broadway/event-store-dbal": "dev-feature/dbal4#35c9fa7d938cccb874f53042b5a1aca9f67dba96",
+        "broadway/event-store-dbal": "dev-feature/dbal4",
         "doctrine/annotations": "^2.0",
         "doctrine/dbal": "^4.3,<4.4",
         "doctrine/doctrine-bundle": "^2.13.2",

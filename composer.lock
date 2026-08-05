@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03ef470102c038e5ceba720b727230fa",
+    "content-hash": "0e05f9ab18b3aa7df0671139abe61bd2",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -227,12 +227,12 @@
             "version": "dev-feature/dbal4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/johanib/event-store-dbal.git",
+                "url": "https://github.com/SURFnet/broadway-event-store-dbal.git",
                 "reference": "35c9fa7d938cccb874f53042b5a1aca9f67dba96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johanib/event-store-dbal/zipball/35c9fa7d938cccb874f53042b5a1aca9f67dba96",
+                "url": "https://api.github.com/repos/SURFnet/broadway-event-store-dbal/zipball/35c9fa7d938cccb874f53042b5a1aca9f67dba96",
                 "reference": "35c9fa7d938cccb874f53042b5a1aca9f67dba96",
                 "shasum": ""
             },
@@ -297,7 +297,7 @@
             ],
             "description": "Event store implementation using doctrine/dbal",
             "support": {
-                "source": "https://github.com/johanib/event-store-dbal/tree/feature/dbal4"
+                "source": "https://github.com/SURFnet/broadway-event-store-dbal/tree/feature/dbal4"
             },
             "time": "2025-11-27T13:46:13+00:00"
         },

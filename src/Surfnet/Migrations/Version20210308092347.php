@@ -32,7 +32,7 @@ final class Version20210308092347 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
         $this->addSql('ALTER TABLE institution_configuration_options ADD self_vet_option INT DEFAULT \'0\' NOT NULL');
@@ -42,7 +42,7 @@ final class Version20210308092347 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
         $this->addSql('ALTER TABLE institution_configuration_options DROP self_vet_option');

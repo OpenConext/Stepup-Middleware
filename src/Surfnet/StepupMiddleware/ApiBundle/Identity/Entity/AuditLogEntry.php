@@ -38,6 +38,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -87,6 +88,7 @@ class AuditLogEntry implements JsonSerializable
         GssfPossessionProvenAndVerifiedEvent::class => 'possession_proven',
         IdentityCreatedEvent::class => 'created',
         IdentityEmailChangedEvent::class => 'email_changed',
+        IdentityForgottenEvent::class => 'deprovisioned',
         IdentityRenamedEvent::class => 'renamed',
         PhonePossessionProvenEvent::class => 'possession_proven',
         PhonePossessionProvenAndVerifiedEvent::class => 'possession_proven',

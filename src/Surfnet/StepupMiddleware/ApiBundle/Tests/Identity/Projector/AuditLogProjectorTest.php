@@ -31,6 +31,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -165,6 +166,67 @@ final class AuditLogProjectorTest extends TestCase
 
         // PHPUnit's comparison is more informative than Mockery's no-match exception.
         $this->assertEquals($expectedEntry, $actualEntry);
+    }
+
+    #[Test]
+    #[Group('api-projector')]
+    public function it_creates_a_deprovisioned_entry_and_anonymizes_the_identitys_other_entries(): void
+    {
+        $identityId = new IdentityId('abcd');
+        $institution = new Institution('efgh');
+
+        $existingEntry = new AuditLogEntry();
+        $existingEntry->id = 'existing-entry';
+        $existingEntry->identityId = $identityId;
+        $existingEntry->identityInstitution = $institution;
+        $existingEntry->actorCommonName = new CommonName(self::$actorCommonName);
+        $existingEntry->event = 'SomeEarlierEvent';
+        $existingEntry->recordedOn = new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'));
+
+        $entryWhereIdentityIsActor = new AuditLogEntry();
+        $entryWhereIdentityIsActor->id = 'actor-entry';
+        $entryWhereIdentityIsActor->identityId = new IdentityId('some-other-identity');
+        $entryWhereIdentityIsActor->identityInstitution = $institution;
+        $entryWhereIdentityIsActor->actorId = $identityId;
+        $entryWhereIdentityIsActor->actorCommonName = new CommonName(self::$actorCommonName);
+        $entryWhereIdentityIsActor->event = 'SomeEarlierEvent';
+        $entryWhereIdentityIsActor->recordedOn = new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'));
+
+        $repository = m::mock(AuditLogRepository::class);
+
+        $newEntry = null;
+        $repository->shouldReceive('save')->once()->with($this->spy($newEntry));
+        /** @var null|AuditLogEntry $newEntry */
+
+        $repository->shouldReceive('findByIdentityId')->once()->with($identityId)->andReturn([$existingEntry]);
+        $repository->shouldReceive('findEntriesWhereIdentityIsActorOnly')->once()->with($identityId)
+            ->andReturn([$entryWhereIdentityIsActor]);
+        $repository->shouldReceive('saveAll')->once()->with([$existingEntry]);
+        $repository->shouldReceive('saveAll')->once()->with([$entryWhereIdentityIsActor]);
+
+        $identityRepository = m::mock(IdentityRepository::class);
+
+        $projector = new AuditLogProjector($repository, $identityRepository);
+
+        $message = new DomainMessage(
+            'id',
+            0,
+            new MessageMetadata(),
+            new IdentityForgottenEvent($identityId, $institution),
+            BroadwayDateTime::fromString('1970-01-01H00:00:00.000'),
+        );
+
+        $projector->handle($message);
+
+        // A new "deprovisioned" audit log entry must have been created for the identity.
+        $this->assertNotNull($newEntry);
+        $this->assertSame((string)$identityId, $newEntry->identityId);
+        $this->assertSame($institution, $newEntry->identityInstitution);
+        $this->assertSame(IdentityForgottenEvent::class, $newEntry->event);
+
+        // Pre-existing entries for the identity must still be anonymized, same as before this change.
+        $this->assertEquals(CommonName::unknown(), $existingEntry->actorCommonName);
+        $this->assertEquals(CommonName::unknown(), $entryWhereIdentityIsActor->actorCommonName);
     }
 
     private function createAuditLogMetadata(

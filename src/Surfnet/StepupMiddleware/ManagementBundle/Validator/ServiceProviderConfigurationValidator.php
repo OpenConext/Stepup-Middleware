@@ -103,10 +103,14 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
     }
 
     /**
-     * service_name is optional; when present it must be a map of locale code
+     * service_name is optional; when present it must be a non-empty map of locale code
      * (e.g. "en_GB", "nl_NL") to a non-empty display name string for that
      * locale. Per RFC OpenConext/Stepup-Gateway#587: "If set it must be a
-     * map of locale to service name."
+     * map of locale to service name." An empty map is rejected: Gateway treats an empty
+     * map as "not configured" and falls through to the SP-supplied name, which is the
+     * opposite of what an administrator writing `{}` intends. Locale keys must normalize
+     * (by primary language subtag) to distinct values, since Gateway matches on the primary
+     * subtag only and an administrator has no visibility into which region variant would win.
      *
      * @param array<string, mixed> $configuration
      */
@@ -116,11 +120,43 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $path = $propertyPath . '.' . $name;
 
         Assertion::isArray($value, 'value must be a map of locale to service name', $path);
+        Assertion::notEmpty(
+            $value,
+            'value must not be an empty map; omit service_name entirely to leave it unconfigured',
+            $path,
+        );
+
+        $primarySubtags = [];
         foreach ($value as $locale => $serviceName) {
             Assertion::string($locale, 'locale keys must be strings', $path);
             Assertion::notBlank($locale, 'locale keys must not be empty', $path);
+            Assertion::regex(
+                $locale,
+                '/^[a-zA-Z]{2}([_-][a-zA-Z]{2})?$/',
+                sprintf(
+                    "locale key '%s' must be a language code (e.g. 'en') optionally followed by "
+                    . "a region (e.g. 'en_GB')",
+                    $locale,
+                ),
+                $path,
+            );
             Assertion::string($serviceName, 'service name values must be strings', $path . '.' . $locale);
             Assertion::notBlank($serviceName, 'service name values must not be empty', $path . '.' . $locale);
+
+            $primarySubtag = strtolower(substr((string) $locale, 0, 2));
+            $collidesWith = $primarySubtags[$primarySubtag] ?? null;
+            Assertion::null(
+                $collidesWith,
+                sprintf(
+                    "locale key '%s' collides with '%s' after normalization to '%s'; only one "
+                    . 'region variant per language is allowed',
+                    $locale,
+                    $collidesWith,
+                    $primarySubtag,
+                ),
+                $path,
+            );
+            $primarySubtags[$primarySubtag] = $locale;
         }
     }
 

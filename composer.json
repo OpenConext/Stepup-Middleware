@@ -62,6 +62,7 @@
         "malukenho/docheader": "^1.1",
         "mockery/mockery": "^1.6.12",
         "overtrue/phplint": ">=9.5.6",
+        "phpcpd-next/phpcpd": "^1.1",
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-doctrine": "^2.0",

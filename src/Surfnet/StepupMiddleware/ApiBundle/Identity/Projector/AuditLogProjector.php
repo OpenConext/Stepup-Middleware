@@ -62,9 +62,10 @@ class AuditLogProjector extends Projector
 
         switch (true) {
             case $event instanceof IdentityForgottenEvent:
-                // Record the deprovisioning itself first, then anonymise the identity's other audit log
-                // entries. Anonymising first would immediately wipe the actor name off the entry we're
-                // about to create here.
+                // Record the deprovisioning entry first so applyIdentityForgottenEvent's re-query of
+                // findByIdentityId() picks it up too, anonymising its actor name along with the
+                // identity's other entries. Anonymising first would query before this entry exists,
+                // leaving its actor name (typically the deprovisioning system/API actor) untouched.
                 $this->applyAuditableEvent($event, $domainMessage);
                 $this->applyIdentityForgottenEvent($event);
                 break;

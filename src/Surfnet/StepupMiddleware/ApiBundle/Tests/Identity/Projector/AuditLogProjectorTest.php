@@ -198,10 +198,19 @@ final class AuditLogProjectorTest extends TestCase
         $repository->shouldReceive('save')->once()->with($this->spy($newEntry));
         /** @var null|AuditLogEntry $newEntry */
 
-        $repository->shouldReceive('findByIdentityId')->once()->with($identityId)->andReturn([$existingEntry]);
+        // The new entry is flushed (AuditLogRepository::save() flushes immediately) before this is
+        // called, so a real findByIdentityId() re-query picks it up alongside the pre-existing entry.
+        $repository->shouldReceive('findByIdentityId')->once()->with($identityId)
+            ->andReturnUsing(function () use ($existingEntry, &$newEntry): array {
+                return [$existingEntry, $newEntry];
+            });
         $repository->shouldReceive('findEntriesWhereIdentityIsActorOnly')->once()->with($identityId)
             ->andReturn([$entryWhereIdentityIsActor]);
-        $repository->shouldReceive('saveAll')->once()->with([$existingEntry]);
+        $repository->shouldReceive('saveAll')->once()->with(
+            m::on(function (array $entries) use ($existingEntry, &$newEntry): bool {
+                return $entries === [$existingEntry, $newEntry];
+            }),
+        );
         $repository->shouldReceive('saveAll')->once()->with([$entryWhereIdentityIsActor]);
 
         $identityRepository = m::mock(IdentityRepository::class);
@@ -227,6 +236,10 @@ final class AuditLogProjectorTest extends TestCase
         // Pre-existing entries for the identity must still be anonymized, same as before this change.
         $this->assertEquals(CommonName::unknown(), $existingEntry->actorCommonName);
         $this->assertEquals(CommonName::unknown(), $entryWhereIdentityIsActor->actorCommonName);
+
+        // The new "deprovisioned" entry is swept up by the same anonymization pass, since it belongs
+        // to the identity being forgotten.
+        $this->assertEquals(CommonName::unknown(), $newEntry->actorCommonName);
     }
 
     private function createAuditLogMetadata(

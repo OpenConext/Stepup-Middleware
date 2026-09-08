@@ -63,9 +63,9 @@ class AuditLogProjector extends Projector
         switch (true) {
             case $event instanceof IdentityForgottenEvent:
                 // Record the deprovisioning entry first so applyIdentityForgottenEvent's re-query of
-                // findByIdentityId() picks it up too, anonymising its actor name along with the
-                // identity's other entries. Anonymising first would query before this entry exists,
-                // leaving its actor name (typically the deprovisioning system/API actor) untouched.
+                // findByIdentityId() picks it up too. The actor name is intentionally anonymized,
+                // consistent with all other entries for a forgotten identity. Anonymizing first
+                // would query before this entry exists, leaving its actor name untouched.
                 $this->applyAuditableEvent($event, $domainMessage);
                 $this->applyIdentityForgottenEvent($event);
                 break;
@@ -83,6 +83,17 @@ class AuditLogProjector extends Projector
     private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage): void
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
+        $recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+
+        if ($event instanceof IdentityForgottenEvent
+            && $this->auditLogRepository->hasDeprovisionedEntry(
+                $auditLogMetadata->identityId,
+                $event::class,
+                $recordedOn,
+            )
+        ) {
+            return;
+        }
 
         $metadata = $domainMessage->getMetadata()->serialize();
         $entry = new AuditLogEntry();
@@ -113,7 +124,7 @@ class AuditLogProjector extends Projector
         $entry->identityId = (string)$auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event = $event::class;
-        $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->recordedOn = $recordedOn;
 
         if ($auditLogMetadata->secondFactorId instanceof SecondFactorId) {
             $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;

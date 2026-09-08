@@ -68,6 +68,8 @@ use Throwable;
  * The whole set of IdentityForgottenEvents is read up front (it is bounded by the number of identities
  * ever deprovisioned); the resulting audit log entries are written in batches with the entity manager
  * cleared between them.
+ *
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 #[AsCommand(
     name: 'stepup:audit-log:backfill-deprovisioned',
@@ -93,70 +95,16 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
         #[Option(description: 'Skip the confirmation prompt', name: 'force')]
         bool $force = false,
     ): int {
-        if (!$dryRun && !$force && $input->isInteractive()) {
-            $question = new ConfirmationQuestion(
-                '<question>Run this only with the lifecycle (deprovisioning) API access disabled, to avoid '
-                . 'duplicate entries from concurrent live projection. Continue? (y/N)</question> ',
-                false,
-            );
-
-            if (!(new QuestionHelper())->ask($input, $output, $question)) {
-                $output->writeln('<comment>Aborted.</comment>');
-
-                return 1;
-            }
+        if ($this->shouldAbort($input, $output, $dryRun, $force)) {
+            return 1;
         }
 
-        // Phase 1: every distinct deprovisioning occurrence, keyed by aggregate id + playhead so a
-        // second IdentityForgottenEvent (after a restore) is never merged with the first.
         $occurrences = $this->collectDeprovisioningOccurrences();
+        $missing = $this->findMissingOccurrences($occurrences);
 
-        // Phase 2: keep only the occurrences that have no audit log entry yet. All lookups happen
-        // before any insert, so two occurrences that fall in the same second are both kept.
-        $missing = array_values(array_filter(
-            $occurrences,
-            fn(array $occurrence): bool => !$this->auditLogRepository->hasDeprovisionedEntry(
-                $occurrence['identityId'],
-                IdentityForgottenEvent::class,
-                $occurrence['recordedOn'],
-            ),
-        ));
+        $this->reportMissingOccurrences($output, $missing, $dryRun);
 
-        foreach ($missing as $occurrence) {
-            $output->writeln(
-                sprintf(
-                    '<info>%s deprovisioned entry for identity %s (%s) recorded on %s</info>',
-                    $dryRun ? 'Would create' : 'Creating',
-                    $occurrence['identityId'],
-                    $occurrence['institution'],
-                    $occurrence['recordedOn']->format(DateTime::FORMAT),
-                ),
-                OutputInterface::VERBOSITY_VERBOSE,
-            );
-        }
-
-        if (!$dryRun && $missing !== []) {
-            try {
-                $this->persistInBatches($missing);
-            } catch (Throwable $e) {
-                $output->writeln(sprintf('<error>Backfill failed: %s</error>', $e->getMessage()));
-
-                return 1;
-            }
-        }
-
-        $output->writeln(
-            sprintf(
-                '<comment>%s: %d deprovisioned %s %s, %d already present</comment>',
-                $dryRun ? 'Dry run' : 'Done',
-                count($missing),
-                count($missing) === 1 ? 'entry' : 'entries',
-                $dryRun ? 'would be created' : 'created',
-                count($occurrences) - count($missing),
-            ),
-        );
-
-        return 0;
+        return $this->finishBackfill($output, $occurrences, $missing, $dryRun);
     }
 
     /**
@@ -164,6 +112,8 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
      */
     private function collectDeprovisioningOccurrences(): array
     {
+        // Phase 1: every distinct deprovisioning occurrence, keyed by aggregate id + playhead so a
+        // second IdentityForgottenEvent (after a restore) is never merged with the first.
         $eventStreamType = strtr(IdentityForgottenEvent::class, '\\', '.');
         $events = $this->eventHydrator->fetchByEventTypes([$eventStreamType]);
 
@@ -186,6 +136,123 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
         }
 
         return $occurrences;
+    }
+
+    private function shouldAbort(
+        InputInterface $input,
+        OutputInterface $output,
+        bool $dryRun,
+        bool $force,
+    ): bool {
+        if ($dryRun || $force || !$input->isInteractive()) {
+            return false;
+        }
+
+        $question = new ConfirmationQuestion(
+            '<question>Run this only with the lifecycle (deprovisioning) API access disabled, to avoid '
+            . 'duplicate entries from concurrent live projection. Continue? (y/N)</question> ',
+            false,
+        );
+
+        if ((new QuestionHelper())->ask($input, $output, $question)) {
+            return false;
+        }
+
+        $output->writeln('<comment>Aborted.</comment>');
+
+        return true;
+    }
+
+    /**
+     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @return list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}>
+     */
+    private function findMissingOccurrences(array $occurrences): array
+    {
+        // Phase 2: keep only the occurrences that have no audit log entry yet. All lookups happen
+        // before any insert, so two occurrences that fall in the same second are both kept.
+        return array_values(array_filter(
+            $occurrences,
+            fn(array $occurrence): bool => !$this->auditLogRepository->hasDeprovisionedEntry(
+                $occurrence['identityId'],
+                IdentityForgottenEvent::class,
+                $occurrence['recordedOn'],
+            ),
+        ));
+    }
+
+    /**
+     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     */
+    private function reportMissingOccurrences(OutputInterface $output, array $missing, bool $dryRun): void
+    {
+        foreach ($missing as $occurrence) {
+            $output->writeln(
+                sprintf(
+                    '<info>%s deprovisioned entry for identity %s (%s) recorded on %s</info>',
+                    $dryRun ? 'Would create' : 'Creating',
+                    $occurrence['identityId'],
+                    $occurrence['institution'],
+                    $occurrence['recordedOn']->format(DateTime::FORMAT),
+                ),
+                OutputInterface::VERBOSITY_VERBOSE,
+            );
+        }
+    }
+
+    /**
+     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     */
+    private function finishBackfill(
+        OutputInterface $output,
+        array $occurrences,
+        array $missing,
+        bool $dryRun,
+    ): int {
+        if (!$this->persistMissingOccurrences($output, $missing, $dryRun)) {
+            return 1;
+        }
+
+        $output->writeln($this->summary($occurrences, $missing, $dryRun));
+
+        return 0;
+    }
+
+    /**
+     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     */
+    private function persistMissingOccurrences(OutputInterface $output, array $missing, bool $dryRun): bool
+    {
+        if ($dryRun || $missing === []) {
+            return true;
+        }
+
+        try {
+            $this->persistInBatches($missing);
+        } catch (Throwable $e) {
+            $output->writeln(sprintf('<error>Backfill failed: %s</error>', $e->getMessage()));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     */
+    private function summary(array $occurrences, array $missing, bool $dryRun): string
+    {
+        return sprintf(
+            '<comment>%s: %d deprovisioned %s %s, %d already present</comment>',
+            $dryRun ? 'Dry run' : 'Done',
+            count($missing),
+            count($missing) === 1 ? 'entry' : 'entries',
+            $dryRun ? 'would be created' : 'created',
+            count($occurrences) - count($missing),
+        );
     }
 
     /**

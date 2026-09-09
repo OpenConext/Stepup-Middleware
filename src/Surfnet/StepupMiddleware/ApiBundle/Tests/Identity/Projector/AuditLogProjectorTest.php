@@ -195,14 +195,10 @@ final class AuditLogProjectorTest extends TestCase
         $repository = m::mock(AuditLogRepository::class);
 
         $newEntry = null;
-        $repository->shouldReceive('hasDeprovisionedEntry')
+        $repository->shouldReceive('find')
             ->once()
-            ->with(
-                $identityId,
-                IdentityForgottenEvent::class,
-                m::on(fn(StepupDateTime $actual): bool => $actual == new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))),
-            )
-            ->andReturnFalse();
+            ->with(AuditLogEntry::deprovisionedEntryIdFor('id', 0))
+            ->andReturnNull();
         $repository->shouldReceive('save')->once()->with($this->spy($newEntry));
         /** @var null|AuditLogEntry $newEntry */
 
@@ -252,6 +248,67 @@ final class AuditLogProjectorTest extends TestCase
 
     #[Test]
     #[Group('api-projector')]
+    public function it_creates_two_distinct_deprovisioned_entries_that_share_a_second(): void
+    {
+        $identityId = new IdentityId('abcd');
+        $institution = new Institution('efgh');
+
+        $firstEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3);
+        $secondEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7);
+
+        $savedEntries = [];
+        $repository = m::mock(AuditLogRepository::class);
+        $repository->shouldReceive('find')->once()->with($firstEntryId)->andReturnNull();
+        $repository->shouldReceive('find')->once()->with($secondEntryId)->andReturnNull();
+        $repository->shouldReceive('save')->twice()->with(
+            m::on(function (AuditLogEntry $entry) use (&$savedEntries): bool {
+                $savedEntries[] = $entry;
+
+                return true;
+            }),
+        );
+        $repository->shouldReceive('findByIdentityId')->twice()->with($identityId)
+            ->andReturnUsing(function () use (&$savedEntries): array {
+                return $savedEntries;
+            });
+        $repository->shouldReceive('findEntriesWhereIdentityIsActorOnly')->twice()->with($identityId)->andReturn([]);
+        $repository->shouldReceive('saveAll')->twice()->with(
+            m::on(function (array $entries) use (&$savedEntries): bool {
+                if (count($entries) !== count($savedEntries)) {
+                    return false;
+                }
+
+                return array_map(fn(AuditLogEntry $entry): string => $entry->id, $entries)
+                    === array_map(fn(AuditLogEntry $entry): string => $entry->id, $savedEntries);
+            }),
+        );
+        $repository->shouldReceive('saveAll')->twice()->with([]);
+
+        $identityRepository = m::mock(IdentityRepository::class);
+
+        $projector = new AuditLogProjector($repository, $identityRepository);
+        $projector->handle(new DomainMessage(
+            'abcd',
+            3,
+            new MessageMetadata(),
+            new IdentityForgottenEvent($identityId, $institution),
+            BroadwayDateTime::fromString('1970-01-01T00:00:00.100000'),
+        ));
+        $projector->handle(new DomainMessage(
+            'abcd',
+            7,
+            new MessageMetadata(),
+            new IdentityForgottenEvent($identityId, $institution),
+            BroadwayDateTime::fromString('1970-01-01T00:00:00.900000'),
+        ));
+
+        $this->assertCount(2, $savedEntries);
+        $this->assertSame($firstEntryId, $savedEntries[0]->id);
+        $this->assertSame($secondEntryId, $savedEntries[1]->id);
+    }
+
+    #[Test]
+    #[Group('api-projector')]
     public function it_skips_creating_a_duplicate_deprovisioned_entry_but_still_anonymizes_existing_entries(): void
     {
         $identityId = new IdentityId('abcd');
@@ -276,14 +333,10 @@ final class AuditLogProjectorTest extends TestCase
         $entryWhereIdentityIsActor->recordedOn = $recordedOn;
 
         $repository = m::mock(AuditLogRepository::class);
-        $repository->shouldReceive('hasDeprovisionedEntry')
+        $repository->shouldReceive('find')
             ->once()
-            ->with(
-                $identityId,
-                IdentityForgottenEvent::class,
-                m::on(fn(StepupDateTime $actual): bool => $actual == $recordedOn),
-            )
-            ->andReturnTrue();
+            ->with(AuditLogEntry::deprovisionedEntryIdFor('id', 0))
+            ->andReturn($existingEntry);
         $repository->shouldNotReceive('save');
         $repository->shouldReceive('findByIdentityId')->once()->with($identityId)->andReturn([$existingEntry]);
         $repository->shouldReceive('findEntriesWhereIdentityIsActorOnly')->once()->with($identityId)

@@ -24,7 +24,6 @@ use Broadway\Domain\DomainMessage;
 use DateTime as CoreDateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
@@ -49,9 +48,9 @@ use Throwable;
  * would also re-run the destructive anonymisation pass over the identity's (possibly since restored)
  * current audit log.
  *
- * It is idempotent: an entry that already exists for the identity + moment is left untouched, so it is
- * safe to run more than once. All writes happen in a single transaction, so an interrupted run rolls
- * back completely and leaves nothing half-applied.
+ * It is idempotent: an entry that already exists for the same source event stream id + playhead is
+ * left untouched, so it is safe to run more than once. All writes happen in a single transaction, so
+ * an interrupted run rolls back completely and leaves nothing half-applied.
  *
  * Assumptions:
  *  - It is run with the lifecycle (deprovisioning) API access disabled. The existence check and the
@@ -59,11 +58,9 @@ use Throwable;
  *    could be recorded twice. The historical IdentityForgottenEvents this command targets are not
  *    re-emitted by anything, so the only way to hit this is to deprovision an identity, or run an
  *    event replay, while the backfill is running.
- *  - An identity is never forgotten twice within the same wall-clock second. A restore
- *    (UpdateIdentityCommand -> Identity::restore()) has to happen between two forgets, so the existence
- *    check keying on identity + event + second-precision recordedOn uniquely identifies one
- *    deprovisioning. In-memory the events are still distinguished by playhead, so two same-second
- *    events in one run are both created.
+ *  - Repeated command runs and event replays can present the same IdentityForgottenEvent more than
+ *    once. The command deduplicates those by using a deterministic audit_log.id derived from the
+ *    source event stream id + playhead, so distinct same-second deprovisionings remain distinct.
  *
  * The whole set of IdentityForgottenEvents is read up front (it is bounded by the number of identities
  * ever deprovisioned); the resulting audit log entries are written in batches with the entity manager
@@ -108,12 +105,13 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @return array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}>
+     * @return array<string, array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}>
      */
     private function collectDeprovisioningOccurrences(): array
     {
-        // Phase 1: every distinct deprovisioning occurrence, keyed by aggregate id + playhead so a
-        // second IdentityForgottenEvent (after a restore) is never merged with the first.
+        // Phase 1: every distinct deprovisioning occurrence, keyed by the audit log entry id derived
+        // from aggregate id + playhead so a second IdentityForgottenEvent (after a restore) is never
+        // merged with the first.
         $eventStreamType = strtr(IdentityForgottenEvent::class, '\\', '.');
         $events = $this->eventHydrator->fetchByEventTypes([$eventStreamType]);
 
@@ -127,8 +125,9 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
                 continue;
             }
 
-            $key = $domainMessage->getId() . '|' . $domainMessage->getPlayhead();
+            $key = AuditLogEntry::deprovisionedEntryIdFor($domainMessage->getId(), $domainMessage->getPlayhead());
             $occurrences[$key] = [
+                'auditLogEntryId' => $key,
                 'identityId' => $event->identityId,
                 'institution' => $event->identityInstitution,
                 'recordedOn' => new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString())),
@@ -164,25 +163,21 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
-     * @return list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}>
+     * @param array<string, array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @return list<array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}>
      */
     private function findMissingOccurrences(array $occurrences): array
     {
-        // Phase 2: keep only the occurrences that have no audit log entry yet. All lookups happen
-        // before any insert, so two occurrences that fall in the same second are both kept.
+        // Phase 2: keep only the occurrences that have no audit log entry yet. The lookup is by the
+        // exact source event occurrence, so same-second deprovisionings are not collapsed together.
         return array_values(array_filter(
             $occurrences,
-            fn(array $occurrence): bool => !$this->auditLogRepository->hasDeprovisionedEntry(
-                $occurrence['identityId'],
-                IdentityForgottenEvent::class,
-                $occurrence['recordedOn'],
-            ),
+            fn(array $occurrence): bool => !$this->auditLogRepository->find($occurrence['auditLogEntryId']) instanceof AuditLogEntry,
         ));
     }
 
     /**
-     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     * @param list<array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
      */
     private function reportMissingOccurrences(OutputInterface $output, array $missing, bool $dryRun): void
     {
@@ -201,8 +196,8 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
-     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     * @param array<string, array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @param list<array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
      */
     private function finishBackfill(
         OutputInterface $output,
@@ -220,7 +215,7 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     * @param list<array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
      */
     private function persistMissingOccurrences(OutputInterface $output, array $missing, bool $dryRun): bool
     {
@@ -240,8 +235,8 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @param array<string, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
-     * @param list<array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     * @param array<string, array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $occurrences
+     * @param list<array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
      */
     private function summary(array $occurrences, array $missing, bool $dryRun): string
     {
@@ -256,7 +251,7 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
     }
 
     /**
-     * @param array<int, array{identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
+     * @param array<int, array{auditLogEntryId: string, identityId: IdentityId, institution: Institution, recordedOn: DateTime}> $missing
      */
     private function persistInBatches(array $missing): void
     {
@@ -266,7 +261,7 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
             foreach (array_chunk($missing, self::BATCH_SIZE) as $chunk) {
                 foreach ($chunk as $occurrence) {
                     $entry = new AuditLogEntry();
-                    $entry->id = (string)Uuid::uuid4();
+                    $entry->id = $occurrence['auditLogEntryId'];
                     $entry->identityId = (string)$occurrence['identityId'];
                     $entry->identityInstitution = $occurrence['institution'];
                     $entry->actorCommonName = CommonName::unknown();

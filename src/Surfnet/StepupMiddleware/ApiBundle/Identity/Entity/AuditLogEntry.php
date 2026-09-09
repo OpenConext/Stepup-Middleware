@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
@@ -74,6 +75,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLogEntry implements JsonSerializable
 {
+    private const DEPROVISIONED_ENTRY_ID_PREFIX = 'deprovisioned-audit-log-entry';
+
     /**
      * Maps event FQCNs to action names.
      *
@@ -165,6 +168,14 @@ class AuditLogEntry implements JsonSerializable
 
     #[ORM\Column(type: 'stepup_datetime')]
     public DateTime $recordedOn;
+
+    public static function deprovisionedEntryIdFor(string $sourceEventStreamId, int $sourceEventPlayhead): string
+    {
+        return (string) Uuid::uuid5(
+            Uuid::NAMESPACE_URL,
+            sprintf('%s:%s:%d', self::DEPROVISIONED_ENTRY_ID_PREFIX, $sourceEventStreamId, $sourceEventPlayhead),
+        );
+    }
 
     public function jsonSerialize(): array
     {

@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
-use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
@@ -37,7 +36,6 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
-use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
@@ -55,7 +53,6 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
@@ -107,7 +104,6 @@ class AuditLogRepository extends ServiceEntityRepository
         RecoveryTokenRevokedEvent::class,
         PhoneRecoveryTokenPossessionProvenEvent::class,
         CompliedWithRecoveryCodeRevocationEvent::class,
-        IdentityForgottenEvent::class,
     ];
 
     /**
@@ -166,27 +162,6 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameter('identityId', $identityId)
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * Whether an audit log entry already exists for the given identity, event FQCN and moment.
-     *
-     * Used by the deprovisioned-entry backfill to stay idempotent. recordedOn is stored with
-     * second precision, and an identity cannot be forgotten twice within the same second (a
-     * restore has to happen in between), so this uniquely identifies a single deprovisioning.
-     */
-    public function hasDeprovisionedEntry(IdentityId $identityId, string $event, DateTime $recordedOn): bool
-    {
-        return (int)$this->createQueryBuilder('al')
-            ->select('COUNT(al.id)')
-            ->where('al.identityId = :identityId')
-            ->andWhere('al.event = :event')
-            ->andWhere('al.recordedOn = :recordedOn')
-            ->setParameter('identityId', $identityId)
-            ->setParameter('event', $event)
-            ->setParameter('recordedOn', $recordedOn, DateTimeType::NAME)
-            ->getQuery()
-            ->getSingleScalarResult() > 0;
     }
 
     public function save(AuditLogEntry $entry): void

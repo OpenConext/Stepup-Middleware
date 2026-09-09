@@ -84,20 +84,22 @@ class AuditLogProjector extends Projector
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
         $recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry = new AuditLogEntry();
 
-        if ($event instanceof IdentityForgottenEvent
-            && $this->auditLogRepository->hasDeprovisionedEntry(
-                $auditLogMetadata->identityId,
-                $event::class,
-                $recordedOn,
-            )
-        ) {
-            return;
+        if ($event instanceof IdentityForgottenEvent) {
+            $entry->id = AuditLogEntry::deprovisionedEntryIdFor(
+                $domainMessage->getId(),
+                $domainMessage->getPlayhead(),
+            );
+
+            if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
+                return;
+            }
+        } else {
+            $entry->id = (string)Uuid::uuid4();
         }
 
         $metadata = $domainMessage->getMetadata()->serialize();
-        $entry = new AuditLogEntry();
-        $entry->id = (string)Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
             $actor = $this->identityRepository->find($metadata['actorId']);

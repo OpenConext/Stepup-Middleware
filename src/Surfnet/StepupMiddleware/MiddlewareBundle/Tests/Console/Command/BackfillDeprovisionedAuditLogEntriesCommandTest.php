@@ -79,10 +79,10 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
                 $this->forgottenMessage($forgottenWithEntry, $institution, 0, '2021-06-15T12:30:00.000000'),
             ]));
 
-        $this->auditLogRepository->shouldReceive('hasDeprovisionedEntry')
-            ->once()->with($forgottenWithoutEntry, IdentityForgottenEvent::class, m::any())->andReturnFalse();
-        $this->auditLogRepository->shouldReceive('hasDeprovisionedEntry')
-            ->once()->with($forgottenWithEntry, IdentityForgottenEvent::class, m::any())->andReturnTrue();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$forgottenWithoutEntry, 0))->andReturnNull();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$forgottenWithEntry, 0))->andReturn(new AuditLogEntry());
 
         $persisted = [];
         $this->entityManager->shouldReceive('persist')->once()
@@ -115,7 +115,10 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
             $this->forgottenMessage($identityId, $institution, 7, '2020-01-01T10:00:00.900000'),
         ]));
 
-        $this->auditLogRepository->shouldReceive('hasDeprovisionedEntry')->twice()->andReturnFalse();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3))->andReturnNull();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7))->andReturnNull();
 
         $this->entityManager->shouldReceive('persist')->twice();
         $this->entityManager->shouldReceive('flush')->once();
@@ -125,6 +128,44 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString('2 deprovisioned entries created, 0 already present', $this->commandTester->getDisplay());
+    }
+
+    #[Test]
+    public function it_creates_the_missing_same_second_occurrence_when_another_same_second_entry_already_exists(): void
+    {
+        $identityId = new IdentityId('77777777-7777-7777-7777-777777777777');
+        $institution = new Institution('institution-f.example');
+
+        $firstEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3);
+        $secondEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7);
+
+        $existingEntry = new AuditLogEntry();
+        $existingEntry->id = $firstEntryId;
+
+        $this->eventHydrator->shouldReceive('fetchByEventTypes')->once()->andReturn(new DomainEventStream([
+            $this->forgottenMessage($identityId, $institution, 3, '2020-01-01T10:00:00.100000'),
+            $this->forgottenMessage($identityId, $institution, 7, '2020-01-01T10:00:00.900000'),
+        ]));
+
+        $this->auditLogRepository->shouldReceive('find')->once()->with($firstEntryId)->andReturn($existingEntry);
+        $this->auditLogRepository->shouldReceive('find')->once()->with($secondEntryId)->andReturnNull();
+
+        $persisted = [];
+        $this->entityManager->shouldReceive('persist')->once()
+            ->with(m::on(function (AuditLogEntry $entry) use (&$persisted, $secondEntryId): bool {
+                $persisted[] = $entry;
+
+                return $entry->id === $secondEntryId;
+            }));
+        $this->entityManager->shouldReceive('flush')->once();
+        $this->entityManager->shouldReceive('clear')->once();
+
+        $exitCode = $this->commandTester->execute(['--force' => true]);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertCount(1, $persisted);
+        $this->assertSame($secondEntryId, $persisted[0]->id);
+        $this->assertStringContainsString('1 deprovisioned entry created, 1 already present', $this->commandTester->getDisplay());
     }
 
     #[Test]
@@ -138,7 +179,8 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
         $this->eventHydrator->shouldReceive('fetchByEventTypes')->once()
             ->andReturn(new DomainEventStream([$message, $message]));
 
-        $this->auditLogRepository->shouldReceive('hasDeprovisionedEntry')->once()->andReturnFalse();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 2))->andReturnNull();
 
         $this->entityManager->shouldReceive('persist')->once();
         $this->entityManager->shouldReceive('flush')->once();
@@ -161,7 +203,10 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
             $this->forgottenMessage($identityId, $institution, 7, '2020-01-01T10:00:00.900000'),
         ]));
 
-        $this->auditLogRepository->shouldReceive('hasDeprovisionedEntry')->twice()->andReturnFalse();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3))->andReturnNull();
+        $this->auditLogRepository->shouldReceive('find')
+            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7))->andReturnNull();
         $this->entityManager->shouldNotReceive('persist');
         $this->entityManager->shouldNotReceive('flush');
 

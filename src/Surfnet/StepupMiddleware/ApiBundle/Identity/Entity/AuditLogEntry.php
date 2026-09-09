@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
@@ -38,6 +39,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -73,6 +75,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLogEntry implements JsonSerializable
 {
+    private const DEPROVISIONED_ENTRY_ID_PREFIX = 'deprovisioned-audit-log-entry';
+
     /**
      * Maps event FQCNs to action names.
      *
@@ -87,6 +91,7 @@ class AuditLogEntry implements JsonSerializable
         GssfPossessionProvenAndVerifiedEvent::class => 'possession_proven',
         IdentityCreatedEvent::class => 'created',
         IdentityEmailChangedEvent::class => 'email_changed',
+        IdentityForgottenEvent::class => 'deprovisioned',
         IdentityRenamedEvent::class => 'renamed',
         PhonePossessionProvenEvent::class => 'possession_proven',
         PhonePossessionProvenAndVerifiedEvent::class => 'possession_proven',
@@ -163,6 +168,14 @@ class AuditLogEntry implements JsonSerializable
 
     #[ORM\Column(type: 'stepup_datetime')]
     public DateTime $recordedOn;
+
+    public static function deprovisionedEntryIdFor(string $sourceEventStreamId, int $sourceEventPlayhead): string
+    {
+        return (string) Uuid::uuid5(
+            Uuid::NAMESPACE_URL,
+            sprintf('%s:%s:%d', self::DEPROVISIONED_ENTRY_ID_PREFIX, $sourceEventStreamId, $sourceEventPlayhead),
+        );
+    }
 
     public function jsonSerialize(): array
     {

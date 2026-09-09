@@ -22,6 +22,7 @@ use DateTime as CoreDateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\InvalidFormat;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\DateTime\DateTime;
 
@@ -63,6 +64,14 @@ class DateTimeType extends Type
             return null;
         }
 
+        if (!is_string($value)) {
+            throw InvalidFormat::new(
+                is_scalar($value) ? (string)$value : get_debug_type($value),
+                $this->getName(),
+                $platform->getDateTimeFormatString(),
+            );
+        }
+
         $dateTime = CoreDateTime::createFromFormat(
             $platform->getDateTimeFormatString(),
             $value,
@@ -70,7 +79,7 @@ class DateTimeType extends Type
         );
 
         if (!$dateTime) {
-            throw ConversionException::conversionFailedFormat(
+            throw InvalidFormat::new(
                 $value,
                 $this->getName(),
                 $platform->getDateTimeFormatString(),

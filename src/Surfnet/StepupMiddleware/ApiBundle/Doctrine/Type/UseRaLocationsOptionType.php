@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -55,7 +56,7 @@ class UseRaLocationsOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?UseRaLocationsOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?UseRaLocationsOption
     {
         if (is_null($value)) {
             return null;
@@ -64,13 +65,12 @@ class UseRaLocationsOptionType extends Type
         try {
             $useRaLocationsOption = new UseRaLocationsOption($platform->convertFromBoolean($value));
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $useRaLocationsOption;

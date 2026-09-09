@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\JsonType;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
@@ -36,7 +36,7 @@ class VettingTypeHintsType extends JsonType
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?VettingTypeHintCollection
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?VettingTypeHintCollection
     {
         if (is_null($value)) {
             return null;
@@ -46,13 +46,12 @@ class VettingTypeHintsType extends JsonType
             $data = json_decode((string)$value, true);
             $vettingTypeHints = VettingTypeHintCollection::deserialize($data);
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $vettingTypeHints;

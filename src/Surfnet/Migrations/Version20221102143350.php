@@ -32,7 +32,7 @@ final class Version20221102143350 extends AbstractMigration implements Configura
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
         // Create the new sso_on_2fa option, note the name conversion 'error' made by doctrine.
@@ -50,7 +50,7 @@ final class Version20221102143350 extends AbstractMigration implements Configura
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            $this->connection->getDatabasePlatform()->getName() !== 'mysql',
+            !($this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQLPlatform || $this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform),
             'Migration can only be executed safely on \'mysql\'.',
         );
         // Down the Middleware schema change

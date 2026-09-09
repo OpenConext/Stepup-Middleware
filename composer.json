@@ -22,8 +22,7 @@
             "url": "https://github.com/SURFnet/broadway-event-store-dbal"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "minimum-stability": "stable",
     "require": {
         "php": "^8.5",
         "ext-gmp": "*",
@@ -31,7 +30,7 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "broadway/broadway": "^2.5",
-        "broadway/event-store-dbal": "dev-feature/dbal4",
+        "broadway/event-store-dbal": "dev-feature/dbal4@dev",
         "doctrine/annotations": "^2.0",
         "doctrine/dbal": "^4.3,<4.4",
         "doctrine/doctrine-bundle": "^2.13.2",

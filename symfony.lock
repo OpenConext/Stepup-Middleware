@@ -141,9 +141,6 @@
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
-    "jms/translation-bundle": {
-        "version": "1.5.4"
-    },
     "liip/test-fixtures-bundle": {
         "version": "1.9.1"
     },

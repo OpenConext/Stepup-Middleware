@@ -2,7 +2,6 @@
 
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
-    JMS\TranslationBundle\JMSTranslationBundle::class => ['all' => true],
     Nelmio\SecurityBundle\NelmioSecurityBundle::class => ['all' => true],
     OpenConext\MonitorBundle\OpenConextMonitorBundle::class => ['all' => true],
     Surfnet\SamlBundle\SurfnetSamlBundle::class => ['all' => false],

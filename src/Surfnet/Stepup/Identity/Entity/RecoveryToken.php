@@ -22,6 +22,7 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
@@ -85,5 +86,12 @@ final class RecoveryToken extends SimpleEventSourcedEntity
                 $authorityId,
             ),
         );
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
+    {
+        // No PII is stored on a RecoveryToken (only a token id and type), so there is nothing to
+        // anonymize here. This handler exists so the entity is included in Identity::getChildEntities()
+        // dispatch, matching the SecondFactor entities.
     }
 }

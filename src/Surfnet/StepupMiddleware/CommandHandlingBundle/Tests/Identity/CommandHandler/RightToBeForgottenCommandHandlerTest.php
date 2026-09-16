@@ -35,6 +35,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -45,6 +46,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -147,6 +150,62 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTestBase
                     $locale,
                     new SecondFactorId('SF-ID'),
                     new YubikeyPublicId('01900473'),
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new IdentityForgottenEvent($identityId, $institution),
+            ]);
+    }
+
+    #[Test]
+    #[Group('command-handler')]
+    #[Group('sensitive-data')]
+    public function an_identity_with_a_recovery_token_can_be_forgotten(): void
+    {
+        $identityId = new IdentityId('A');
+        $institution = new Institution('Helsingin Yliopisto');
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
+
+        $this->apiIdentityRepository
+            ->shouldReceive('findOneByNameIdAndInstitution')
+            ->once()
+            ->with(new IsEqual($nameId), new IsEqual($institution))
+            ->andReturn($this->createIdentity($identityId->getIdentityId()));
+
+        $this->sensitiveDataService
+            ->shouldReceive('forgetSensitiveData')
+            ->once()
+            ->with(new IsEqual($identityId));
+
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
+
+        $command = new ForgetIdentityCommand();
+        $command->nameId = $nameId->getNameId();
+        $command->institution = $institution->getInstitution();
+
+        $this->scenario
+            ->withAggregateId('A')
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $locale,
+                ),
+                new PhoneRecoveryTokenPossessionProvenEvent(
+                    $identityId,
+                    $institution,
+                    new RecoveryTokenId('RT-ID'),
+                    new PhoneNumber('+31 (0) 12345678'),
+                    $commonName,
+                    $email,
+                    $locale,
                 ),
             ])
             ->when($command)

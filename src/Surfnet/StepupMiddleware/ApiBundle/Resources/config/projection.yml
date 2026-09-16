@@ -53,7 +53,9 @@ services:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RecoveryTokenProjector
     arguments:
       - '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository'
-    tags: [ { name: event_bus.event_listener, disable_for_replay: false } ]
+    tags:
+      - { name: event_bus.event_listener, disable_for_replay: false }
+      - { name: projector.register_for_replay }
 
   surfnet_stepup_middleware_api.projector.vetting_type_hint:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\VettingTypeHintProjector

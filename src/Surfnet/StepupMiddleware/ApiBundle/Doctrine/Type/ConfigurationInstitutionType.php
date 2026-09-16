@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -40,7 +41,7 @@ class ConfigurationInstitutionType extends Type
         return $platform->getStringTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return null;
@@ -59,7 +60,7 @@ class ConfigurationInstitutionType extends Type
         return $value->getInstitution();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?Institution
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?Institution
     {
         if (is_null($value)) {
             return null;
@@ -68,13 +69,12 @@ class ConfigurationInstitutionType extends Type
         try {
             $institution = new Institution($value);
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $institution;

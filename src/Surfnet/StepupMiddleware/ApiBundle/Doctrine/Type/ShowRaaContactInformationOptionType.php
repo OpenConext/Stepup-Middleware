@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -55,7 +56,7 @@ class ShowRaaContactInformationOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?ShowRaaContactInformationOption
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?ShowRaaContactInformationOption
     {
         if (is_null($value)) {
             return null;
@@ -66,13 +67,12 @@ class ShowRaaContactInformationOptionType extends Type
                 $platform->convertFromBoolean($value),
             );
         } catch (InvalidArgumentException $e) {
-            // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailed(
+            throw ValueNotConvertible::new(
                 $value,
                 $this->getName(),
-            )->getMessage();
-
-            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+                $e->getMessage(),
+                $e,
+            );
         }
 
         return $showRaaContactInformationOption;

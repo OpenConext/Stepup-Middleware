@@ -74,6 +74,9 @@ class ConsoleCommandRegistrationTest extends KernelTestCase
             'EmailVerifiedSecondFactorRemindersCommand' => [
                 'commandName' => 'middleware:cron:email-reminder',
             ],
+            'BackfillDeprovisionedAuditLogEntriesCommand' => [
+                'commandName' => 'stepup:audit-log:backfill-deprovisioned',
+            ],
         ];
     }
 

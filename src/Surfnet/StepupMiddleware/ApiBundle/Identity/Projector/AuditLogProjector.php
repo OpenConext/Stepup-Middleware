@@ -62,7 +62,11 @@ class AuditLogProjector extends Projector
 
         switch (true) {
             case $event instanceof IdentityForgottenEvent:
-                // Don't insert the IdentityForgottenEvent into the audit log, as we'd remove it immediately afterwards.
+                // Record the deprovisioning entry first so applyIdentityForgottenEvent's re-query of
+                // findByIdentityId() picks it up too. The actor name is intentionally anonymized,
+                // consistent with all other entries for a forgotten identity. Anonymizing first
+                // would query before this entry exists, leaving its actor name untouched.
+                $this->applyAuditableEvent($event, $domainMessage);
                 $this->applyIdentityForgottenEvent($event);
                 break;
             // Finally apply the auditable event, most events are auditable this so first handle the unique variants
@@ -79,10 +83,23 @@ class AuditLogProjector extends Projector
     private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage): void
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
+        $recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry = new AuditLogEntry();
+
+        if ($event instanceof IdentityForgottenEvent) {
+            $entry->id = AuditLogEntry::deprovisionedEntryIdFor(
+                $domainMessage->getId(),
+                $domainMessage->getPlayhead(),
+            );
+
+            if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
+                return;
+            }
+        } else {
+            $entry->id = (string)Uuid::uuid4();
+        }
 
         $metadata = $domainMessage->getMetadata()->serialize();
-        $entry = new AuditLogEntry();
-        $entry->id = (string)Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
             $actor = $this->identityRepository->find($metadata['actorId']);
@@ -109,7 +126,7 @@ class AuditLogProjector extends Projector
         $entry->identityId = (string)$auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event = $event::class;
-        $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->recordedOn = $recordedOn;
 
         if ($auditLogMetadata->secondFactorId instanceof SecondFactorId) {
             $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;

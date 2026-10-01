@@ -1,5 +1,13 @@
 # Changelog
 
+# Unreleased
+**Notable Changes**
+- Deprovision (right-to-be-forgotten) now also dispatches to recovery tokens, matching the existing second-factor handling (#628)
+
+**Deployment action required**
+- `RecoveryTokenProjector` only started removing recovery-token read-model rows on `IdentityForgottenEvent` as of commit `e6c81940` (2022-07-13). Identities forgotten before that date may still have stale `recovery_tokens` rows (containing PII). `RecoveryTokenProjector` is now tagged `projector.register_for_replay` so it can be targeted for a backfill. Operators should run, under the `prod_event_replay` environment:
+  `APP_ENV=prod_event_replay bin/console stepup:event:replay`, selecting `IdentityForgottenEvent` and `RecoveryTokenProjector`, to clean up those rows.
+
 # 7.0.1
 **Notable Changes**
 - Upgrade to Symfony 7.4 (from 6.4)

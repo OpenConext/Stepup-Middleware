@@ -144,6 +144,7 @@ final class AuditLogProjectorTest extends TestCase
     public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry): void
     {
         $repository = m::mock(AuditLogRepository::class);
+        $repository->shouldReceive('find')->once()->andReturnNull();
         $actualEntry = null;
         $repository->shouldReceive('save')->with($this->spy($actualEntry));
         /** @var null|AuditLogEntry $actualEntry */
@@ -197,7 +198,7 @@ final class AuditLogProjectorTest extends TestCase
         $newEntry = null;
         $repository->shouldReceive('find')
             ->once()
-            ->with(AuditLogEntry::deprovisionedEntryIdFor('id', 0))
+            ->with($this->entryIdFor('id', 0))
             ->andReturnNull();
         $repository->shouldReceive('save')->once()->with($this->spy($newEntry));
         /** @var null|AuditLogEntry $newEntry */
@@ -253,8 +254,8 @@ final class AuditLogProjectorTest extends TestCase
         $identityId = new IdentityId('abcd');
         $institution = new Institution('efgh');
 
-        $firstEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3);
-        $secondEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7);
+        $firstEntryId = $this->entryIdFor((string)$identityId, 3);
+        $secondEntryId = $this->entryIdFor((string)$identityId, 7);
 
         $savedEntries = [];
         $repository = m::mock(AuditLogRepository::class);
@@ -335,7 +336,7 @@ final class AuditLogProjectorTest extends TestCase
         $repository = m::mock(AuditLogRepository::class);
         $repository->shouldReceive('find')
             ->once()
-            ->with(AuditLogEntry::deprovisionedEntryIdFor('id', 0))
+            ->with($this->entryIdFor('id', 0))
             ->andReturn($existingEntry);
         $repository->shouldNotReceive('save');
         $repository->shouldReceive('findByIdentityId')->once()->with($identityId)->andReturn([$existingEntry]);
@@ -415,5 +416,20 @@ final class AuditLogProjectorTest extends TestCase
                 return true;
             },
         );
+    }
+
+    /**
+     * Mirrors AuditLogEntry::idFor(), which only depends on the source event's stream id and
+     * playhead, so the event payload used here is irrelevant to the resulting id.
+     */
+    private function entryIdFor(string $streamId, int $playhead): string
+    {
+        return AuditLogEntry::idFor(new DomainMessage(
+            $streamId,
+            $playhead,
+            new MessageMetadata(),
+            new IdentityForgottenEvent(new IdentityId('irrelevant'), new Institution('irrelevant')),
+            BroadwayDateTime::fromString('1970-01-01H00:00:00.000'),
+        ));
     }
 }

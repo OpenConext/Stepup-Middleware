@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
 use DateTime as CoreDateTime;
-use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
@@ -83,20 +82,15 @@ class AuditLogProjector extends Projector
     private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage): void
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
-        $recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
         $entry = new AuditLogEntry();
+        $entry->id = AuditLogEntry::idFor($domainMessage);
 
-        if ($event instanceof IdentityForgottenEvent) {
-            $entry->id = AuditLogEntry::deprovisionedEntryIdFor(
-                $domainMessage->getId(),
-                $domainMessage->getPlayhead(),
-            );
-
-            if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
-                return;
-            }
-        } else {
-            $entry->id = (string)Uuid::uuid4();
+        // Each event creates at most one audit log entry, identified deterministically by its
+        // source event. This makes re-processing a given event (replay, backfill, or - for
+        // IdentityForgottenEvent - a race with a concurrent live projection) a no-op instead of
+        // creating a duplicate entry.
+        if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
+            return;
         }
 
         $metadata = $domainMessage->getMetadata()->serialize();
@@ -126,7 +120,7 @@ class AuditLogProjector extends Projector
         $entry->identityId = (string)$auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event = $event::class;
-        $entry->recordedOn = $recordedOn;
+        $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
         if ($auditLogMetadata->secondFactorId instanceof SecondFactorId) {
             $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;

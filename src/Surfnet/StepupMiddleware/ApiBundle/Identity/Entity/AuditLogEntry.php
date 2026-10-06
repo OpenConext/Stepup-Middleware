@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
+use Broadway\Domain\DomainMessage;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
@@ -75,7 +76,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLogEntry implements JsonSerializable
 {
-    private const DEPROVISIONED_ENTRY_ID_PREFIX = 'deprovisioned-audit-log-entry';
+    private const ENTRY_ID_NAMESPACE = 'audit-log-entry';
 
     /**
      * Maps event FQCNs to action names.
@@ -169,11 +170,17 @@ class AuditLogEntry implements JsonSerializable
     #[ORM\Column(type: 'stepup_datetime')]
     public DateTime $recordedOn;
 
-    public static function deprovisionedEntryIdFor(string $sourceEventStreamId, int $sourceEventPlayhead): string
+    /**
+     * A deterministic id derived from the source event's stream id + playhead, which together
+     * uniquely identify the event (it's the primary key of event_stream). Using it as the audit
+     * log entry's id makes projecting and backfilling idempotent for every event, not just
+     * deprovisionings: re-processing the same event always yields the same entry id.
+     */
+    public static function idFor(DomainMessage $domainMessage): string
     {
         return (string) Uuid::uuid5(
             Uuid::NAMESPACE_URL,
-            sprintf('%s:%s:%d', self::DEPROVISIONED_ENTRY_ID_PREFIX, $sourceEventStreamId, $sourceEventPlayhead),
+            sprintf('%s:%s:%d', self::ENTRY_ID_NAMESPACE, $domainMessage->getId(), $domainMessage->getPlayhead()),
         );
     }
 

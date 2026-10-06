@@ -53,11 +53,17 @@ use Throwable;
  * an interrupted run rolls back completely and leaves nothing half-applied.
  *
  * Assumptions:
- *  - It is run with the lifecycle (deprovisioning) API access disabled. The existence check and the
- *    insert are not atomic with AuditLogProjector, so a deprovisioning projected live during the run
- *    could be recorded twice. The historical IdentityForgottenEvents this command targets are not
- *    re-emitted by anything, so the only way to hit this is to deprovision an identity, or run an
- *    event replay, while the backfill is running.
+ *  - Only the lifecycle (deprovisioning) API needs to be disabled while this runs; the rest of the
+ *    application can stay up. The existence check and the insert are not atomic with
+ *    AuditLogProjector, so if an identity is deprovisioned live while this command is also backfilling
+ *    that same identity's (historical) entry, both can decide the entry is missing and then both try
+ *    to insert it with the same deterministic id. The database's primary-key constraint rejects the
+ *    second insert, which fails the whole transaction (see above: nothing partial is committed, no
+ *    data is corrupted) and the command exits non-zero. Because the command is idempotent, simply
+ *    re-running it afterwards is safe and will pick up whatever is still missing. The historical
+ *    IdentityForgottenEvents this command targets are not re-emitted by anything, so the only way to
+ *    hit this is to deprovision an identity, or run an event replay, while the backfill is running -
+ *    for a given environment this is a narrow window, not a sustained risk.
  *  - Repeated command runs and event replays can present the same IdentityForgottenEvent more than
  *    once. The command deduplicates those by using a deterministic audit_log.id derived from the
  *    source event stream id + playhead, so distinct same-second deprovisionings remain distinct.
@@ -125,7 +131,7 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
                 continue;
             }
 
-            $key = AuditLogEntry::deprovisionedEntryIdFor($domainMessage->getId(), $domainMessage->getPlayhead());
+            $key = AuditLogEntry::idFor($domainMessage);
             $occurrences[$key] = [
                 'auditLogEntryId' => $key,
                 'identityId' => $event->identityId,
@@ -148,8 +154,10 @@ final class BackfillDeprovisionedAuditLogEntriesCommand
         }
 
         $question = new ConfirmationQuestion(
-            '<question>Run this only with the lifecycle (deprovisioning) API access disabled, to avoid '
-            . 'duplicate entries from concurrent live projection. Continue? (y/N)</question> ',
+            '<question>Recommended: disable the lifecycle (deprovisioning) API before running this (the rest '
+            . 'of the application can stay up). If an identity is deprovisioned live while this backfill is '
+            . 'processing it too, the run fails safely (transaction rolled back, nothing corrupted) and can '
+            . 'simply be re-run. Continue? (y/N)</question> ',
             false,
         );
 

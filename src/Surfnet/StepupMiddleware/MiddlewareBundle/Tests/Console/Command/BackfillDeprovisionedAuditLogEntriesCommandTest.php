@@ -80,9 +80,9 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
             ]));
 
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$forgottenWithoutEntry, 0))->andReturnNull();
+            ->once()->with($this->entryIdFor($forgottenWithoutEntry, 0))->andReturnNull();
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$forgottenWithEntry, 0))->andReturn(new AuditLogEntry());
+            ->once()->with($this->entryIdFor($forgottenWithEntry, 0))->andReturn(new AuditLogEntry());
 
         $persisted = [];
         $this->entityManager->shouldReceive('persist')->once()
@@ -116,9 +116,9 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
         ]));
 
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3))->andReturnNull();
+            ->once()->with($this->entryIdFor($identityId, 3))->andReturnNull();
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7))->andReturnNull();
+            ->once()->with($this->entryIdFor($identityId, 7))->andReturnNull();
 
         $this->entityManager->shouldReceive('persist')->twice();
         $this->entityManager->shouldReceive('flush')->once();
@@ -136,8 +136,8 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
         $identityId = new IdentityId('77777777-7777-7777-7777-777777777777');
         $institution = new Institution('institution-f.example');
 
-        $firstEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3);
-        $secondEntryId = AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7);
+        $firstEntryId = $this->entryIdFor($identityId, 3);
+        $secondEntryId = $this->entryIdFor($identityId, 7);
 
         $existingEntry = new AuditLogEntry();
         $existingEntry->id = $firstEntryId;
@@ -180,7 +180,7 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
             ->andReturn(new DomainEventStream([$message, $message]));
 
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 2))->andReturnNull();
+            ->once()->with($this->entryIdFor($identityId, 2))->andReturnNull();
 
         $this->entityManager->shouldReceive('persist')->once();
         $this->entityManager->shouldReceive('flush')->once();
@@ -204,9 +204,9 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
         ]));
 
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 3))->andReturnNull();
+            ->once()->with($this->entryIdFor($identityId, 3))->andReturnNull();
         $this->auditLogRepository->shouldReceive('find')
-            ->once()->with(AuditLogEntry::deprovisionedEntryIdFor((string)$identityId, 7))->andReturnNull();
+            ->once()->with($this->entryIdFor($identityId, 7))->andReturnNull();
         $this->entityManager->shouldNotReceive('persist');
         $this->entityManager->shouldNotReceive('flush');
 
@@ -240,6 +240,17 @@ final class BackfillDeprovisionedAuditLogEntriesCommandTest extends TestCase
             new Metadata([]),
             new IdentityForgottenEvent($identityId, $institution),
             BroadwayDateTime::fromString($recordedOn),
+        );
+    }
+
+    /**
+     * Mirrors AuditLogEntry::idFor(), which only depends on the source event's stream id and
+     * playhead, so the recordedOn value used here is irrelevant to the resulting id.
+     */
+    private function entryIdFor(IdentityId $identityId, int $playhead): string
+    {
+        return AuditLogEntry::idFor(
+            $this->forgottenMessage($identityId, new Institution('irrelevant'), $playhead, '1970-01-01T00:00:00.000000'),
         );
     }
 }

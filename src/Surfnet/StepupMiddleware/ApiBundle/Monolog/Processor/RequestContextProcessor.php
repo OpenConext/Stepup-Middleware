@@ -24,10 +24,10 @@ use Monolog\LogRecord;
 use Stringable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use function array_filter;
 use function in_array;
 use function is_array;
 use function is_scalar;
-use function is_string;
 use function json_decode;
 use function trim;
 
@@ -84,209 +84,162 @@ class RequestContextProcessor
      */
     private function extractRequestContext(Request $request): array
     {
-        $jsonData = null;
-        $content = $request->getContent();
-        if ($content !== '') {
-            $decoded = json_decode($content, true);
-            if (is_array($decoded)) {
-                $jsonData = $decoded;
-            }
-        }
+        $jsonData = $this->parseJsonContent($request->getContent());
+        $sources = $this->collectSources($request, $jsonData);
 
-        $context = [];
+        $fields = [
+            'identity_id' => $this->extractIdentityId($request, $sources, $jsonData),
+            'collab_person_id' => $this->extractFromSources($sources, ['collabPersonId', 'collab_person_id']),
+            'second_factor_id' => $this->extractSecondFactorId($request, $sources),
+            'recovery_token_id' => $this->extractRecoveryTokenId($request, $sources),
+            'name_id' => $this->extractFromSources($sources, ['nameId', 'name_id', 'NameID']),
+            'institution' => $this->extractInstitution($sources, $jsonData),
+        ];
 
-        $identityId = $this->extractIdentityId($request, $jsonData);
-        if ($identityId !== null) {
-            $context['identity_id'] = $identityId;
-        }
-
-        $collabPersonId = $this->extractCollabPersonId($request, $jsonData);
-        if ($collabPersonId !== null) {
-            $context['collab_person_id'] = $collabPersonId;
-        }
-
-        $secondFactorId = $this->extractSecondFactorId($request, $jsonData);
-        if ($secondFactorId !== null) {
-            $context['second_factor_id'] = $secondFactorId;
-        }
-
-        $recoveryTokenId = $this->extractRecoveryTokenId($request, $jsonData);
-        if ($recoveryTokenId !== null) {
-            $context['recovery_token_id'] = $recoveryTokenId;
-        }
-
-        $nameId = $this->extractNameId($request, $jsonData);
-        if ($nameId !== null) {
-            $context['name_id'] = $nameId;
-        }
-
-        $institution = $this->extractInstitution($request, $jsonData);
-        if ($institution !== null) {
-            $context['institution'] = $institution;
-        }
-
-        return $context;
+        return array_filter($fields, static fn (?string $value): bool => $value !== null);
     }
 
-    private function extractIdentityId(Request $request, ?array $jsonData): ?string
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function parseJsonContent(string $content): ?array
     {
-        if ($request->attributes->get('_route') === 'identity' && $request->attributes->has('id')) {
-            $id = $this->stringify($request->attributes->get('id'));
-            if ($id !== null) {
-                return $id;
-            }
+        if ($content === '') {
+            return null;
         }
 
-        $value = $this->extractFromRequestOrJson($request, ['identityId', 'identity_id'], $jsonData);
-        if ($value !== null) {
-            return $value;
-        }
+        $decoded = json_decode($content, true);
 
-        if ($jsonData !== null) {
-            if (isset($jsonData['command']['name'])
-                && is_string($jsonData['command']['name'])
-                && in_array($jsonData['command']['name'], ['Identity:CreateIdentity', 'Identity:UpdateIdentity'], true)
-                && isset($jsonData['command']['payload']['id'])
-            ) {
-                $id = $this->stringify($jsonData['command']['payload']['id']);
-                if ($id !== null) {
-                    return $id;
-                }
-            }
-        }
-
-        return null;
+        return is_array($decoded) ? $decoded : null;
     }
 
-    private function extractCollabPersonId(Request $request, ?array $jsonData): ?string
+    /**
+     * @param array<string, mixed>|null $jsonData
+     * @return list<array<string, mixed>>
+     */
+    private function collectSources(Request $request, ?array $jsonData): array
     {
-        return $this->extractFromRequestOrJson($request, ['collabPersonId', 'collab_person_id'], $jsonData);
+        $sources = [
+            $request->attributes->all(),
+            $request->query->all(),
+            $request->request->all(),
+        ];
+
+        if ($jsonData === null) {
+            return $sources;
+        }
+
+        $sources[] = $jsonData;
+
+        if (isset($jsonData['command']['payload']) && is_array($jsonData['command']['payload'])) {
+            $sources[] = $jsonData['command']['payload'];
+        }
+
+        if (isset($jsonData['payload']) && is_array($jsonData['payload'])) {
+            $sources[] = $jsonData['payload'];
+        }
+
+        return $sources;
     }
 
-    private function extractSecondFactorId(Request $request, ?array $jsonData): ?string
+    /**
+     * @param list<array<string, mixed>> $sources
+     * @param array<string, mixed>|null $jsonData
+     */
+    private function extractIdentityId(Request $request, array $sources, ?array $jsonData): ?string
+    {
+        return $this->extractRouteId($request, ['identity'])
+            ?? $this->extractFromSources($sources, ['identityId', 'identity_id'])
+            ?? $this->extractIdentityCommandId($jsonData);
+    }
+
+    /**
+     * @param list<string> $allowedRoutes
+     */
+    private function extractRouteId(Request $request, array $allowedRoutes): ?string
     {
         $route = (string) $request->attributes->get('_route');
-        if (in_array($route, self::SECOND_FACTOR_ROUTES, true) && $request->attributes->has('id')) {
-            $id = $this->stringify($request->attributes->get('id'));
-            if ($id !== null) {
-                return $id;
-            }
-        }
-
-        return $this->extractFromRequestOrJson(
-            $request,
-            ['secondFactorId', 'second_factor_id', 'authoringSecondFactorId', 'authoring_second_factor_id'],
-            $jsonData,
-        );
-    }
-
-    private function extractRecoveryTokenId(Request $request, ?array $jsonData): ?string
-    {
-        if ($request->attributes->get('_route') === 'recovery_token' && $request->attributes->has('id')) {
-            $id = $this->stringify($request->attributes->get('id'));
-            if ($id !== null) {
-                return $id;
-            }
-        }
-
-        return $this->extractFromRequestOrJson(
-            $request,
-            ['recoveryTokenIdId', 'recoveryTokenId', 'recovery_token_id', 'recovery_token_id_id'],
-            $jsonData,
-        );
-    }
-
-    private function extractNameId(Request $request, ?array $jsonData): ?string
-    {
-        return $this->extractFromRequestOrJson($request, ['nameId', 'name_id', 'NameID'], $jsonData);
-    }
-
-    private function extractInstitution(Request $request, ?array $jsonData): ?string
-    {
-        $value = $this->extractFromRequestOrJson(
-            $request,
-            ['institution', 'institutionName', 'institution_name', 'raInstitution', 'ra_institution'],
-            $jsonData,
-        );
-
-        if ($value !== null) {
-            return $value;
-        }
-
-        if ($jsonData !== null && isset($jsonData['meta']) && is_array($jsonData['meta'])) {
-            foreach (['actor_institution', 'actorInstitution', 'institution'] as $key) {
-                if (isset($jsonData['meta'][$key])) {
-                    $id = $this->stringify($jsonData['meta'][$key]);
-                    if ($id !== null) {
-                        return $id;
-                    }
-                }
-            }
+        if (in_array($route, $allowedRoutes, true)) {
+            return $this->stringify($request->attributes->get('id'));
         }
 
         return null;
     }
 
     /**
+     * @param array<string, mixed>|null $jsonData
+     */
+    private function extractIdentityCommandId(?array $jsonData): ?string
+    {
+        $commandName = $jsonData['command']['name'] ?? null;
+        if (in_array($commandName, ['Identity:CreateIdentity', 'Identity:UpdateIdentity'], true)) {
+            return $this->stringify($jsonData['command']['payload']['id'] ?? null);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $sources
+     */
+    private function extractSecondFactorId(Request $request, array $sources): ?string
+    {
+        return $this->extractRouteId($request, self::SECOND_FACTOR_ROUTES)
+            ?? $this->extractFromSources(
+                $sources,
+                ['secondFactorId', 'second_factor_id', 'authoringSecondFactorId', 'authoring_second_factor_id'],
+            );
+    }
+
+    /**
+     * @param list<array<string, mixed>> $sources
+     */
+    private function extractRecoveryTokenId(Request $request, array $sources): ?string
+    {
+        return $this->extractRouteId($request, ['recovery_token'])
+            ?? $this->extractFromSources(
+                $sources,
+                ['recoveryTokenIdId', 'recoveryTokenId', 'recovery_token_id', 'recovery_token_id_id'],
+            );
+    }
+
+    /**
+     * @param list<array<string, mixed>> $sources
+     * @param array<string, mixed>|null $jsonData
+     */
+    private function extractInstitution(array $sources, ?array $jsonData): ?string
+    {
+        return $this->extractFromSources(
+            $sources,
+            ['institution', 'institutionName', 'institution_name', 'raInstitution', 'ra_institution'],
+        ) ?? $this->extractMetaInstitution($jsonData);
+    }
+
+    /**
+     * @param array<string, mixed>|null $jsonData
+     */
+    private function extractMetaInstitution(?array $jsonData): ?string
+    {
+        $meta = $jsonData['meta'] ?? null;
+        if (!is_array($meta)) {
+            return null;
+        }
+
+        return $this->extractFromSources([$meta], ['actor_institution', 'actorInstitution', 'institution']);
+    }
+
+    /**
+     * @param list<array<string, mixed>> $sources
      * @param list<string> $keys
      */
-    private function extractFromRequestOrJson(Request $request, array $keys, ?array $jsonData): ?string
+    private function extractFromSources(array $sources, array $keys): ?string
     {
-        foreach ($keys as $key) {
-            if ($request->attributes->has($key)) {
-                $val = $this->stringify($request->attributes->get($key));
-                if ($val !== null) {
-                    return $val;
-                }
-            }
-        }
-
-        foreach ($keys as $key) {
-            if ($request->query->has($key)) {
-                $val = $this->stringify($request->query->get($key));
-                if ($val !== null) {
-                    return $val;
-                }
-            }
-        }
-
-        foreach ($keys as $key) {
-            if ($request->request->has($key)) {
-                $val = $this->stringify($request->request->get($key));
-                if ($val !== null) {
-                    return $val;
-                }
-            }
-        }
-
-        if ($jsonData !== null) {
+        foreach ($sources as $source) {
             foreach ($keys as $key) {
-                if (isset($jsonData[$key])) {
-                    $val = $this->stringify($jsonData[$key]);
+                if (isset($source[$key])) {
+                    $val = $this->stringify($source[$key]);
                     if ($val !== null) {
                         return $val;
-                    }
-                }
-            }
-
-            if (isset($jsonData['command']['payload']) && is_array($jsonData['command']['payload'])) {
-                foreach ($keys as $key) {
-                    if (isset($jsonData['command']['payload'][$key])) {
-                        $val = $this->stringify($jsonData['command']['payload'][$key]);
-                        if ($val !== null) {
-                            return $val;
-                        }
-                    }
-                }
-            }
-
-            if (isset($jsonData['payload']) && is_array($jsonData['payload'])) {
-                foreach ($keys as $key) {
-                    if (isset($jsonData['payload'][$key])) {
-                        $val = $this->stringify($jsonData['payload'][$key]);
-                        if ($val !== null) {
-                            return $val;
-                        }
                     }
                 }
             }
@@ -297,17 +250,9 @@ class RequestContextProcessor
 
     private function stringify(mixed $value): ?string
     {
-        if ($value === null) {
-            return null;
-        }
-
-        if (is_string($value)) {
-            $trimmed = trim($value);
-            return $trimmed !== '' ? $trimmed : null;
-        }
-
         if (is_scalar($value) || $value instanceof Stringable) {
             $trimmed = trim((string) $value);
+
             return $trimmed !== '' ? $trimmed : null;
         }
 

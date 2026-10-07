@@ -26,7 +26,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-#[AutoconfigureTag('monolog.processor')]
+#[AutoconfigureTag('monolog.processor', ['channel' => 'request'])]
 class SecurityContextProcessor implements ProcessorInterface
 {
     public function __construct(

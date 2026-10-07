@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Copyright 2026 SURFnet bv
@@ -33,6 +33,9 @@ use function json_encode;
 
 class RequestContextProcessorTest extends TestCase
 {
+    /**
+     * @param array<string, mixed> $extra
+     */
     private function createLogRecord(array $extra = []): LogRecord
     {
         return new LogRecord(
@@ -181,7 +184,7 @@ class RequestContextProcessorTest extends TestCase
 
         $request = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
 
         $requestStack = new RequestStack();
@@ -212,7 +215,7 @@ class RequestContextProcessorTest extends TestCase
 
         $request = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
 
         $requestStack = new RequestStack();
@@ -243,7 +246,7 @@ class RequestContextProcessorTest extends TestCase
 
         $request = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
 
         $requestStack = new RequestStack();
@@ -267,7 +270,7 @@ class RequestContextProcessorTest extends TestCase
 
         $request = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
 
         $requestStack = new RequestStack();
@@ -329,7 +332,7 @@ class RequestContextProcessorTest extends TestCase
         ];
         $request2 = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
         $requestStack2 = new RequestStack();
         $requestStack2->push($request2);
@@ -417,7 +420,7 @@ class RequestContextProcessorTest extends TestCase
         ];
         $request2 = new Request(
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
         $requestStack2 = new RequestStack();
         $requestStack2->push($request2);
@@ -448,7 +451,7 @@ class RequestContextProcessorTest extends TestCase
         $request = new Request(
             query: ['secondFactorId' => 'sf-uuid-9'],
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload),
+            content: json_encode($payload, JSON_THROW_ON_ERROR),
         );
 
         $requestStack = new RequestStack();

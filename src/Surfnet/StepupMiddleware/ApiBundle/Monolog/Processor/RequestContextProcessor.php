@@ -28,6 +28,7 @@ use function array_filter;
 use function in_array;
 use function is_array;
 use function is_scalar;
+use function is_string;
 use function json_decode;
 use function trim;
 
@@ -100,7 +101,7 @@ class RequestContextProcessor
     }
 
     /**
-     * @return array<string, mixed>|null
+     * @return array<array-key, mixed>|null
      */
     private function parseJsonContent(string $content): ?array
     {
@@ -114,8 +115,8 @@ class RequestContextProcessor
     }
 
     /**
-     * @param array<string, mixed>|null $jsonData
-     * @return list<array<string, mixed>>
+     * @param array<array-key, mixed>|null $jsonData
+     * @return list<array<array-key, mixed>>
      */
     private function collectSources(Request $request, ?array $jsonData): array
     {
@@ -131,20 +132,22 @@ class RequestContextProcessor
 
         $sources[] = $jsonData;
 
-        if (isset($jsonData['command']['payload']) && is_array($jsonData['command']['payload'])) {
-            $sources[] = $jsonData['command']['payload'];
+        $command = $jsonData['command'] ?? null;
+        if (is_array($command) && isset($command['payload']) && is_array($command['payload'])) {
+            $sources[] = $command['payload'];
         }
 
-        if (isset($jsonData['payload']) && is_array($jsonData['payload'])) {
-            $sources[] = $jsonData['payload'];
+        $payload = $jsonData['payload'] ?? null;
+        if (is_array($payload)) {
+            $sources[] = $payload;
         }
 
         return $sources;
     }
 
     /**
-     * @param list<array<string, mixed>> $sources
-     * @param array<string, mixed>|null $jsonData
+     * @param list<array<array-key, mixed>> $sources
+     * @param array<array-key, mixed>|null $jsonData
      */
     private function extractIdentityId(Request $request, array $sources, ?array $jsonData): ?string
     {
@@ -158,8 +161,8 @@ class RequestContextProcessor
      */
     private function extractRouteId(Request $request, array $allowedRoutes): ?string
     {
-        $route = (string) $request->attributes->get('_route');
-        if (in_array($route, $allowedRoutes, true)) {
+        $route = $request->attributes->get('_route');
+        if (is_string($route) && in_array($route, $allowedRoutes, true)) {
             return $this->stringify($request->attributes->get('id'));
         }
 
@@ -167,20 +170,32 @@ class RequestContextProcessor
     }
 
     /**
-     * @param array<string, mixed>|null $jsonData
+     * @param array<array-key, mixed>|null $jsonData
      */
     private function extractIdentityCommandId(?array $jsonData): ?string
     {
-        $commandName = $jsonData['command']['name'] ?? null;
+        if ($jsonData === null) {
+            return null;
+        }
+
+        $command = $jsonData['command'] ?? null;
+        if (!is_array($command)) {
+            return null;
+        }
+
+        $commandName = $command['name'] ?? null;
         if (in_array($commandName, ['Identity:CreateIdentity', 'Identity:UpdateIdentity'], true)) {
-            return $this->stringify($jsonData['command']['payload']['id'] ?? null);
+            $payload = $command['payload'] ?? null;
+            if (is_array($payload)) {
+                return $this->stringify($payload['id'] ?? null);
+            }
         }
 
         return null;
     }
 
     /**
-     * @param list<array<string, mixed>> $sources
+     * @param list<array<array-key, mixed>> $sources
      */
     private function extractSecondFactorId(Request $request, array $sources): ?string
     {
@@ -192,7 +207,7 @@ class RequestContextProcessor
     }
 
     /**
-     * @param list<array<string, mixed>> $sources
+     * @param list<array<array-key, mixed>> $sources
      */
     private function extractRecoveryTokenId(Request $request, array $sources): ?string
     {
@@ -204,8 +219,8 @@ class RequestContextProcessor
     }
 
     /**
-     * @param list<array<string, mixed>> $sources
-     * @param array<string, mixed>|null $jsonData
+     * @param list<array<array-key, mixed>> $sources
+     * @param array<array-key, mixed>|null $jsonData
      */
     private function extractInstitution(array $sources, ?array $jsonData): ?string
     {
@@ -216,10 +231,14 @@ class RequestContextProcessor
     }
 
     /**
-     * @param array<string, mixed>|null $jsonData
+     * @param array<array-key, mixed>|null $jsonData
      */
     private function extractMetaInstitution(?array $jsonData): ?string
     {
+        if ($jsonData === null) {
+            return null;
+        }
+
         $meta = $jsonData['meta'] ?? null;
         if (!is_array($meta)) {
             return null;
@@ -229,7 +248,7 @@ class RequestContextProcessor
     }
 
     /**
-     * @param list<array<string, mixed>> $sources
+     * @param list<array<array-key, mixed>> $sources
      * @param list<string> $keys
      */
     private function extractFromSources(array $sources, array $keys): ?string

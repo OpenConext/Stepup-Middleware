@@ -68,3 +68,9 @@ services:
     arguments:
       - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService'
       - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper'
+
+  Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BackfillDeprovisionedAuditLogEntriesCommand:
+    arguments:
+      - "@middleware.event_replay.dbal_event_hydrator"
+      - "@surfnet_stepup_middleware_api.repository.audit_log"
+      - "@doctrine"

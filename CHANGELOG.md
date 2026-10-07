@@ -1,5 +1,18 @@
 # Changelog
 
+# Unreleased
+**Notable Changes**
+- Show deprovisioning event and date in the audit log (#423)
+
+**Deployment action required**
+- Deprovisioning ("right-to-be-forgotten") audit log entries were only introduced with this
+  change, so identities forgotten before it was deployed have no "deprovisioned" entry in their
+  audit log. Run `bin/console stepup:audit-log:backfill-deprovisioned` (add `--dry-run` first to
+  preview what would be created, `--force` to skip the confirmation prompt) to backfill the
+  missing entries straight from the event store. The command is idempotent, so it is safe to run
+  more than once. Run it with the lifecycle (deprovisioning) API access disabled, to avoid
+  creating duplicate entries from a deprovisioning that is projected live while the backfill runs.
+
 # 7.0.1
 **Notable Changes**
 - Upgrade to Symfony 7.4 (from 6.4)

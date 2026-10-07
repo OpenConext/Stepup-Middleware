@@ -78,6 +78,81 @@ final class SecurityContextProcessorTest extends TestCase
     }
 
     #[Test]
+    public function it_enriches_log_record_when_request_is_present_without_user(): void
+    {
+        $requestStack = m::mock(RequestStack::class);
+        $security = m::mock(Security::class);
+
+        $request = Request::create(
+            uri: '/api/identity/resolve',
+            method: 'GET',
+            server: ['REMOTE_ADDR' => '192.168.1.100']
+        );
+        $request->attributes->set('_route', 'api_identity_resolve');
+
+        $requestStack->shouldReceive('getCurrentRequest')->andReturn($request);
+        $security->shouldReceive('getUser')->andReturnNull();
+
+        $processor = new SecurityContextProcessor($requestStack, $security);
+
+        $record = new LogRecord(
+            datetime: new DateTimeImmutable(),
+            channel: 'request',
+            level: Level::Info,
+            message: 'Unauthenticated request received',
+            context: [],
+            extra: ['existing' => 'value']
+        );
+
+        $processed = $processor($record);
+
+        $this->assertSame('value', $processed->extra['existing']);
+        $this->assertSame('GET', $processed->extra['http_method']);
+        $this->assertSame('/api/identity/resolve', $processed->extra['path']);
+        $this->assertSame('api_identity_resolve', $processed->extra['route']);
+        $this->assertSame('192.168.1.100', $processed->extra['client_ip']);
+        $this->assertArrayNotHasKey('user', $processed->extra);
+    }
+
+    #[Test]
+    public function it_omits_route_when_route_attribute_is_missing(): void
+    {
+        $requestStack = m::mock(RequestStack::class);
+        $security = m::mock(Security::class);
+
+        $request = Request::create(
+            uri: '/api/identity/resolve',
+            method: 'POST',
+            server: ['REMOTE_ADDR' => '192.168.1.100']
+        );
+
+        $user = m::mock(UserInterface::class);
+        $user->shouldReceive('getUserIdentifier')->andReturn('user-12345');
+
+        $requestStack->shouldReceive('getCurrentRequest')->andReturn($request);
+        $security->shouldReceive('getUser')->andReturn($user);
+
+        $processor = new SecurityContextProcessor($requestStack, $security);
+
+        $record = new LogRecord(
+            datetime: new DateTimeImmutable(),
+            channel: 'request',
+            level: Level::Info,
+            message: 'Request with unmatched route',
+            context: [],
+            extra: []
+        );
+
+        $processed = $processor($record);
+
+        $this->assertSame('POST', $processed->extra['http_method']);
+        $this->assertSame('/api/identity/resolve', $processed->extra['path']);
+        $this->assertSame('192.168.1.100', $processed->extra['client_ip']);
+        $this->assertSame('user-12345', $processed->extra['user']);
+        $this->assertArrayNotHasKey('route', $processed->extra);
+    }
+
+    #[Test]
     public function it_handles_missing_request_and_missing_user(): void
     {
         $requestStack = m::mock(RequestStack::class);

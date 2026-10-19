@@ -36,6 +36,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
@@ -104,6 +105,7 @@ class AuditLogRepository extends ServiceEntityRepository
         RecoveryTokenRevokedEvent::class,
         PhoneRecoveryTokenPossessionProvenEvent::class,
         CompliedWithRecoveryCodeRevocationEvent::class,
+        IdentityForgottenEvent::class,
     ];
 
     /**

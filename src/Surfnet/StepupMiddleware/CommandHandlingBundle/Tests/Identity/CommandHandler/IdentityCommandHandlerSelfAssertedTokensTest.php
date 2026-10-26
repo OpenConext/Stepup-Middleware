@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use LogicException;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
@@ -37,10 +38,13 @@ use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRestoredEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -65,9 +69,12 @@ use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
+use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -574,127 +581,185 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      */
     public function test_self_asserted_token_registration_denied_when_a_non_self_asserted_token_was_previously_vetted(): void
     {
-        $recoveryTokenId = new RecoveryTokenId(self::uuid());
-        $secret = m::mock(HashedSecret::class);
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = [
+            ...$this->vettedThenRevokedTokenHistory(new OnPremiseVettingType(new DocumentNumber('123456')), '00028100'),
+            new VettedSecondFactorsAllRevokedEvent($this->id, $this->institution),
+        ];
 
-        $confMock = m::mock(InstitutionConfigurationOptions::class);
-        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
-        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
 
-        // A previously RA (on-premise) vetted token, revoked again
-        $oldSecondFactorId = new SecondFactorId(self::uuid());
-        $oldSecondFactorIdentifier = new YubikeyPublicId('00028100');
-        $nameId = new NameId(md5(__METHOD__));
-
-        // The token the identity now tries to self-assert
-        $secondFactorId = new SecondFactorId(self::uuid());
-        $yubikeyPublicId = new YubikeyPublicId('00028278');
-
-        $command = new RegisterSelfAssertedSecondFactorCommand();
-        $command->authoringRecoveryTokenId = (string)$recoveryTokenId;
-        $command->secondFactorType = 'yubikey';
-        $command->secondFactorId = (string)$secondFactorId;
-        $command->secondFactorIdentifier = (string)$yubikeyPublicId;
-        $command->identityId = (string)$this->id;
-
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(
-            'Self-asserted second factor registration is only allowed when the identity never '
-            . 'possessed a second factor that was vetted with another vetting type',
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_after_self_vetted_token_without_possession_was_revoked(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = $this->vettedThenRevokedTokenHistory(
+            new SelfVetVettingType(new Loa(2, 'loa-2')),
+            '00000001',
+            true,
         );
 
-        $this->scenario
-            ->withAggregateId($this->id)
-            ->given([
-                $this->buildIdentityCreatedEvent(),
-                new YubikeyPossessionProvenEvent(
-                    $this->id,
-                    $this->institution,
-                    $oldSecondFactorId,
-                    $oldSecondFactorIdentifier,
-                    true,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(self::$window),
-                        DateTime::now(),
-                    ),
-                    'nonce',
-                    $this->commonName,
-                    $this->email,
-                    new Locale('en_GB'),
-                ),
-                new EmailVerifiedEvent(
-                    $this->id,
-                    $this->institution,
-                    $oldSecondFactorId,
-                    new SecondFactorType('yubikey'),
-                    $oldSecondFactorIdentifier,
-                    DateTime::now(),
-                    'REGCODE_OLD',
-                    $this->commonName,
-                    $this->email,
-                    new Locale('en_GB'),
-                ),
-                new SecondFactorVettedEvent(
-                    $this->id,
-                    $nameId,
-                    $this->institution,
-                    $oldSecondFactorId,
-                    new SecondFactorType('yubikey'),
-                    $oldSecondFactorIdentifier,
-                    $this->commonName,
-                    $this->email,
-                    $this->preferredLocale,
-                    new OnPremiseVettingType(new DocumentNumber('123456')),
-                ),
-                new VettedSecondFactorRevokedEvent(
-                    $this->id,
-                    $this->institution,
-                    $oldSecondFactorId,
-                    new SecondFactorType('yubikey'),
-                    $oldSecondFactorIdentifier,
-                ),
-                new VettedSecondFactorsAllRevokedEvent(
-                    $this->id,
-                    $this->institution,
-                ),
-                new YubikeyPossessionProvenEvent(
-                    $this->id,
-                    $this->institution,
-                    $secondFactorId,
-                    $yubikeyPublicId,
-                    true,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(self::$window),
-                        DateTime::now(),
-                    ),
-                    'nonce',
-                    $this->commonName,
-                    $this->email,
-                    new Locale('en_GB'),
-                ),
-                new EmailVerifiedEvent(
-                    $this->id,
-                    $this->institution,
-                    $secondFactorId,
-                    new SecondFactorType('yubikey'),
-                    $yubikeyPublicId,
-                    DateTime::now(),
-                    'REGCODE',
-                    $this->commonName,
-                    $this->email,
-                    new Locale('en_GB'),
-                ),
-                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
-                    $this->id,
-                    $this->institution,
-                    $recoveryTokenId,
-                    new SafeStore($secret),
-                    $this->commonName,
-                    $this->email,
-                    $this->preferredLocale,
-                ),
-            ])
-            ->when($command);
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_after_token_with_unknown_vetting_type_was_revoked(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = $this->vettedThenRevokedTokenHistory(new UnknownVettingType(), '00000001');
+
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_after_migrated_token_was_revoked(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $migratedSecondFactorId = new SecondFactorId(self::uuid());
+        $identifier = new YubikeyPublicId('00000001');
+        $type = new SecondFactorType('yubikey');
+
+        $history = [
+            new SecondFactorMigratedEvent(
+                $this->id,
+                $this->identityNameId(),
+                $this->institution,
+                new Institution('B Corp.'),
+                new SecondFactorId(self::uuid()),
+                $migratedSecondFactorId,
+                $type,
+                $identifier,
+                new OnPremiseVettingType(new DocumentNumber('123456')),
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale,
+            ),
+            new VettedSecondFactorRevokedEvent(
+                $this->id,
+                $this->institution,
+                $migratedSecondFactorId,
+                $type,
+                $identifier,
+            ),
+        ];
+
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_after_bootstrapped_token_was_revoked(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $bootstrappedSecondFactorId = new SecondFactorId(self::uuid());
+        $identifier = new YubikeyPublicId('00000001');
+
+        $history = [
+            new YubikeySecondFactorBootstrappedEvent(
+                $this->id,
+                $this->identityNameId(),
+                $this->institution,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale,
+                $bootstrappedSecondFactorId,
+                $identifier,
+            ),
+            new VettedSecondFactorRevokedEvent(
+                $this->id,
+                $this->institution,
+                $bootstrappedSecondFactorId,
+                new SecondFactorType('yubikey'),
+                $identifier,
+            ),
+        ];
+
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_allowed_after_only_self_asserted_tokens_were_revoked(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = $this->vettedThenRevokedTokenHistory(
+            new SelfAssertedRegistrationVettingType(new RecoveryTokenId(self::uuid())),
+            '00000001',
+            true,
+        );
+
+        $this->assertSelfAssertedRegistrationAllowed([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_when_history_contains_self_asserted_and_other_tokens(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = [
+            ...$this->vettedThenRevokedTokenHistory(
+                new SelfAssertedRegistrationVettingType(new RecoveryTokenId(self::uuid())),
+                '00000001',
+                true,
+            ),
+            ...$this->vettedThenRevokedTokenHistory(
+                new OnPremiseVettingType(new DocumentNumber('123456')),
+                '00000002',
+            ),
+        ];
+
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_stays_denied_after_identity_was_forgotten_and_restored(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $history = [
+            ...$this->vettedThenRevokedTokenHistory(new OnPremiseVettingType(new DocumentNumber('123456')), '00000001'),
+            new IdentityForgottenEvent($this->id, $this->institution),
+            new IdentityRestoredEvent($this->id, $this->institution, $this->commonName, $this->email),
+        ];
+
+        $this->assertSelfAssertedRegistrationDenied([$identityCreated, ...$history]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_denied_while_a_non_self_asserted_token_is_still_vetted(): void
+    {
+        $identityCreated = $this->buildIdentityCreatedEvent();
+        $stillVetted = $this->vettedTokenHistory(
+            new OnPremiseVettingType(new DocumentNumber('123456')),
+            '00000001',
+            false,
+        );
+
+        $this->assertSelfAssertedRegistrationDenied(
+            [$identityCreated, ...$stillVetted],
+            'Self-asserted second factor registration is only allowed when no tokens are vetted yet',
+        );
     }
 
     /**
@@ -1142,6 +1207,194 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             $this->recoveryTokenSecretHelper,
             $registrationMailService,
         );
+    }
+
+    /**
+     * @param list<object> $given Events of the identity, starting with the IdentityCreatedEvent
+     */
+    private function assertSelfAssertedRegistrationDenied(array $given, ?string $expectedMessage = null): void
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage(
+            $expectedMessage ?? 'Self-asserted second factor registration is not allowed when the identity '
+            . 'possessed a second factor vetted with another vetting type',
+        );
+
+        [$command] = $this->prepareSelfAssertedRegistration();
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given($this->withRegistrationPrerequisites($given, $command))
+            ->when($command);
+    }
+
+    /**
+     * @param list<object> $given Events of the identity, starting with the IdentityCreatedEvent
+     */
+    private function assertSelfAssertedRegistrationAllowed(array $given): void
+    {
+        [$command, $recoveryTokenId] = $this->prepareSelfAssertedRegistration();
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given($this->withRegistrationPrerequisites($given, $command))
+            ->when($command)
+            ->then([
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->id,
+                    $this->identityNameId(),
+                    $this->institution,
+                    new SecondFactorId($command->secondFactorId),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId($command->secondFactorIdentifier),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale,
+                    new SelfAssertedRegistrationVettingType($recoveryTokenId),
+                ),
+            ]);
+    }
+
+    /**
+     * @return array{RegisterSelfAssertedSecondFactorCommand, RecoveryTokenId}
+     */
+    private function prepareSelfAssertedRegistration(): array
+    {
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+
+        $command = new RegisterSelfAssertedSecondFactorCommand();
+        $command->authoringRecoveryTokenId = (string)$recoveryTokenId;
+        $command->secondFactorType = 'yubikey';
+        $command->secondFactorId = self::uuid();
+        $command->secondFactorIdentifier = '00028278';
+        $command->identityId = (string)$this->id;
+
+        return [$command, $recoveryTokenId];
+    }
+
+    /**
+     * @param list<object> $given
+     * @return list<object>
+     */
+    private function withRegistrationPrerequisites(
+        array $given,
+        RegisterSelfAssertedSecondFactorCommand $command,
+    ): array {
+        $secondFactorId = new SecondFactorId($command->secondFactorId);
+        $identifier = new YubikeyPublicId($command->secondFactorIdentifier);
+
+        return [
+            ...$given,
+            ...$this->verifiedTokenHistory($secondFactorId, $identifier),
+            new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                $this->id,
+                $this->institution,
+                new RecoveryTokenId($command->authoringRecoveryTokenId),
+                new SafeStore(m::mock(HashedSecret::class)),
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale,
+            ),
+        ];
+    }
+
+    /**
+     * @return list<object>
+     */
+    private function verifiedTokenHistory(SecondFactorId $secondFactorId, YubikeyPublicId $identifier): array
+    {
+        return [
+            new YubikeyPossessionProvenEvent(
+                $this->id,
+                $this->institution,
+                $secondFactorId,
+                $identifier,
+                true,
+                EmailVerificationWindow::createFromTimeFrameStartingAt(
+                    TimeFrame::ofSeconds(self::$window),
+                    DateTime::now(),
+                ),
+                'nonce',
+                $this->commonName,
+                $this->email,
+                new Locale('en_GB'),
+            ),
+            new EmailVerifiedEvent(
+                $this->id,
+                $this->institution,
+                $secondFactorId,
+                new SecondFactorType('yubikey'),
+                $identifier,
+                DateTime::now(),
+                'REGCODE',
+                $this->commonName,
+                $this->email,
+                new Locale('en_GB'),
+            ),
+        ];
+    }
+
+    /**
+     * @return list<object>
+     */
+    private function vettedTokenHistory(
+        VettingType $vettingType,
+        string $yubikeyId,
+        bool $provePossessionSkipped,
+        ?SecondFactorId $secondFactorId = null,
+    ): array {
+        $secondFactorId ??= new SecondFactorId(self::uuid());
+        $identifier = new YubikeyPublicId($yubikeyId);
+        $vettedEventClass = $provePossessionSkipped
+            ? SecondFactorVettedWithoutTokenProofOfPossession::class
+            : SecondFactorVettedEvent::class;
+
+        return [
+            ...$this->verifiedTokenHistory($secondFactorId, $identifier),
+            new $vettedEventClass(
+                $this->id,
+                $this->identityNameId(),
+                $this->institution,
+                $secondFactorId,
+                new SecondFactorType('yubikey'),
+                $identifier,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale,
+                $vettingType,
+            ),
+        ];
+    }
+
+    /**
+     * @return list<object>
+     */
+    private function vettedThenRevokedTokenHistory(
+        VettingType $vettingType,
+        string $yubikeyId,
+        bool $provePossessionSkipped = false,
+    ): array {
+        $secondFactorId = new SecondFactorId(self::uuid());
+
+        return [
+            ...$this->vettedTokenHistory($vettingType, $yubikeyId, $provePossessionSkipped, $secondFactorId),
+            new VettedSecondFactorRevokedEvent(
+                $this->id,
+                $this->institution,
+                $secondFactorId,
+                new SecondFactorType('yubikey'),
+                new YubikeyPublicId($yubikeyId),
+            ),
+        ];
+    }
+
+    private function identityNameId(): NameId
+    {
+        return $this->nameId ?? throw new LogicException('Build the IdentityCreatedEvent first');
     }
 
     private function buildIdentityCreatedEvent(): IdentityCreatedEvent

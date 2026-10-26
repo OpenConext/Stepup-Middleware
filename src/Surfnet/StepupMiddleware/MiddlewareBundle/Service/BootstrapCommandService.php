@@ -41,8 +41,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailC
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
@@ -58,18 +56,12 @@ class BootstrapCommandService
     public function __construct(
         private readonly Pipeline $pipeline,
         private readonly MetadataEnricher $enricher,
-        private readonly TokenStorageInterface $tokenStorage,
         private readonly IdentityRepository $identityRepository,
         private readonly UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
         private readonly VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
         private readonly VettedSecondFactorRepository $vettedSecondFactorRepository,
         private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationRepository,
     ) {
-    }
-
-    public function setToken(TokenInterface $token): void
-    {
-        $this->tokenStorage->setToken($token);
     }
 
     public function validRegistrationStatus(string $registrationStatus): void

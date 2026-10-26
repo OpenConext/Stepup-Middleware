@@ -34,6 +34,11 @@ Some of the configuration of the components is static (i.e. stored in parametere
 ### Technical debt
  * https://github.com/broadway/event-store-dbal blocks upgrade to `doctrine/dbal:^4.0`
 
+### Translations
+Middleware uses the default Symfony translations bundle. To extract / update the translations, run:  
+`./bin/extract-translations.sh`  
+Then modify and commit the changes.
+
 ### Adding new events
 
 Whenever adding a new event, be sure to update `bin/config/events.yml`.

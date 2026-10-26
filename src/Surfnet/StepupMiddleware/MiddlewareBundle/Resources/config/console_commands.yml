@@ -7,7 +7,6 @@ services:
     arguments:
       - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
       - "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"
-      - "@security.token_storage"
       - "@surfnet_stepup_middleware_api.repository.identity"
       - "@surfnet_stepup_middleware_api.repository.unverified_second_factor"
       - "@surfnet_stepup_middleware_api.repository.verified_second_factor"
@@ -19,6 +18,7 @@ services:
       - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
       - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
       - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+      - "@security.token_storage"
 
   Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplaySpecificEventsCommand:
     arguments:

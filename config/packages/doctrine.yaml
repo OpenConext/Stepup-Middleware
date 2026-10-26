@@ -5,34 +5,16 @@ doctrine:
         connections:
             middleware:
                 driver:   "%database_driver%"
-                host:     "%database_host%"
-                port:     "%database_port%"
-                dbname:   "%database_middleware_name%"
-                user:     "%database_middleware_user%"
-                password: "%database_middleware_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                use_savepoints: true
             gateway:
                 driver:   "%database_driver%"
-                host:     "%database_host%"
-                port:     "%database_port%"
-                dbname:   "%database_gateway_name%"
-                user:     "%database_gateway_user%"
-                password: "%database_gateway_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                use_savepoints: true
             deploy:
                 driver:   "%database_driver%"
-                host:     "%database_host%"
-                port:     "%database_port%"
-                dbname:   "%database_middleware_name%"
-                user:     "%database_deploy_user%"
-                password: "%database_deploy_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                use_savepoints: true
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
@@ -90,9 +72,6 @@ doctrine:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VettingTypeHintsType
     orm:
         default_entity_manager: middleware
-        auto_generate_proxy_classes: "%kernel.debug%"
-        controller_resolver:
-          auto_mapping: false
         entity_managers:
             middleware:
                 connection: middleware
@@ -133,19 +112,33 @@ when@dev:
     doctrine:
         dbal: &mariadbDbal
             connections:
-                middleware: &options
-                    options:
+                middleware:
+                    host:     "%database_host%"
+                    port:     "%database_port%"
+                    dbname:   "%database_middleware_name%"
+                    user:     "%database_middleware_user%"
+                    password: "%database_middleware_password%"
+                    options: &driverOptions
                         # The 1002 constant sets the PDO MYSQL_ATTR_INIT_COMMAND for when the connection is (re)connected.
                         1002: "%database_driver_options_1002%"
                 gateway:
-                    *options
+                    host:     "%database_host%"
+                    port:     "%database_port%"
+                    dbname:   "%database_gateway_name%"
+                    user:     "%database_gateway_user%"
+                    password: "%database_gateway_password%"
+                    options: *driverOptions
                 deploy:
-                    *options
+                    host:     "%database_host%"
+                    port:     "%database_port%"
+                    dbname:   "%database_middleware_name%"
+                    user:     "%database_deploy_user%"
+                    password: "%database_deploy_password%"
+                    options: *driverOptions
 
 when@prod: &prodOverride
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
             metadata_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool
@@ -181,19 +174,19 @@ when@smoketest: &smoketestOveride
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
                 gateway:
                     dbname: gateway_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
                 deploy:
                     dbname: middleware_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
 
 when@smoketest_event_replay:
     doctrine:
@@ -205,19 +198,19 @@ when@smoketest_event_replay:
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
                 gateway:
                     dbname: gateway_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
                 deploy:
                     dbname: middleware_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
-                    <<: *options
+                    options: *driverOptions
         orm:
             default_entity_manager: deploy
 

@@ -87,6 +87,7 @@ final class BootstrapGsspSecondFactorCommand
                 $identity->commonName,
             ),
         );
+        $this->transactionHelper->authorizeConsoleContext();
         $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 

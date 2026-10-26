@@ -74,6 +74,7 @@ final class BootstrapYubikeySecondFactorCommand
         $output->writeln(
             sprintf('<comment>Adding a %s Yubikey token for %s</comment>', $registrationStatus, $identity->commonName),
         );
+        $this->transactionHelper->authorizeConsoleContext();
         $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 

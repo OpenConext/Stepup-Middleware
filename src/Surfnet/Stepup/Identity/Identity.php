@@ -161,6 +161,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     private ?RecoveryTokenCollection $recoveryTokens = null;
 
+    /**
+     * Whether this identity has at some point possessed a second factor
+     * vetted with the self-asserted registration vetting type.
+     */
+    private bool $possessedSelfAssertedToken = false;
+
+    /**
+     * Whether this identity has at some point possessed a second factor
+     * vetted with any other vetting type (for example on-premise or self-vet).
+     */
+    private bool $possessedNonSelfAssertedToken = false;
+
     public static function create(
         IdentityId $id,
         Institution $institution,
@@ -1047,6 +1059,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->email = $event->email;
         $this->preferredLocale = $event->preferredLocale;
         $this->forgotten = false;
+        $this->possessedSelfAssertedToken = false;
+        $this->possessedNonSelfAssertedToken = false;
 
         $this->unverifiedSecondFactors = new SecondFactorCollection();
         $this->verifiedSecondFactors = new SecondFactorCollection();
@@ -1255,6 +1269,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $vetted = $verified->asVetted($event->vettingType);
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
+        $this->recordPossessionOfVettedSecondFactor($event->vettingType);
     }
 
     protected function applySecondFactorVettedWithoutTokenProofOfPossession(
@@ -1268,6 +1283,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
+        $this->recordPossessionOfVettedSecondFactor($event->vettingType);
+    }
+
+    private function recordPossessionOfVettedSecondFactor(?VettingType $vettingType): void
+    {
+        if ($vettingType instanceof VettingType && $vettingType->type() === VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
+            $this->possessedSelfAssertedToken = true;
+            return;
+        }
+        $this->possessedNonSelfAssertedToken = true;
     }
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event): void
@@ -1591,6 +1616,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         if ($this->vettedSecondFactors->count() !== 0) {
             throw new DomainException(
                 "Self-asserted second factor registration is only allowed when no tokens are vetted yet",
+            );
+        }
+        if ($this->possessedNonSelfAssertedToken && !$this->possessedSelfAssertedToken) {
+            throw new DomainException(
+                "Self-asserted second factor registration is only allowed when the identity never "
+                . "possessed a second factor that was vetted with another vetting type",
             );
         }
         if ($this->recoveryTokens->count() === 0) {

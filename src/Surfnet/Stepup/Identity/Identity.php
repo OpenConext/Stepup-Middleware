@@ -1465,7 +1465,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this->verifiedSecondFactors->getValues(),
             $this->vettedSecondFactors->getValues(),
             $this->registrationAuthorities->getValues(),
-            $this->recoveryTokens->getValues(),
         );
     }
 

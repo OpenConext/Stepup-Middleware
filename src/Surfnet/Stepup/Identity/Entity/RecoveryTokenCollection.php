@@ -57,14 +57,6 @@ final class RecoveryTokenCollection
         return count($this->recoveryTokens);
     }
 
-    /**
-     * @return RecoveryToken[]
-     */
-    public function getValues(): array
-    {
-        return array_values($this->recoveryTokens);
-    }
-
     public function remove(RecoveryTokenId $recoveryTokenId): void
     {
         unset($this->recoveryTokens[(string)$recoveryTokenId]);

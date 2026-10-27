@@ -37,6 +37,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 /**
  * @extends ServiceEntityRepository<RecoveryToken>
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class RecoveryTokenRepository extends ServiceEntityRepository
 {

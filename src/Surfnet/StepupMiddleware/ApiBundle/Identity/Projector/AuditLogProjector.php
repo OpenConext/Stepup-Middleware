@@ -86,9 +86,8 @@ class AuditLogProjector extends Projector
         $entry->id = AuditLogEntry::idFor($domainMessage);
 
         // Each event creates at most one audit log entry, identified deterministically by its
-        // source event. This makes re-processing a given event (replay, backfill, or - for
-        // IdentityForgottenEvent - a race with a concurrent live projection) a no-op instead of
-        // creating a duplicate entry.
+        // source event. This makes re-processing a given event (replay or backfill) a no-op instead
+        // of creating a duplicate entry.
         if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
             return;
         }

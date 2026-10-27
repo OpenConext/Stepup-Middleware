@@ -10,8 +10,9 @@
   audit log. Run `bin/console stepup:audit-log:backfill-deprovisioned` (add `--dry-run` first to
   preview what would be created, `--force` to skip the confirmation prompt) to backfill the
   missing entries straight from the event store. The command is idempotent, so it is safe to run
-  more than once. Run it with the lifecycle (deprovisioning) API access disabled, to avoid
-  creating duplicate entries from a deprovisioning that is projected live while the backfill runs.
+  more than once. Run it only after every node is running the new code: a deprovisioning that an
+  old node projects after the backfill has run gets no audit log entry. Do not use
+  `stepup:event:replay` for this backfill.
 
 # 7.0.1
 **Notable Changes**

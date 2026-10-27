@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
 use DateTime as CoreDateTime;
-use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
@@ -62,7 +61,11 @@ class AuditLogProjector extends Projector
 
         switch (true) {
             case $event instanceof IdentityForgottenEvent:
-                // Don't insert the IdentityForgottenEvent into the audit log, as we'd remove it immediately afterwards.
+                // Record the deprovisioning entry first so applyIdentityForgottenEvent's re-query of
+                // findByIdentityId() picks it up too. The actor name is intentionally anonymized,
+                // consistent with all other entries for a forgotten identity. Anonymizing first
+                // would query before this entry exists, leaving its actor name untouched.
+                $this->applyAuditableEvent($event, $domainMessage);
                 $this->applyIdentityForgottenEvent($event);
                 break;
             // Finally apply the auditable event, most events are auditable this so first handle the unique variants
@@ -79,10 +82,17 @@ class AuditLogProjector extends Projector
     private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage): void
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
+        $entry = new AuditLogEntry();
+        $entry->id = AuditLogEntry::idFor($domainMessage);
+
+        // Each event creates at most one audit log entry, identified deterministically by its
+        // source event. This makes re-processing a given event (replay or backfill) a no-op instead
+        // of creating a duplicate entry.
+        if ($this->auditLogRepository->find($entry->id) instanceof AuditLogEntry) {
+            return;
+        }
 
         $metadata = $domainMessage->getMetadata()->serialize();
-        $entry = new AuditLogEntry();
-        $entry->id = (string)Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
             $actor = $this->identityRepository->find($metadata['actorId']);

@@ -27,6 +27,10 @@ services:
       - "@middleware.event_replay.past_events_service"
       - "@middleware.event_replay.transaction_aware_event_dispatcher"
 
+  Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\RemoveForgottenIdentitiesRecoveryTokensCommand:
+    arguments:
+      - '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository'
+
   Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand:
     arguments:
       - "@middleware.event_replay.event_stream_replayer"

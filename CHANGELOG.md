@@ -2,11 +2,10 @@
 
 # Unreleased
 **Notable Changes**
-- Deprovision (right-to-be-forgotten) now also dispatches to recovery tokens, matching the existing second-factor handling (#628)
+- Add `stepup:recovery-token:remove-forgotten` to remove stale recovery tokens of deprovisioned (forgotten) identities (#628)
 
 **Deployment action required**
-- `RecoveryTokenProjector` only started removing recovery-token read-model rows on `IdentityForgottenEvent` as of commit `e6c81940` (2022-07-13). Identities forgotten before that date may still have stale `recovery_tokens` rows (containing PII). `RecoveryTokenProjector` is now tagged `projector.register_for_replay` so it can be targeted for a backfill. Operators should run, under the `prod_event_replay` environment:
-  `APP_ENV=prod_event_replay bin/console stepup:event:replay`, selecting `IdentityForgottenEvent` and `RecoveryTokenProjector`, to clean up those rows.
+- `RecoveryTokenProjector` only started removing recovery-token read-model rows on `IdentityForgottenEvent` as of commit `e6c81940` (2022-07-13). Identities forgotten before that date may still have stale `recovery_tokens` rows (containing PII). Run `bin/console stepup:recovery-token:remove-forgotten` (add `--dry-run` first to see how many rows would be removed) to clean them up. The command only removes tokens of identities that are currently forgotten, so it is idempotent and tokens registered after an identity was restored are kept. Do not use `stepup:event:replay` for this cleanup: replaying `IdentityForgottenEvent` for `RecoveryTokenProjector` would also remove those tokens.
 
 # 7.0.1
 **Notable Changes**

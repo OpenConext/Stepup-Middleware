@@ -16,6 +16,12 @@
             "src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"
         ]
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/SURFnet/broadway-event-store-dbal"
+        }
+    ],
     "minimum-stability": "stable",
     "require": {
         "php": "^8.5",
@@ -24,13 +30,12 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "broadway/broadway": "^2.5",
-        "broadway/event-store-dbal": "^0.6",
-        "doctrine/annotations": "^2.0",
-        "doctrine/doctrine-bundle": "^2.13.2",
+        "broadway/event-store-dbal": "^0.6.1",
+        "doctrine/dbal": "^4.3",
+        "doctrine/doctrine-bundle": "^3.3.2",
         "doctrine/doctrine-migrations-bundle": "^3.4.1",
         "doctrine/orm": "^3.3.2",
         "incenteev/composer-parameter-handler": "^2.2",
-        "jms/translation-bundle": "^2.6",
         "nelmio/security-bundle": "^3.4.2",
         "openconext/monitor-bundle": "^4.3.1",
         "pagerfanta/pagerfanta": "^4.7.1",
@@ -62,6 +67,7 @@
         "malukenho/docheader": "^1.1",
         "mockery/mockery": "^1.6.12",
         "overtrue/phplint": ">=9.5.6",
+        "phpcpd-next/phpcpd": "^1.1",
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-doctrine": "^2.0",

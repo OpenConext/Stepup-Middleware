@@ -68,7 +68,7 @@ SQL;
             $this->write("<info>Migating: {$uuid}#{$playhead}</info>");
 
             $payload = $this->stripSensitiveData($rawPayload);
-            $this->connection->executeUpdate(
+            $this->connection->executeStatement(
                 self::$update,
                 [
                     'payload' => $payload,

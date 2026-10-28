@@ -220,6 +220,22 @@ class ConfigurationControllerTest extends WebTestCase
 
     #[Test]
     #[Group('management')]
+    public function validPushWithServiceNameIsAccepted(): void
+    {
+        $this->pushConfiguration([
+            'gateway' => [
+                'identity_providers' => [],
+                'service_providers' => [
+                    array_merge(self::minimalServiceProvider(), [
+                        'service_name' => ['en_GB' => 'Test Service', 'nl_NL' => 'Test Dienst'],
+                    ]),
+                ],
+            ],
+        ]);
+    }
+
+    #[Test]
+    #[Group('management')]
     public function pushWithSraaAndEmailTemplatesIsSilentlyAccepted(): void
     {
         $this->pushConfiguration([

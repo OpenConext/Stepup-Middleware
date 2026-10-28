@@ -21,18 +21,23 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 /**
  * @extends ServiceEntityRepository<RecoveryToken>
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
@@ -161,5 +166,45 @@ class RecoveryTokenRepository extends ServiceEntityRepository
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * An identity is forgotten when its read model has the anonymised (unknown) name and email. A restored
+     * identity gets its real name and email back, so tokens registered after a restore are never matched.
+     */
+    public function countForForgottenIdentities(): int
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select('COUNT(rt.id)')
+            ->from($this->getEntityName(), 'rt')
+            ->where($this->forgottenIdentityCondition());
+
+        $count = $this->withForgottenIdentityParameters($queryBuilder)->getQuery()->getSingleScalarResult();
+
+        return is_numeric($count) ? (int)$count : 0;
+    }
+
+    public function removeForForgottenIdentities(): int
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'rt')
+            ->where($this->forgottenIdentityCondition());
+
+        $removed = $this->withForgottenIdentityParameters($queryBuilder)->getQuery()->execute();
+
+        return is_int($removed) ? $removed : 0;
+    }
+
+    private function forgottenIdentityCondition(): string
+    {
+        return 'rt.identityId IN (SELECT i.id FROM ' . Identity::class
+            . ' i WHERE i.commonName = :unknownName AND i.email = :unknownEmail)';
+    }
+
+    private function withForgottenIdentityParameters(QueryBuilder $queryBuilder): QueryBuilder
+    {
+        return $queryBuilder
+            ->setParameter('unknownName', CommonName::unknown())
+            ->setParameter('unknownEmail', Email::unknown());
     }
 }

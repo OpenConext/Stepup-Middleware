@@ -2,6 +2,7 @@
 
 # Unreleased
 **Notable Changes**
+- Add `stepup:recovery-token:remove-forgotten` to remove stale recovery tokens of deprovisioned (forgotten) identities (#628)
 - Show deprovisioning event and date in the audit log (#423)
 
 **Deployment action required**
@@ -13,6 +14,7 @@
   more than once. Run it only after every node is running the new code: a deprovisioning that an
   old node projects after the backfill has run gets no audit log entry. Do not use
   `stepup:event:replay` for this backfill.
+- `RecoveryTokenProjector` only started removing recovery-token read-model rows on `IdentityForgottenEvent` as of commit `e6c81940` (2022-07-13). Identities forgotten before that date may still have stale `recovery_tokens` rows (containing PII). Run `bin/console stepup:recovery-token:remove-forgotten` (add `--dry-run` first to see how many rows would be removed) to clean them up. The command only removes tokens of identities that are currently forgotten, so it is idempotent and tokens registered after an identity was restored are kept. Do not use `stepup:event:replay` for this cleanup: replaying `IdentityForgottenEvent` for `RecoveryTokenProjector` would also remove those tokens.
 
 # 7.0.1
 **Notable Changes**

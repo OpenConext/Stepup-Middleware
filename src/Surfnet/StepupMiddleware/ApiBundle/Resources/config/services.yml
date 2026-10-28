@@ -136,6 +136,16 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.exception }
 
+  # Monolog Processors
+  surfnet_stepup_middleware_api.monolog.request_context_processor:
+    class: Surfnet\StepupMiddleware\ApiBundle\Monolog\Processor\RequestContextProcessor
+    arguments:
+      - "@request_stack"
+    tags:
+      - { name: monolog.processor }
+  Surfnet\StepupMiddleware\ApiBundle\Monolog\Processor\RequestContextProcessor:
+    alias: surfnet_stepup_middleware_api.monolog.request_context_processor
+
   # Security Entry Point
   surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
     class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint

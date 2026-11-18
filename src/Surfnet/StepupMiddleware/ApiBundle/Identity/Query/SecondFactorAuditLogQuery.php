@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 
 final class SecondFactorAuditLogQuery extends AbstractQuery
 {
@@ -42,4 +43,10 @@ final class SecondFactorAuditLogQuery extends AbstractQuery
      * @var string
      */
     public string $orderDirection = 'desc';
+
+    /**
+     * When set, results are filtered on the institutions the actor is authorized for. Optional for backwards
+     * compatibility: clients that do not send an actorId are not filtered.
+     */
+    public ?InstitutionAuthorizationContextInterface $authorizationContext = null;
 }

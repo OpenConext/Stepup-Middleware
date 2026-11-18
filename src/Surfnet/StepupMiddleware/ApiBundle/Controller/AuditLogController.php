@@ -20,6 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService;
@@ -30,6 +32,7 @@ final class AuditLogController extends AbstractController
 {
     public function __construct(
         private readonly AuditLogService $auditLogService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
     }
 
@@ -48,6 +51,20 @@ final class AuditLogController extends AbstractController
         $query->orderBy = $request->query->get('orderBy', $query->orderBy);
         $query->orderDirection = $request->query->get('orderDirection', $query->orderDirection);
         $query->pageNumber = $request->query->getInt('p', 1);
+
+        // Optional for backwards compatibility: when the client sends an actorId, restrict the results to the
+        // institutions that actor is RA for.
+        $actorId = $request->query->get('actorId');
+        if ($actorId !== null) {
+            if (!is_string($actorId) || $actorId === '') {
+                throw new BadApiRequestException(['The actorId get parameter MUST be a non-empty string']);
+            }
+
+            $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+                new IdentityId($actorId),
+                RegistrationAuthorityRole::ra(),
+            );
+        }
 
         $paginator = $this->auditLogService->searchSecondFactorAuditLog($query);
 

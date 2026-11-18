@@ -54,6 +54,7 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
@@ -63,8 +64,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
  */
 class AuditLogRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, AuditLogEntry::class);
     }
 
@@ -122,6 +125,16 @@ class AuditLogRepository extends ServiceEntityRepository
             ->andWhere('al.event IN (:secondFactorEvents)')
             ->setParameter('identityId', $query->identityId)
             ->setParameter('secondFactorEvents', self::$secondFactorEvents);
+
+        // When an authorization context is provided, only return entries of institutions the actor is authorized for.
+        if ($query->authorizationContext !== null) {
+            $this->authorizationRepositoryFilter->filter(
+                $queryBuilder,
+                $query->authorizationContext,
+                'al.identityInstitution',
+                'iac',
+            );
+        }
 
         match ($query->orderBy) {
             'secondFactorType',

@@ -1,6 +1,6 @@
 # Changelog
 
-# Unreleased
+# 7.1.0
 **Notable Changes**
 - Add `stepup:recovery-token:remove-forgotten` to remove stale recovery tokens of deprovisioned (forgotten) identities (#628)
 - Show deprovisioning event and date in the audit log (#423)

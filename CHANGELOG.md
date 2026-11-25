@@ -5,6 +5,9 @@
 - Add `stepup:recovery-token:remove-forgotten` to remove stale recovery tokens of deprovisioned (forgotten) identities (#628)
 - Show deprovisioning event and date in the audit log (#423)
 
+**Security**
+- Restrict the second factor audit log to the institutions the actor is RA for when `actorId` is sent
+
 **Deployment action required**
 - Deprovisioning ("right-to-be-forgotten") audit log entries were only introduced with this
   change, so identities forgotten before it was deployed have no "deprovisioned" entry in their
